@@ -9,6 +9,13 @@ namespace RobustEngine.Graphics
     public struct Vertex
     {
         public float X, Y, Z;
+        public const int Stride = 12;
+
+        public static readonly Vertex Zero  = new Vertex(0,0);
+        public static readonly Vertex UnitX = new Vertex(1,0); 
+        public static readonly Vertex UnitY = new Vertex(0,1);
+        public static readonly Vertex One   = new Vertex(1,1);
+
         public Vertex(float x, float y, float z = 0)
         {
             X = x;
@@ -16,6 +23,24 @@ namespace RobustEngine.Graphics
             Z = z;
         }
 
+        public static Vertex operator *(Vertex A, Vertex B)
+        {
+            return new Vertex(A.X * B.X, A.Y * B.Y, A.Z * B.Z);
+        }
+
+        public static Vertex operator +(Vertex A, Vertex B)
+        {
+            return new Vertex(A.X + B.X, A.Y + B.Y, A.Z + B.Z);
+        }
+
+        public static Vertex operator -(Vertex A, Vertex B)
+        {
+            return new Vertex(A.X - B.X, A.Y - B.Y, A.Z - B.Z);
+        }
+
+        public static Vertex operator /(Vertex A, Vertex B)
+        {
+            return new Vertex(A.X / B.X, A.Y / B.Y, A.Z / B.Z);
+        }
     }
- 
 }
