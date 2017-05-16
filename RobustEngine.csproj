@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Graphics\IRenderable2D.cs" />
     <Compile Include="Graphics\Render\OffscreenTarget.cs" />
     <Compile Include="Graphics\Render\RenderTarget.cs" />
     <Compile Include="Graphics\Shaders\ShaderTechnique.cs" />
@@ -63,7 +64,8 @@
     <Compile Include="Graphics\Sprites\TextSprite.cs" />
     <Compile Include="Graphics\Texture2D.cs" />
     <Compile Include="Graphics\Shaders\Shader.cs" />
-    <Compile Include="Graphics\BufferObject.cs" />
+    <Compile Include="Graphics\Buffer.cs" />
+    <Compile Include="Graphics\Vertex.cs" />
     <Compile Include="Graphics\View.cs" />
     <Compile Include="RobustEngine.cs" />
     <Compile Include="RobustStarter.cs" />
