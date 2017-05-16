@@ -12,12 +12,14 @@ namespace RobustEngine.Graphics
     {
 
         public int ID;
+
+        private Bitmap     Bitmap;
+        private BitmapData BitmapData;
+        private Color[,]   PixelData;
+
+        public Vertex[]  TexCoords;
         public Rectangle TextureAABB;
 
-        private Bitmap Bitmap;
-        private BitmapData BitmapData;
-
-        private Color[,] PixelData;
 
         public Texture2D(string path)
         {
@@ -31,7 +33,7 @@ namespace RobustEngine.Graphics
 
         public void Bind()
         {
-            GL.BindTexture(TextureTarget.Texture2D, ID);
+            GL.BindTexture(TextureTarget.Texture2D, ID); 
         }              
 
         private void Load(string path)
@@ -41,14 +43,29 @@ namespace RobustEngine.Graphics
       
         private void Load(PixelInternalFormat PIF, string path)
         {
-            ID = GL.GenTexture();
+            ID = GL.GenTexture(); 
 
             Bind();
 
-            Bitmap      = new Bitmap(path);
+            Bitmap = new Bitmap(path);
+
+            if(Bitmap.Width % 2 != 0 || Bitmap.Height % 2 != 0)
+            {
+                throw new Exception("TEXTURE AINT A POWER OF TWO"); 
+            }
+
             TextureAABB = new Rectangle(0, 0, Bitmap.Width, Bitmap.Height);
             PixelData   = new Color[TextureAABB.Width, TextureAABB.Height];
             BitmapData  = Bitmap.LockBits(TextureAABB, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+            TexCoords = new Vertex[]
+            {
+                Vertex.Zero,
+                Vertex.UnitX * Bitmap.Width, 
+                Vertex.UnitY * Bitmap.Width,
+                Vertex.One * Bitmap.Width 
+
+            };
                 
             GL.TexImage2D
                 (
@@ -78,19 +95,12 @@ namespace RobustEngine.Graphics
 
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-
-
-         
+                     
 
             //todo Mipmap + Bump map maybe?
 
         }
-
-        //TODO these methods
-        public bool isOpaque()
-        {
-            return false;
-        }
+         
 
 
        
