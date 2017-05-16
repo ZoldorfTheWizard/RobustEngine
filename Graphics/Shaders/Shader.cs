@@ -8,8 +8,8 @@ namespace RobustEngine.Graphics.Shaders
 {
     public class Shader
     {
-        private int VID;
-        private int FID;
+        private int VSID;
+        private int FSID;
         private int PID;   
 
         private string VIDDump;
@@ -45,33 +45,33 @@ namespace RobustEngine.Graphics.Shaders
         private void Compile(string VertexCode, string FragCode)
         {
             DEBUG = false;
-            VID = GL.CreateShader(ShaderType.VertexShader);
-            FID = GL.CreateShader(ShaderType.FragmentShader);
+            VSID = GL.CreateShader(ShaderType.VertexShader);
+            FSID = GL.CreateShader(ShaderType.FragmentShader);
 
             VIDDump = File.ReadAllText(VertexCode);
             FIDDump = File.ReadAllText(FragCode);
 
-            GL.ShaderSource(VID, VIDDump);
-            GL.ShaderSource(FID, FIDDump);
+            GL.ShaderSource(VSID, VIDDump);
+            GL.ShaderSource(FSID, FIDDump);
            
             int VertexCompiled;
             int FragmentCompiled;
             int ProgramComplied;
 
-            GL.CompileShader(VID);
-            GL.GetShader(VID, ShaderParameter.CompileStatus, out VertexCompiled);
+            GL.CompileShader(VSID);
+            GL.GetShader(VSID, ShaderParameter.CompileStatus, out VertexCompiled);
             
             if(VertexCompiled != 1)
             {
-               RobustConsole.Write(LogLevel.Critical , this, GL.GetShaderInfoLog(VID));
+               RobustConsole.Write(LogLevel.Critical , this, GL.GetShaderInfoLog(VSID));
             }
 
-            GL.CompileShader(FID);
-            GL.GetShader(FID, ShaderParameter.CompileStatus, out FragmentCompiled);
+            GL.CompileShader(FSID);
+            GL.GetShader(FSID, ShaderParameter.CompileStatus, out FragmentCompiled);
 
             if (FragmentCompiled != 1)
             {
-                RobustConsole.Write(LogLevel.Critical, this, GL.GetShaderInfoLog(FID));
+                RobustConsole.Write(LogLevel.Critical, this, GL.GetShaderInfoLog(FSID));
             }
 
             PID = GL.CreateProgram();
@@ -80,15 +80,15 @@ namespace RobustEngine.Graphics.Shaders
             GL.BindAttribLocation(PID, 2, "normal");
             GL.BindAttribLocation(PID, 3, "color");
 
-            GL.AttachShader(PID, VID);
-            GL.AttachShader(PID, FID);
+            GL.AttachShader(PID, VSID);
+            GL.AttachShader(PID, FSID);
             GL.LinkProgram(PID);
 
             GL.GetProgram(PID, GetProgramParameterName.LinkStatus, out ProgramComplied);
 
             if (FragmentCompiled != 1)
             {
-                RobustConsole.Write(LogLevel.Critical, this, GL.GetShaderInfoLog(FID));
+                RobustConsole.Write(LogLevel.Critical, this, GL.GetShaderInfoLog(FSID));
             }
             
         }
