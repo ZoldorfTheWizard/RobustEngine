@@ -23,6 +23,9 @@ namespace RobustEngine.Graphics
             Z = z;
         }
 
+        #region OPERATORS OH BOY
+
+        #region VECTOR MATH 
         public static Vertex operator *(Vertex A, Vertex B)
         {
             return new Vertex(A.X * B.X, A.Y * B.Y, A.Z * B.Z);
@@ -42,5 +45,30 @@ namespace RobustEngine.Graphics
         {
             return new Vertex(A.X / B.X, A.Y / B.Y, A.Z / B.Z);
         }
+        #endregion
+
+        #region INT MATH
+        public static Vertex operator *(Vertex A, int B)
+        {
+            return new Vertex(A.X * B, A.Y * B, A.Z * B);
+        }
+
+        public static Vertex operator +(Vertex A, int B)
+        {
+            return new Vertex(A.X + B, A.Y + B, A.Z + B);
+        }
+
+        public static Vertex operator -(Vertex A, int B)
+        {
+            return new Vertex(A.X - B, A.Y - B, A.Z - B);
+        }
+
+        public static Vertex operator /(Vertex A, int B)
+        {
+            return new Vertex(A.X / B, A.Y / B, A.Z / B);
+        }
+        #endregion
+
+        #endregion
     }
 }
