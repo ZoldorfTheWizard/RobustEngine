@@ -3,24 +3,28 @@ using OpenTK;
 
 namespace RobustEngine.Graphics.Sprites
 {
-    public class Sprite
+    public class Sprite : IRenderable2D
     {
         public string ID;               
 
     
         //GL VBO'S
         public int VertexBuffer;
-        public int TextureBuffer;
-        public int ColorBuffer;
+        public int IndexBuffer;
+
+        public Color ColorBuffer;
+        public Rectangle SpriteAABB;
+        public Texture2D Texture;
+        public Vector2 Scale;
+        public Vector2 Position;
 
         //Accessors TODO
         public double Rotation;
         public int Width;
         public int Height;
-        public Rectangle SpriteAABB;
-        public Texture2D Texture;
-        public Vector2 Scale;
-        public Vector2 Position;
+
+
+     
 
         public Sprite(string id, Texture2D texture)
         {
@@ -54,7 +58,7 @@ namespace RobustEngine.Graphics.Sprites
             Scale = newScale;
         }        
 
-        public void Blit()
+        public void Draw()
         {
            
         }
