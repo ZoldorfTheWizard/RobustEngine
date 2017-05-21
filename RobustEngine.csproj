@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Graphics\IRenderable2D.cs" />
+    <Compile Include="Graphics\MatrixStack.cs" />
     <Compile Include="Graphics\Render\OffscreenTarget.cs" />
     <Compile Include="Graphics\Render\RenderTarget.cs" />
     <Compile Include="Graphics\Shaders\ShaderTechnique.cs" />

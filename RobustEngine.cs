@@ -80,8 +80,8 @@ namespace RobustEngine
             GameScreen.RenderFrame += Render;
             GameScreen.UpdateFrame += Update;
             GL.Enable(EnableCap.Texture2D);
-            GL.Enable(EnableCap.VertexArray);
-          //  GL.Viewport(0, 0, 1920, 1080);
+         //   GL.Enable(EnableCap.VertexArray);
+            GL.Viewport(0, 0, 800, 800);
 
             //TESTING
             Texture = new Texture2D("Devtexture_Floor.png");
@@ -90,8 +90,7 @@ namespace RobustEngine
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.ClearColor(Color.Black);
-
-
+          
 
             //Context = new GraphicsContext(GraphicsMode.Default, GameScreen.WindowInfo,4,4,GraphicsContextFlags.Default);
             //Context.MakeCurrent(GameScreen.WindowInfo);
@@ -110,7 +109,7 @@ namespace RobustEngine
 
             RobustConsole.Write(LogLevel.Warning, "RobustEngine", "Starting Run loop...");
 
-
+            GameScreen.ProcessEvents();
             GameScreen.Run(60);
 
         }
@@ -130,26 +129,25 @@ namespace RobustEngine
             
           
      
-         //   PlayerView.Setup(1920, 1080);
+         //  PlayerView.Setup(800, 800);
 
 
 
-
+//PlayerView.Update();
             Spritebatch.Begin();
 
-            Spritebatch.Draw(Texture, new Vector2(0, 0), new Vector2(1, 1), Color.Yellow, new Vector2(0,0));
-
+          
             for (int i = 0; i < 10; i++)
             {
                 for (int iy = 0; iy < 10; iy++)
                 {
-                    
+
+               //     Spritebatch.Draw(Texture, new Vector2(i, iy), new Vector2(1, 1), Color.Yellow, new Vector2(0, 0));
 
                 }
-
             }
 
-        //    PlayerView.Update();
+         
             GameScreen.SwapBuffers();
             frames++;
           
