@@ -22,8 +22,8 @@ namespace RobustEngine.Graphics
             {
                 Vertex.Zero,
                 Vertex.UnitX,
-                Vertex.UnitY,
-                Vertex.One,
+                Vertex.UnitY,  
+                Vertex.One             
             };
 
             Create(); 
@@ -51,10 +51,8 @@ namespace RobustEngine.Graphics
 
             Indexes = new float[]
             {
-                0,
-                1,
-                2,
-                3
+                0, 1, 2,
+                2, 3, 1 
             };
 
             EBOID = GL.GenBuffer();
@@ -80,11 +78,7 @@ namespace RobustEngine.Graphics
         {
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, EBOID);
         }
-
-        public void Draw()
-        {
-
-        }
+            
 
     
 
