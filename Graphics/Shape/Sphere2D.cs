@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RobustEngine.Graphics.Shape
 {
-    public class Sphere
+    public class Sphere2D
     {
 
     }
