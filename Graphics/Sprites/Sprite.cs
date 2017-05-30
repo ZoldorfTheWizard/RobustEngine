@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.Collections.Generic;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
 
 namespace RobustEngine.Graphics.Sprites
 {
@@ -48,9 +49,31 @@ namespace RobustEngine.Graphics.Sprites
             Rotation    = 0.0f;
             Scale       = Vector2.One;
             Position    = Vector2.Zero;
-            Matrix      = Matrix4.Identity;       
+            Matrix      = Matrix4.Identity;
+
+            VertexBuffer = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBuffer);
+           // GL.BufferData()
         }
-        
+            
+        /// <summary>
+        /// Push a custom Matrix.
+        /// </summary>
+        /// <param name="mat"></param>
+        public void PushMatrix(Matrix4 mat)
+        {
+            Matrix *= mat;
+        }
+
+        /// <summary>
+        /// Set the matrix back to Identity.
+        /// </summary>
+        public void PopMatrix()
+        {
+            Matrix = Matrix4.Identity;
+        }
+
+
         public void SetRotation(float newRotation)
         {
             Rotation = newRotation;
@@ -61,11 +84,15 @@ namespace RobustEngine.Graphics.Sprites
         public void SetPosition(Vector2 newPosition)
         {
             Position = newPosition;
+
+            Matrix *= Matrix4.CreateTranslation(Position.X, Position.Y, 1);
         }
 
         public void SetScale(Vector2 newScale)
         {
             Scale = newScale;
+
+            Matrix *= Matrix4.CreateScale(Scale.X, Scale.Y, 1);
         }        
 
         public void Draw()
