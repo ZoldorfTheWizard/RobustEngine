@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\RobustEngine\</OutputPath>
+    <OutputPath>Build\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -28,7 +28,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>Build\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -51,11 +51,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Graphics\IRenderable2D.cs" />
-    <Compile Include="Graphics\MatrixStack.cs" />
     <Compile Include="Graphics\Render\OffscreenTarget.cs" />
     <Compile Include="Graphics\Render\RenderTarget.cs" />
     <Compile Include="Graphics\Shaders\ShaderTechnique.cs" />
-    <Compile Include="Graphics\Shape\Sphere.cs" />
+    <Compile Include="Graphics\Shape\Sphere2D.cs" />
     <Compile Include="Graphics\Shape\Line.cs" />
     <Compile Include="Graphics\Shape\Square.cs" />
     <Compile Include="Graphics\Shape\Triangle.cs" />
@@ -65,12 +64,11 @@
     <Compile Include="Graphics\Sprites\TextSprite.cs" />
     <Compile Include="Graphics\Texture2D.cs" />
     <Compile Include="Graphics\Shaders\Shader.cs" />
-    <Compile Include="Graphics\Buffer.cs" />
+    <Compile Include="Graphics\BufferObject.cs" />
     <Compile Include="Graphics\Vertex.cs" />
     <Compile Include="Graphics\View.cs" />
     <Compile Include="RobustEngine.cs" />
     <Compile Include="RobustStarter.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="System\RobustConsole.cs" />
     <Compile Include="System\Settings\AudioSettings.cs" />
     <Compile Include="System\Settings\GameSettings.cs" />
@@ -82,24 +80,25 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="Graphics\Shaders\ImageTest.frag" />
-    <None Include="Graphics\Shaders\ImageTest.vert" />
-    <None Include="packages.config" />
+    <None Include="Graphics\Shaders\ImageTest.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Graphics\Shaders\ImageTest.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Audio\" />
+    <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Devtexture_Floor.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="floor_texture.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="testlogo.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="testlogo.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
