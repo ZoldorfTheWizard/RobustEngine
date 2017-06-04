@@ -18,8 +18,8 @@ namespace RobustEngine
     public class RobustEngine 
     {
         //Render engine. Handles all rendering.      
-        public int version;   
-
+        public int version;
+        public string GLINFO; 
 
    
 
@@ -30,6 +30,7 @@ namespace RobustEngine
 
         //Rendering
         public Dictionary<string, NativeWindow> Windows;
+
         public RenderTarget[] Rendertargets; // This may be unused due to Multiple Windows.
         public GameWindow GameScreen;
         public GameWindow AltScreens; // All other non gamescreen windows
@@ -52,8 +53,8 @@ namespace RobustEngine
         public Clock Timekeeper;
         public SpriteBatch Spritebatch;
         public Texture2D Texture;
-              
 
+        public Sprite Sprite;
 
         public RobustEngine()
         {
@@ -62,13 +63,14 @@ namespace RobustEngine
 
         public void Init()
         {
-            
 
             RobustConsole.SetLogLevel(LogLevel.Debug);
             RobustConsole.Write(LogLevel.Debug, "RobustEngine Init()", "Intializing...");
+
             Timekeeper = new Clock();
-           
             VSettings = new VideoSettings(); //TODO import video settings here
+
+            #region Unfuck this and use our own context stuff instead of relying on gamescreen.
 
             GameScreen              = new GameWindow();
             GameScreen.Size         = VSettings.Size;
@@ -77,27 +79,41 @@ namespace RobustEngine
             GameScreen.Visible      = true;
 
             GameScreen.MakeCurrent(); //OPENGL CONTEXT STARTS HERE
+            
+            GLINFO += " | OpenGL Version: " + GL.GetString(StringName.Version);
+            GLINFO += " | Vendor: " + GL.GetString(StringName.Vendor);
+            GLINFO += " | GLSL Version: " + GL.GetString(StringName.ShadingLanguageVersion);
+
+            RobustConsole.Write(LogLevel.Info, this, GLINFO);
             GameScreen.RenderFrame += Render;
             GameScreen.UpdateFrame += Update;
             GL.Enable(EnableCap.Texture2D);
-         //   GL.Enable(EnableCap.VertexArray);
-            GL.Viewport(0, 0, 800, 800);
+            //GL.Enable(EnableCap.VertexArray);
+               
+
+            #endregion Unfuck this and use our own context stuff instead of relying on gamescreen.
+
 
             //TESTING
             Texture = new Texture2D("Devtexture_Floor.png");
             PlayerView = new View(Vector2.One, 0, 10);
             Spritebatch = new SpriteBatch(1920, 1080);
+            Sprite = new Sprite("test", Texture);
+
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            GL.ClearColor(Color.Black);
-          
+            GL.ClearColor(Color.Blue);
+            CurrentShader = new Shader(@"Graphics\Shaders\ImageTest.vert", @"Graphics\Shaders\ImageTest.frag");
+            GL.Viewport(0, 0, 1000, 1000);
+            GL.Ortho(-1000,1000,-1000,1000,1,0);
+
 
             //Context = new GraphicsContext(GraphicsMode.Default, GameScreen.WindowInfo,4,4,GraphicsContextFlags.Default);
             //Context.MakeCurrent(GameScreen.WindowInfo);
             //(Context as IGraphicsContextInternal).LoadAll();
 
             //     GL.Enable(EnableCap.Blend);
-         
+
 
             RobustConsole.Write(LogLevel.Debug, "RobustEngine Init()", "Done.");
             ReadyToRun = true;
@@ -108,8 +124,7 @@ namespace RobustEngine
         {
 
             RobustConsole.Write(LogLevel.Warning, "RobustEngine", "Starting Run loop...");
-
-            GameScreen.ProcessEvents();
+                      
             GameScreen.Run(60);
 
         }
@@ -123,42 +138,43 @@ namespace RobustEngine
 
         int frames;
         float timer = 0;
+
+        double x = 256.0;
         public void Render(object Sender, FrameEventArgs E)
         {
             Timekeeper.Start();
-            
-          
-     
-         //  PlayerView.Setup(800, 800);
+
+            GL.Clear(ClearBufferMask.ColorBufferBit);
+
+            //PlayerView.Setup(800, 800);
 
 
 
-//PlayerView.Update();
-            Spritebatch.Begin();
+            //  PlayerView.Update();
+            //  Spritebatch.Begin();
+            CurrentShader.Enable();
 
-          
-            for (int i = 0; i < 10; i++)
-            {
-                for (int iy = 0; iy < 10; iy++)
-                {
+            //Matrix4 ortho = Matrix4.Identity;
+            CurrentShader.setUniform("position", new Vector2(-1,-1));
 
-               //     Spritebatch.Draw(Texture, new Vector2(i, iy), new Vector2(1, 1), Color.Yellow, new Vector2(0, 0));
 
-                }
-            }
+            //Texture.Bind();
 
-         
+            Sprite.Draw();
+
+
+           // GL.PolygonMode(MaterialFace.Back, PolygonMode.Fill);
+            CurrentShader.Disable();
+
             GameScreen.SwapBuffers();
             frames++;
-          
-            
             if (Timekeeper.GetElapsed().Seconds >= 1)
             {
                 RobustConsole.Write(LogLevel.Debug, "RobustEngine", "Render() FPS " + frames);
                 Timekeeper.Reset();
                 frames = 0;
             }
-            RobustConsole.Write(LogLevel.Debug, "RobustEngine", "Render() MS " + Timekeeper.GetTime().Milliseconds.ToString());
+           // RobustConsole.Write(LogLevel.Debug, "RobustEngine", "Render() MS " + Timekeeper.GetTime().Milliseconds.ToString());
         }
 
         public void Stop()
