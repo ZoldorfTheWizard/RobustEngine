@@ -14,24 +14,23 @@ namespace RobustEngine.Graphics.Sprites
         public int VertexBuffer;
         public int IndexBuffer;
 
-        public Color ColorBuffer;
-        public Rectangle SpriteAABB;
+        public Color Color;
+        public Rectangle AABB;
         public Texture2D Texture;
+
         public Vector2 Scale;
         public Vector2 Position;
         public Vector2 Size;
         public float Rotation;
 
         private Matrix4 Matrix;
-    
-
-
-     
+        private BufferObject VBO;
+             
         /// <summary>
         /// Sprite Constructor. 
         /// </summary>
-        /// <param name="id">Name Of sprite</param>
-        /// <param name="texture">Prebuilt Texture for the sprite</param>
+        /// <param name="id">Name of the sprite</param>
+        /// <param name="texture">Texture of thesprite</param>
         public Sprite(string id, Texture2D texture)
         {
             ID = id;
@@ -44,16 +43,14 @@ namespace RobustEngine.Graphics.Sprites
         /// </summary>
         private void Setup()
         {          
-            SpriteAABB  = Texture.TextureAABB;
-            Size        = new Vector2(SpriteAABB.Width, SpriteAABB.Height);
+            AABB  = Texture.TextureAABB;
+            Size        = new Vector2(AABB.Width, AABB.Height);
             Rotation    = 0.0f;
             Scale       = Vector2.One;
             Position    = Vector2.Zero;
             Matrix      = Matrix4.Identity;
 
-            VertexBuffer = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBuffer);
-           // GL.BufferData()
+            VBO = new BufferObject();
         }
             
         /// <summary>
@@ -66,14 +63,17 @@ namespace RobustEngine.Graphics.Sprites
         }
 
         /// <summary>
-        /// Set the matrix back to Identity.
+        /// Sets the matrix back to Identity.
         /// </summary>
         public void PopMatrix()
         {
             Matrix = Matrix4.Identity;
         }
 
-
+        /// <summary>
+        /// Sets the rotation of the sprite. 
+        /// </summary>
+        /// <param name="newRotation"> new rotation</param>
         public void SetRotation(float newRotation)
         {
             Rotation = newRotation;
@@ -81,6 +81,11 @@ namespace RobustEngine.Graphics.Sprites
             Matrix *= Matrix4.CreateRotationY(Rotation);
         }
 
+
+        /// <summary>
+        /// Sets the world Position of the sprite
+        /// </summary>
+        /// <param name="newPosition">New position.</param>
         public void SetPosition(Vector2 newPosition)
         {
             Position = newPosition;
@@ -88,18 +93,27 @@ namespace RobustEngine.Graphics.Sprites
             Matrix *= Matrix4.CreateTranslation(Position.X, Position.Y, 1);
         }
 
+
+        /// <summary>
+        /// Sets the scale of the sprite
+        /// </summary>
+        /// <param name="newScale"></param>
         public void SetScale(Vector2 newScale)
         {
             Scale = newScale;
 
             Matrix *= Matrix4.CreateScale(Scale.X, Scale.Y, 1);
-        }        
+        }
 
+        /// <summary>
+        /// Draws the sprite.
+        /// </summary>
         public void Draw()
         {
-           
+            VBO.BindVertexBuffer();
+            GL.DrawArrays(PrimitiveType.Quads, 0, 1);
+            
         }
-        
 
     }
 }
