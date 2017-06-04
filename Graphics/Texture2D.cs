@@ -61,10 +61,9 @@ namespace RobustEngine.Graphics
             TexCoords = new Vertex[]
             {
                 Vertex.Zero,
-                Vertex.UnitX * Bitmap.Width, 
-                Vertex.UnitY * Bitmap.Width,
-                Vertex.One * Bitmap.Width 
-
+                Vertex.UnitY, 
+                Vertex.One,
+                Vertex.UnitX,
             };
                 
             GL.TexImage2D
@@ -97,10 +96,12 @@ namespace RobustEngine.Graphics
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
                      
 
-            //todo Mipmap + Bump map maybe?
+            //todo Mipmap + Bump map here maybe?
 
         }
          
+
+        //TODO opaque checking here.
 
 
        
