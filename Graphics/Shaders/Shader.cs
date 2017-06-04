@@ -60,7 +60,6 @@ namespace RobustEngine.Graphics.Shaders
 
             GL.CompileShader(VSID);
             GL.GetShader(VSID, ShaderParameter.CompileStatus, out VertexCompiled);
-            
             if(VertexCompiled != 1)
             {
                RobustConsole.Write(LogLevel.Critical , this, GL.GetShaderInfoLog(VSID));
@@ -68,40 +67,42 @@ namespace RobustEngine.Graphics.Shaders
 
             GL.CompileShader(FSID);
             GL.GetShader(FSID, ShaderParameter.CompileStatus, out FragmentCompiled);
-
             if (FragmentCompiled != 1)
             {
                 RobustConsole.Write(LogLevel.Critical, this, GL.GetShaderInfoLog(FSID));
             }
 
             PID = GL.CreateProgram();
-            GL.BindAttribLocation(PID, 0, "position");
-            GL.BindAttribLocation(PID, 1, "texcoord");
-            GL.BindAttribLocation(PID, 2, "normal");
-            GL.BindAttribLocation(PID, 3, "color");
-
+        
             GL.AttachShader(PID, VSID);
             GL.AttachShader(PID, FSID);
             GL.LinkProgram(PID);
 
             GL.GetProgram(PID, GetProgramParameterName.LinkStatus, out ProgramComplied);
 
-            if (FragmentCompiled != 1)
+            if (ProgramComplied != 1)
             {
-                RobustConsole.Write(LogLevel.Critical, this, GL.GetShaderInfoLog(FSID));
+                RobustConsole.Write(LogLevel.Critical, this, GL.GetShaderInfoLog(PID));
             }
             
+            GL.DetachShader(PID, VSID);
+            GL.DetachShader(PID, FSID);
+            GL.DeleteShader(VSID);
+            GL.DeleteShader(FSID);
+
+            UniformLocations = new Dictionary<string, int>();
         }
 
         private int getUniformLoc(string VarName)
         {
-             if (!UniformLocations.ContainsKey(VarName))
+            if (!UniformLocations.ContainsKey(VarName))
             {
                 UniformLocations.Add(VarName, GL.GetUniformLocation(PID, VarName));
-                if (UniformLocations[VarName] == -1)
-                {
-                    RobustConsole.Write(LogLevel.Warning, this, "| Shader PID:" + PID +" | Could not find Uniform Variable named "+ VarName +"!. Uniform data will be discarded!");
-                }
+            }
+
+            if (UniformLocations[VarName] == -1 && DEBUG)
+            {
+                RobustConsole.Write(LogLevel.Warning, this, "| Shader PID:" + PID + " | Could not find Uniform Variable named " + VarName + "!. Uniform data will be discarded!");
             }
 
             return UniformLocations[VarName];
@@ -122,6 +123,7 @@ namespace RobustEngine.Graphics.Shaders
             GL.UseProgram(0);
         }
 
+        #region Set Uniforms
         public void setUniform(string VarName, float f)
         {
            GL.Uniform1(getUniformLoc(VarName), f);     
@@ -157,14 +159,11 @@ namespace RobustEngine.Graphics.Shaders
             GL.UniformMatrix4(getUniformLoc(VarName), false, ref mat4);
         }
 
-        public void setUniform(string VarName, Texture2D mat4)
+        public void setUniform(string VarName, Texture2D texture)
         {
-
+           
 
         }
-
-
-
-
+        #endregion  
     }
 }
