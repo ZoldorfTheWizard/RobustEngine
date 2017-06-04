@@ -33,7 +33,7 @@ namespace RobustEngine.Graphics.Sprites
             Animation.Add(direction, Frames);
             foreach (var Frame in Frames)
             {
-                AABB.Add(direction, Frame.SpriteAABB);
+                AABB.Add(direction, Frame.AABB);
                 MaxTime = (1 / FPS) * (1 / MaxFrames);          }
         }
  
