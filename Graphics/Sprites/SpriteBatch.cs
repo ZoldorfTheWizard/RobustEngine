@@ -8,16 +8,17 @@ namespace RobustEngine.Graphics.Sprites
 {
     public class SpriteBatch
     {
-        private int VAOID; // Vertex Array Object ID
-        private int VBOID;
-        private int IBOID;
+        private int VAOID; // Vertex Array ObjectID
+        private int VBOID; // Vertex Buffer ObjectID
+        private int IBOID; // Index Buffer ObjectID
 
         public string Key;
         public float ScreenW;
         public float ScreenH;
 
-        private Texture2D reuse;
-        private List<IRenderable2D> Queue;
+        private Texture2D CurrentTexture;
+        private List<IRenderable2D> RenderQueue;
+
         private Stack<Matrix4> MatrixStack;
 
 
@@ -35,9 +36,12 @@ namespace RobustEngine.Graphics.Sprites
             VAOID = GL.GenVertexArray();
             VBOID = GL.GenBuffer();
 
-            GL.Enable(EnableCap.VertexArray);
-            GL.BindVertexArray(VBOID);
-       
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, VBOID);
+
+           // GL.Enable(EnableCap.VertexArray);
+           //GL.BindVertexArray(VBOID);
+          
           
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
@@ -57,39 +61,9 @@ namespace RobustEngine.Graphics.Sprites
         //TODO optimize
         public void Draw(IRenderable2D Renderable)
         {
-
-            Queue.Add(Renderable);
+            RenderQueue.Add(Renderable);
         }
 
-        //   Vector2[] vertices = new Vector2[4]
-        //{
-        //      Vector2.Zero,
-        //      Vector2.UnitX,
-        //      Vector2.One,
-        //      Vector2.UnitY
-        //};
-            
-           
-        //   GL.Begin(PrimitiveType.Quads);
-
-        //   GL.Color3(Color.AliceBlue);
-
-        //   for (int i = 0; i < 4; i++)
-        //   {
-
-        //       GL.TexCoord2(vertices[i]);
-
-        //       vertices[i].X *= texture.TextureAABB.Width;
-        //       vertices[i].Y *= texture.TextureAABB.Height;
-        //       vertices[i] -= origin;
-        //       vertices[i] *= scale;
-        //       vertices[i] += position; //translate      
-        //       GL.Vertex2(vertices[i]);
-        //   }       
-        
-         
-        
-        //   GL.End();
 
         //   VAOID = GL.GenBuffer();
         //    GL.BindBuffer(BufferTarget.ArrayBuffer, VAOID);
