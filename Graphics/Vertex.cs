@@ -8,19 +8,28 @@ namespace RobustEngine.Graphics
 {
     public struct Vertex
     {
-        public float X, Y, Z;
-        public const int Stride = 12;
+        public static readonly Vertex Zero = new Vertex(0, 0);
+        public static readonly Vertex UnitX = new Vertex(1, 0);
+        public static readonly Vertex UnitY = new Vertex(0, 1);
+        public static readonly Vertex One = new Vertex(1, 1);       
+       
+        public float X, Y, Z;    // Position
+        public float NX, NY, NZ; // Normal
+        public float S, T;       // Texture
 
-        public static readonly Vertex Zero  = new Vertex(0,0);
-        public static readonly Vertex UnitX = new Vertex(1,0); 
-        public static readonly Vertex UnitY = new Vertex(0,1);
-        public static readonly Vertex One   = new Vertex(1,1);
 
         public Vertex(float x, float y, float z = 0)
         {
             X = x;
             Y = y;
             Z = z;
+
+            NX = 0.0f;
+            NY = NX;
+            NZ = 1.0f;
+
+            S = 0.0f;
+            T = 1.0f;
         }
 
         #region OPERATORS OH BOY
