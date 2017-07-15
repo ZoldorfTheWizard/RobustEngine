@@ -25,6 +25,7 @@ namespace RobustEngine.Graphics.Sprites
 
         private Matrix4 Matrix;
         private BufferObject VBO;
+
              
         /// <summary>
         /// Sprite Constructor. 
@@ -110,9 +111,10 @@ namespace RobustEngine.Graphics.Sprites
         /// </summary>
         public void Draw()
         {
-            VBO.BindVertexBuffer();
-            GL.DrawArrays(PrimitiveType.Quads, 0, 1);
-            
+            VBO.BindVertexArray();
+            //GL.DrawArrays(PrimitiveType.Triangles, 0, 4);
+            VBO.BindIndexBuffer();
+            GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);   
         }
 
     }
