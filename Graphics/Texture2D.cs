@@ -12,8 +12,7 @@ namespace RobustEngine.Graphics
 
         public int ID;
         public Rectangle TextureAABB;
-        public Vertex[] TexCoords;
-
+   
         private Bitmap     Bitmap;
         private BitmapData BitmapData;
 
@@ -67,15 +66,7 @@ namespace RobustEngine.Graphics
             TextureAABB = new Rectangle(0, 0, Bitmap.Width, Bitmap.Height);
             PixelData   = new Color[TextureAABB.Width, TextureAABB.Height];
             BitmapData  = Bitmap.LockBits(TextureAABB, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-
-            TexCoords = new Vertex[] //Texture YAxis flipped here
-            {
-                Vertex.Zero,
-                Vertex.UnitY, 
-                Vertex.One,
-                Vertex.UnitX,
-            };
-                
+                           
             GL.TexImage2D
                 (
                     TextureTarget.Texture2D,
