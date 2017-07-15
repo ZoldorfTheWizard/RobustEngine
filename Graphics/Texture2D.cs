@@ -3,7 +3,6 @@ using System.Drawing.Imaging;
 using OpenTK.Graphics.OpenGL;
 using GLPixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
-using System.Runtime.InteropServices;
 using System;
 
 namespace RobustEngine.Graphics
@@ -12,36 +11,47 @@ namespace RobustEngine.Graphics
     {
 
         public int ID;
+        public Rectangle TextureAABB;
+        public Vertex[] TexCoords;
 
         private Bitmap     Bitmap;
         private BitmapData BitmapData;
+
         private Color[,]   PixelData;
 
-        public Vertex[]  TexCoords;
-        public Rectangle TextureAABB;
-
-
-        public Texture2D(string path)
-        {
-           Load(path);         
-        }
-
-        public Texture2D(string path, PixelInternalFormat PIF)
+        /// <summary>
+        /// Constructs a new 2D Texture 
+        /// </summary>
+        /// <param name="path">Path to texture.</param>
+        /// <param name="PIF">Pixel format. Default is RGBA.</param>
+        public Texture2D(string path, PixelInternalFormat PIF = PixelInternalFormat.Rgba)
         {        
-            Load(PIF,path);
+            Load(path, PIF);
         }
 
+        /// <summary>
+        /// Bind Texture
+        /// </summary>
         public void Bind()
         {
-            GL.BindTexture(TextureTarget.Texture2D, ID); 
-        }              
-
-        private void Load(string path)
-        {
-            Load( PixelInternalFormat.Rgba, path);
+            GL.BindTexture(TextureTarget.Texture2D, ID);
         }
-      
-        private void Load(PixelInternalFormat PIF, string path)
+
+        /// <summary>
+        /// Unbind Texture
+        /// </summary>
+        public void Unbind()
+        {
+            GL.BindTexture(TextureTarget.Texture2D, 0);
+        }
+
+
+        /// <summary>
+        /// Loads Textures into OpenGL Using Bitmaps. Supports PNG and JPG.
+        /// </summary>
+        /// <param name="PIF">Pixel Internal Format</param>
+        /// <param name="path">Path.</param>
+        private void Load(string path, PixelInternalFormat PIF)
         {
             ID = GL.GenTexture(); 
 
@@ -58,7 +68,7 @@ namespace RobustEngine.Graphics
             PixelData   = new Color[TextureAABB.Width, TextureAABB.Height];
             BitmapData  = Bitmap.LockBits(TextureAABB, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
-            TexCoords = new Vertex[]
+            TexCoords = new Vertex[] //Texture YAxis flipped here
             {
                 Vertex.Zero,
                 Vertex.UnitY, 
@@ -94,18 +104,12 @@ namespace RobustEngine.Graphics
 
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-                     
 
-            //todo Mipmap + Bump map here maybe?
+            //TODO Mipmap + Bump map here maybe?
 
-        }
-         
+        }       
 
         //TODO opaque checking here.
-
-
-       
-
 
     }
 
