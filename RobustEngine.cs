@@ -10,8 +10,10 @@ using RobustEngine.System;
 using RobustEngine.System.Settings;
 using RobustEngine.System.Time;
 using RobustEngine.Window;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 
 namespace RobustEngine
 {
@@ -88,15 +90,15 @@ namespace RobustEngine
             GameScreen.UpdateFrame += Update;
             GL.Enable(EnableCap.Texture2D);
             //GL.Enable(EnableCap.VertexArray);
-               
 
+            var ImageTestFile = Path.Combine(Environment.CurrentDirectory, "Graphics", "Shaders","ImageTest");
 
             //TESTING
             Texture = new Texture2D("Devtexture_Floor.png");
             PlayerView = new View(Vector2.One, 0, 10);
          //   Spritebatch = new SpriteBatch(1920, 1080);
             Sprite = new Sprite("test", Texture);
-            CurrentShader = new Shader(@"Graphics\Shaders\ImageTest.vert", @"Graphics\Shaders\ImageTest.frag");
+            CurrentShader = new Shader(ImageTestFile + ".vert", ImageTestFile + ".frag");
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.ClearColor(Color.Gray);    
@@ -132,6 +134,7 @@ namespace RobustEngine
 
         float mov;
         int frames;
+
         public void Render(object Sender, FrameEventArgs E)
         {
             Timekeeper.Start();
@@ -142,13 +145,13 @@ namespace RobustEngine
            // PlayerView.Update();
             //Spritebatch.Begin();
             Texture.Bind();
-            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
+        //    GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
             CurrentShader.Enable();
             Sprite.mov(mov);
             Sprite.Draw();
             CurrentShader.Disable();
 
-            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+          //  GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
             GameScreen.SwapBuffers();
 
 
