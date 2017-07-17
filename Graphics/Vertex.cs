@@ -10,10 +10,10 @@ namespace RobustEngine.Graphics
     public struct Vertex
     {
 
-        public float X, Y, Z;    // Position
-        public float R, G, B;    // Color
-        public float NX, NY, NZ; // Normal
-        public float S, T;       // Texture
+        public float X, Y, Z;      // Position
+        public float R, G, B;      // Color
+        public float NX, NY, NZ;   // Normal
+        public float Tx, Ty;       // Texture
 
         #region Readonly 
 
@@ -28,16 +28,16 @@ namespace RobustEngine.Graphics
         /// <summary>
         /// Create a 2D Vertex with two points. Specify a third float to make a 3d vertex. 
         /// </summary>
-        /// <param name="x">Float X</param>
-        /// <param name="y">Float Y</param>
-        /// <param name="z">Optional Float. Define to make this a 3d vertex</param>
+        /// <param name="x">Pos X</param>
+        /// <param name="y">Pos Y</param>
+        /// <param name="z">Pos Z</param>
         public Vertex(float x, float y, float z = 0)
         {
             X = x;
             Y = y;
             Z = z;
 
-            R = 1f;
+            R = 0f;
             G = 0f;
             B = 0f;
 
@@ -45,8 +45,8 @@ namespace RobustEngine.Graphics
             NY = 0f;
             NZ = 1f;
 
-            S = 0f;
-            T = 1f;
+            Tx = 0f;
+            Ty = 0f;
         }
 
         #region OPERATORS OH BOY
@@ -95,8 +95,30 @@ namespace RobustEngine.Graphics
         }
         #endregion INT MATH
 
+        #region FLOAT MATH
+        public static Vertex operator *(Vertex A, float B)
+        {
+            return new Vertex(A.X * B, A.Y * B, A.Z * B);
+        }
+
+        public static Vertex operator +(Vertex A, float B)
+        {
+            return new Vertex(A.X + B, A.Y + B, A.Z + B);
+        }
+
+        public static Vertex operator -(Vertex A, float B)
+        {
+            return new Vertex(A.X - B, A.Y - B, A.Z - B);
+        }
+
+        public static Vertex operator /(Vertex A, float B)
+        {
+            return new Vertex(A.X / B, A.Y / B, A.Z / B);
+        }
+        #endregion INT MATH
+
         #endregion
 
-        
+
     }
 }
