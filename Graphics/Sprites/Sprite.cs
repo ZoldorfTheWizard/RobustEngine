@@ -94,7 +94,15 @@ namespace RobustEngine.Graphics.Sprites
             Matrix *= Matrix4.CreateTranslation(Position.X, Position.Y, 1);
         }
 
+        public void mov(float move)
+        {
+            VBO.move(move);
+        }
 
+        public void update()
+        {
+            VBO.Update();
+        }
         /// <summary>
         /// Sets the scale of the sprite
         /// </summary>
@@ -108,7 +116,7 @@ namespace RobustEngine.Graphics.Sprites
 
         /// <summary>
         /// Draws the sprite.
-        /// </summary>
+        /// </summary> 
         public void Draw()
         {
             VBO.BindVertexArray();
