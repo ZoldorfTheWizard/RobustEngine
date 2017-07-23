@@ -1,5 +1,4 @@
-﻿
-using OpenTK;
+﻿using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using RobustEngine.Graphics;
@@ -65,9 +64,9 @@ namespace RobustEngine
 
         public void Init()
         {
-
+			RobustConsole.ClearConsole();
             RobustConsole.SetLogLevel(LogLevel.Debug);
-            RobustConsole.Write(LogLevel.Debug, "RobustEngine Init()", "Intializing...");
+			RobustConsole.Write(LogLevel.Debug, "RobustEngine", "Init() Intializing...");
 
             Timekeeper = new Clock();
             VSettings = new VideoSettings(); //TODO import video settings here
@@ -80,10 +79,12 @@ namespace RobustEngine
             GameScreen.Visible      = true;
 
             GameScreen.MakeCurrent(); //OPENGL CONTEXT STARTS HERE
-            
-            GLINFO += " | OpenGL Version: " + GL.GetString(StringName.Version);
-            GLINFO += " | Vendor: "         + GL.GetString(StringName.Vendor);
-            GLINFO += " | GLSL Version: "   + GL.GetString(StringName.ShadingLanguageVersion);
+
+            GLINFO += "\n\n------------------------------------------------------------------";
+            GLINFO += "\n OpenGL Version: " + GL.GetString(StringName.Version);
+            GLINFO += "\n Vendor: "         + GL.GetString(StringName.Vendor);
+            GLINFO += "\n GLSL Version: "   + GL.GetString(StringName.ShadingLanguageVersion);
+			GLINFO += "\n------------------------------------------------------------------\n";
 
             RobustConsole.Write(LogLevel.Info, this, GLINFO);
             GameScreen.RenderFrame += Render;
@@ -111,7 +112,7 @@ namespace RobustEngine
             //(Context as IGraphicsContextInternal).LoadAll();
             //GL.Enable(EnableCap.Blend);
 
-            RobustConsole.Write(LogLevel.Debug, "RobustEngine Init()", "Done.");
+			RobustConsole.Write(LogLevel.Debug, "RobustEngine", "Init() Done.");
             ReadyToRun = true;
         }
 
@@ -182,12 +183,6 @@ namespace RobustEngine
         {
             
         }
-     
-
-        //var gw = new NativeWindow();
-        //gw.Title = "aaaaaa";
-        //    gw.MakeCurrent();
-        //    gw.Run(60.0);
 
         #region Global Error Checking
         public static void CheckGLErrors()
@@ -202,7 +197,7 @@ namespace RobustEngine
             var EC = GL.GetError();
             while (EC != ErrorCode.NoError)
             {
-                RobustConsole.Write(LogLevel.Fatal, "RobustEngine", EC.ToString()); // TODO expand error message
+				RobustConsole.Write(LogLevel.Fatal, "RobustEngine", EC.ToString()); // TODO expand error message
             }
         }
         # endregion Global Error Checking
