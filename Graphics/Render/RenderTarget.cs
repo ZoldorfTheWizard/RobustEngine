@@ -73,7 +73,14 @@ namespace RobustEngine.Graphics.Render
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         }
 
+		public void Bind()
+		{
+			GL.BindFramebuffer(FramebufferTarget.Framebuffer, framebufferID);
+		}
 
-       
+		public void Unbind()
+		{
+			GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+		}       
     }
 }
