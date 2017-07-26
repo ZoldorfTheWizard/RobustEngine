@@ -1,0 +1,26 @@
+﻿<Properties StartupConfiguration="{82EA1C6F-B173-4A0D-86B0-66A90534B45D}|Default">
+  <MonoDevelop.Ide.ItemProperties.RobustEngine PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Graphics/Shaders/ShaderTechnique.cs">
+    <Files>
+      <File FileName="RobustEngine.cs" Line="179" Column="12" />
+      <File FileName="System/RobustConsole.cs" Line="54" Column="43" />
+      <File FileName="Graphics/BufferObject.cs" Line="72" Column="14" />
+      <File FileName="Graphics/Shape/Cube.cs" Line="10" Column="3" />
+      <File FileName="Graphics/Shape/Rectangle.cs" Line="17" Column="1" />
+      <File FileName="Graphics/Render/OffscreenTarget.cs" Line="11" Column="6" />
+      <File FileName="Graphics/Render/RenderTarget.cs" Line="87" Column="1" />
+      <File FileName="Graphics/Shaders/Shader.cs" Line="164" Column="12" />
+      <File FileName="Graphics/TextureAtlas.cs" Line="1" Column="1" />
+      <File FileName="packages.config" Line="1" Column="1" />
+      <File FileName="Graphics/Shape/Triangle.cs" Line="1" Column="1" />
+      <File FileName="Graphics/Shape/Line.cs" Line="1" Column="1" />
+      <File FileName="Graphics/Shaders/ShaderTechnique.cs" Line="11" Column="7" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
+</Properties>

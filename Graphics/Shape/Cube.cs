@@ -1,27 +1,19 @@
-﻿using OpenTK;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RobustEngine.Graphics.Shape
+﻿using System;
+namespace RobustEngine
 {
-    public class Rectangle
-    {
-        public Vector4 AABB { get; set; }
-        public Vector2 Position { get; set; }
-        public Vector2 Size { get; set; }
+	public class Cube
+	{
 
-        public BufferObject[] Vertices; 
+		///public Vertex[] VertexData;
 
-        public Rectangle(int posX, int posY, int sizeX, int sizeY)
-        {
-            //glLoadIdentity();                 // Reset the model-view matrix
-            //glTranslatef(1.5f, 0.0f, -7.0f);  // Move right and into the screen
 
-            //glBegin(GL_QUADS);                // Begin drawing the color cube with 6 quads
-            //                                  // Top face (y = 1.0f)
+
+
+		public Cube()
+		{
+
+			//glBegin(GL_QUADS);                // Begin drawing the color cube with 6 quads
+			// face (y = 1.0f)
             //                                  // Define vertices in counter-clockwise (CCW) order with normal pointing out
             //glColor3f(0.0f, 1.0f, 0.0f);     // Green
             //glVertex3f(1.0f, 1.0f, -1.0f);
@@ -64,7 +56,8 @@ namespace RobustEngine.Graphics.Shape
             //glVertex3f(1.0f, -1.0f, 1.0f);
             //glVertex3f(1.0f, -1.0f, -1.0f);
             //glEnd();
-        }
 
-    }
+
+		}
+	}
 }

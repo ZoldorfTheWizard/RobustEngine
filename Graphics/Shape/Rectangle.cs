@@ -10,7 +10,8 @@ namespace RobustEngine.Graphics.Shape
 		public float Y;
 		public float Width;
 		public float Height;
-		public Color Color;
+		public Color Color ;
+
 
 
 		/// <summary>
@@ -45,7 +46,8 @@ namespace RobustEngine.Graphics.Shape
         }
 
 		private void Calculate()
-		{
+		{	
+			//Set W/H
 			VertexData[1].X += Width;
 			VertexData[2].X += Width;
 			VertexData[2].Y += Height;

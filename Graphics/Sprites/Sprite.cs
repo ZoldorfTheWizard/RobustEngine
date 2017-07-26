@@ -119,10 +119,12 @@ namespace RobustEngine.Graphics.Sprites
         /// </summary> 
         public void Draw()
         {
+			Texture.Bind();
             VBO.BindVertexArray();
             //GL.DrawArrays(PrimitiveType.Triangles, 0, 4);
             VBO.BindIndexBuffer();
-            GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);   
+            GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);
+			Texture.Unbind();
         }
 
     }

@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace RobustEngine.Graphics.Shaders
 {
-    class ShaderTechnique
+    public class ShaderTechnique
     {
+		
+
     }
 }
