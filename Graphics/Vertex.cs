@@ -11,8 +11,8 @@ namespace RobustEngine.Graphics
     {
 
         public float X, Y, Z;      // Position
-        public float R, G, B;      // Color
-        public float NX, NY, NZ;   // Normal
+        public float R, G, B, A;      // Color
+        public float Nx, Ny, Nz;   // Normal
         public float Tx, Ty;       // Texture
 
         #region Readonly 
@@ -21,7 +21,15 @@ namespace RobustEngine.Graphics
         public static readonly Vertex UnitX = new Vertex(1, 0);
         public static readonly Vertex UnitY = new Vertex(0, 1);
         public static readonly Vertex One   = new Vertex(1, 1);               
-        public static readonly int    Stride  = 44;
+		public static readonly Vertex[] Identity = 
+		{
+			Zero,
+			UnitX,
+			One,
+			UnitY
+		};
+
+		public static readonly int Stride = 48;
 
         #endregion Readonly
         
@@ -40,10 +48,11 @@ namespace RobustEngine.Graphics
             R = 0f;
             G = 0f;
             B = 0f;
+			A = 1f;
 
-            NX = 0f;
-            NY = 0f;
-            NZ = 1f;
+            Nx = 0f;
+            Ny = 0f;
+            Nz = 1f;
 
             Tx = 0f;
             Ty = 0f;
