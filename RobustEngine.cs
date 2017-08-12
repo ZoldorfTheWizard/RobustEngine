@@ -71,7 +71,7 @@ namespace RobustEngine
             Timekeeper = new Clock();
             VSettings = new VideoSettings(); //TODO import video settings here
 
-            GameScreen = new GameWindow(800, 800, GraphicsMode.Default, "RobustWando", GameWindowFlags.Default, DisplayDevice, 3, 3, GraphicsContextFlags.Debug);
+            GameScreen = new GameWindow(800, 800, GraphicsMode.Default, "RobustWando", GameWindowFlags.Default, DisplayDevice.Default, 3, 3, GraphicsContextFlags.Debug);
 
             //GameScreen = new GameWindow();
             //GameScreen.Size = VSettings.Size;
