@@ -6,18 +6,17 @@ namespace RobustEngine.Graphics.Shape
 {
 	public class Rectangle
 	{
-
-
-		public float X;
+        public float X;
 		public float Y;
 		public float Width;
 		public float Height;
 
-		public int VertexArrayID;
         public float Left   => X;
         public float Top    => Y;
         public float Right  => Width;
         public float Bottom => Height;
+
+        public int VertexArrayID;
 		public int VertexBufferID;
 		public int IndexBufferID;
 		public int[] Indicies;
@@ -26,18 +25,30 @@ namespace RobustEngine.Graphics.Shape
 		public Vertex[] VertexData;
 
 
-		/// <summary>
-		/// Rectangle Entity Constructor.
-		/// </summary>
-		/// <param name="posX">Position X.</param>
-		/// <param name="posY">Position Y</param>
-		/// <param name="sizeX">Size X.</param>
-		/// <param name="sizeY">Size Y</param>
-		public Rectangle(int posX, int posY, int sizeX, int sizeY)
-		{
-			Create(posX, posY, sizeX, sizeY, Color.Transparent);
-		}
+        /// <summary>
+        /// Rectangle Entity Constructor.
+        /// </summary>
+        /// <param name="posX">Position X.</param>
+        /// <param name="posY">Position Y</param>
+        /// <param name="sizeX">Size X.</param>
+        /// <param name="sizeY">Size Y</param>
+        public Rectangle(float posX, float posY, float sizeX, float sizeY)
+        {
+            Create(posX, posY, sizeX, sizeY, Color.Transparent);
+        }
 
+        /// <summary>
+        /// Rectangle Entity Constructor.
+        /// </summary>
+        /// <param name="posX">Position X.</param>
+        /// <param name="posY">Position Y</param>
+        /// <param name="sizeX">Size X.</param>
+        /// <param name="sizeY">Size Y</param>
+        public Rectangle(int posX, int posY, int sizeX, int sizeY)
+		{
+			Create((float)posX, (float)posY, (float)sizeX, (float)sizeY, Color.Transparent);
+		}
+        
 		/// <summary>
 		/// Rectangle Entity Constructor.
 		/// </summary>
@@ -50,7 +61,7 @@ namespace RobustEngine.Graphics.Shape
 			Create(posX, posY, sizeX, sizeY, fc);
 		}
 
-		private void Create(int posX, int posY, int sizeX, int sizeY, Color fillColor)
+		private void Create(float posX, float posY, float sizeX, float sizeY, Color fillColor)
 		{
 			X = posX;
 			Y = posY;
@@ -186,5 +197,22 @@ namespace RobustEngine.Graphics.Shape
 			return false;
 		}
 
-	}
+
+        public Rectangle Union(Rectangle A, Rectangle B)
+        {
+            var x = Math.Min(A.X, B.X);
+            var width = Math.Max(A.X + A.Width, B.X);
+
+            var y = Math.Min(A.Y, B.Y);
+            var height = Math.Max(A.Y + A.Height, B.Y);
+
+            return new Rectangle(x, y, width, height);
+        }
+
+
+        public bool Intersects(Rectangle B)
+        {
+            return !(Height < B.Y || Y > Height || X > Width || me.Right < other.Left);
+        }
+    }
 }
