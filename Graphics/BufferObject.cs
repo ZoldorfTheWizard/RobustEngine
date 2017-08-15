@@ -91,15 +91,15 @@ namespace RobustEngine.Graphics
             GL.EnableVertexAttribArray(0); // Layout 1 Position Data
 
             // Color Data
-            GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, Vertex.Stride, 12); 
+            GL.VertexAttribPointer(1, 4, VertexAttribPointerType.Float, false, Vertex.Stride, 12); 
             GL.EnableVertexAttribArray(1); // Layout 2 Color Data
             
             // Normal Data
-            GL.VertexAttribPointer(2, 3, VertexAttribPointerType.Float, false, Vertex.Stride, 24);
+            GL.VertexAttribPointer(2, 3, VertexAttribPointerType.Float, false, Vertex.Stride, 28);
             GL.EnableVertexAttribArray(2); // Layout 2 Color
 
             // TextureUVCoords
-            GL.VertexAttribPointer(3, 2, VertexAttribPointerType.Float, false, Vertex.Stride, 36); 
+            GL.VertexAttribPointer(3, 2, VertexAttribPointerType.Float, false, Vertex.Stride, 40); 
             GL.EnableVertexAttribArray(3); // Layout 3 TexCoord
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);

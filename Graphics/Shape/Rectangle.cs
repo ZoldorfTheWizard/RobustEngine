@@ -54,13 +54,19 @@ namespace RobustEngine.Graphics.Shape
 			Height = sizeY;
 			Color = fillColor;
 
-			VertexData = Vertex.Identity;
+            VertexData = new Vertex[]
+                {
+                    Vertex.Zero,
+                    Vertex.UnitX,
+                    Vertex.One,
+                    Vertex.UnitY
+                };
 
 			for (int i = 0; i < VertexData.Length; i++)
 			{
 				VertexData[i].X += X;
 				VertexData[i].Y += Y;
-				VertexData[i].SetColor(fillColor);
+				//VertexData[i].SetColor(fillColor);
 			}
 
 			//Set W/H
