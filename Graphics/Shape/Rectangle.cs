@@ -14,6 +14,10 @@ namespace RobustEngine.Graphics.Shape
 		public float Height;
 
 		public int VertexArrayID;
+        public float Left   => X;
+        public float Top    => Y;
+        public float Right  => Width;
+        public float Bottom => Height;
 		public int VertexBufferID;
 		public int IndexBufferID;
 		public int[] Indicies;
