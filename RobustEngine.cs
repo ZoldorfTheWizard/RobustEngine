@@ -124,6 +124,7 @@ namespace RobustEngine
 
             RobustConsole.Write(LogLevel.Warning, "RobustEngine", "Starting Run loop...");
 
+            Timekeeper.Start();
             GameScreen.Run(60);
 
         }
@@ -140,7 +141,6 @@ namespace RobustEngine
 
         public void Render(object Sender, FrameEventArgs E)
         {
-            Timekeeper.Start();
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
@@ -160,10 +160,10 @@ namespace RobustEngine
 
 
             frames++;
-            if (Timekeeper.GetElapsed().Seconds == 1)
+            if (Timekeeper.GetElapsed().Seconds >= 1)
             {
                 RobustConsole.Write(LogLevel.Debug, "RobustEngine", "Render() FPS " + frames);
-                Timekeeper.Reset();
+                Timekeeper.Start();
                 frames = 0;
             }
             // RobustConsole.Write(LogLevel.Debug, "RobustEngine", "Render() MS " + Timekeeper.GetTime().Milliseconds.ToString());
