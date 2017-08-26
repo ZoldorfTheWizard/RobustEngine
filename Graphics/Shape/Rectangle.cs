@@ -6,14 +6,35 @@ namespace RobustEngine.Graphics.Shape
 {
     public class Rectangle
     {
+        #region Class Variables
+
         public float X;
         public float Y;
         public float Width;
         public float Height;
 
+        /// <summary>
+        /// Gets the left (x pos)
+        /// </summary>
+        /// <value>The left.</value>
         public float Left => X;
+
+        /// <summary>
+        /// Gets the top. (y pos)
+        /// </summary>
+        /// <value>The top.</value>
         public float Top => Y;
+
+        /// <summary>
+        /// Gets the right. (width)
+        /// </summary>
+        /// <value>The right.</value>
         public float Right => Width;
+
+        /// <summary>
+        /// Gets the bottom. (height)
+        /// </summary>
+        /// <value>The bottom.</value>
         public float Bottom => Height;
 
         public int VertexArrayID;
@@ -21,9 +42,9 @@ namespace RobustEngine.Graphics.Shape
         public int IndexBufferID;
         public int[] Indicies;
 
-        public Color Color;
+        public Color FillColor;
         public Vertex[] VertexData;
-
+        #endregion Class Varables
 
         /// <summary>
         /// Rectangle Entity Constructor.
@@ -67,21 +88,20 @@ namespace RobustEngine.Graphics.Shape
             Y = posY;
             Width = sizeX;
             Height = sizeY;
-            Color = fillColor;
+            FillColor = fillColor;
 
             VertexData = new Vertex[]
-                {
-                    Vertex.Zero,
-                    Vertex.UnitX,
-                    Vertex.One,
-                    Vertex.UnitY
-                };
+            {
+                Vertex.Zero,
+                Vertex.UnitX,
+                Vertex.One,
+                Vertex.UnitY
+            };
 
             for (int i = 0; i < VertexData.Length; i++)
             {
                 VertexData[i].X += X;
                 VertexData[i].Y += Y;
-                //VertexData[i].SetColor(fillColor);
             }
 
             //Set W/H
@@ -109,12 +129,12 @@ namespace RobustEngine.Graphics.Shape
                   2, 3, 0  // Second Triangle
             };
 
-            VertexArrayID = GL.GenVertexArray(); // Opengl Please give us a empty State
-            GL.BindVertexArray(VertexArrayID);   // Opengl Please use and write everything to this new empty state now thx            
+            VertexArrayID = GL.GenVertexArray();
+            GL.BindVertexArray(VertexArrayID);
 
             //Generate Buffers
-            VertexBufferID = GL.GenBuffer(); // Hey Opengl we want a empty VBO to use for data pls generate thx
-            IndexBufferID = GL.GenBuffer();  // Hey Opengl we want a empty VBO to use for indexing pls generate      // Hey Opengl we want a empty VBO to use for colors pls generate thx
+            VertexBufferID = GL.GenBuffer();
+            IndexBufferID = GL.GenBuffer();
 
             // VBO
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferID);
@@ -122,19 +142,19 @@ namespace RobustEngine.Graphics.Shape
 
             // Vertex Data
             GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, Vertex.Stride, 0);
-            GL.EnableVertexAttribArray(0); // Layout 1 Position Data
+            GL.EnableVertexAttribArray(0); // Layout 0 Vertex Data
 
             // Color Data
             GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, Vertex.Stride, 12);
-            GL.EnableVertexAttribArray(1); // Layout 2 Color Data
+            GL.EnableVertexAttribArray(1); // Layout 1 Color Data
 
             // Normal Data
             GL.VertexAttribPointer(2, 3, VertexAttribPointerType.Float, false, Vertex.Stride, 24);
-            GL.EnableVertexAttribArray(2); // Layout 2 Color
+            GL.EnableVertexAttribArray(2); // Layout 2 Normal Data
 
             // TextureUVCoords
             GL.VertexAttribPointer(3, 2, VertexAttribPointerType.Float, false, Vertex.Stride, 36);
-            GL.EnableVertexAttribArray(3); // Layout 3 TexCoord
+            GL.EnableVertexAttribArray(3); // Layout 3 TexCoords
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
@@ -200,7 +220,7 @@ namespace RobustEngine.Graphics.Shape
 
         public Rectangle Union(Rectangle A, Rectangle B)
         {
-            var x = Math.Min(A.X, B.X);
+            var x = Math.Min(A.Left, B.X);
             var width = Math.Max(A.X + A.Width, B.X);
 
             var y = Math.Min(A.Y, B.Y);
