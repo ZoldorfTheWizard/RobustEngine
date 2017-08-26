@@ -12,11 +12,11 @@ namespace RobustEngine.Graphics
 
         public int ID;
         public Rectangle TextureAABB;
-   
-        private Bitmap     Bitmap;
+
+        private Bitmap Bitmap;
         private BitmapData BitmapData;
 
-        private Color[,]   PixelData;
+        private Color[,] PixelData;
 
         /// <summary>
         /// Constructs a new 2D Texture 
@@ -24,7 +24,7 @@ namespace RobustEngine.Graphics
         /// <param name="path">Path to texture.</param>
         /// <param name="PIF">Pixel format. Default is RGBA.</param>
         public Texture2D(string path, PixelInternalFormat PIF = PixelInternalFormat.Rgba)
-        {        
+        {
             Load(path, PIF);
         }
 
@@ -52,34 +52,29 @@ namespace RobustEngine.Graphics
         /// <param name="path">Path.</param>
         private void Load(string path, PixelInternalFormat PIF)
         {
-            ID = GL.GenTexture(); 
+            ID = GL.GenTexture();
 
             Bind();
 
             Bitmap = new Bitmap(path);
 
-            if(Bitmap.Width % 2 != 0 || Bitmap.Height % 2 != 0)
-            {
-                throw new Exception("TEXTURE AINT A POWER OF TWO"); 
-            }
-
             TextureAABB = new Rectangle(0, 0, Bitmap.Width, Bitmap.Height);
-            PixelData   = new Color[TextureAABB.Width, TextureAABB.Height];
-            BitmapData  = Bitmap.LockBits(TextureAABB, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-                           
+            PixelData = new Color[TextureAABB.Width, TextureAABB.Height];
+            BitmapData = Bitmap.LockBits(TextureAABB, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
             GL.TexImage2D
-                (
-                    TextureTarget.Texture2D,
-                    0, 
-                    PIF,
-                    TextureAABB.Width,
-                    TextureAABB.Height,                        
-                    0,
-                    GLPixelFormat.Bgra, 
-                    PixelType.UnsignedByte,
-                    BitmapData.Scan0
-                );
-                 
+            (
+                TextureTarget.Texture2D,
+                0,
+                PIF,
+                TextureAABB.Width,
+                TextureAABB.Height,
+                0,
+                GLPixelFormat.Bgra,
+                PixelType.UnsignedByte,
+                BitmapData.Scan0
+            );
+
             Bitmap.UnlockBits(BitmapData);
 
             for (int x = 0; x < Bitmap.Width; x++)
@@ -98,9 +93,13 @@ namespace RobustEngine.Graphics
 
             //TODO Mipmap + Bump map here maybe?
 
-        }       
+        }
 
-        //TODO opaque checking here.
+        public bool IsOpaque(int x, int y)
+        {
+            return PixelData[x, y].A != 0;
+        }
+
 
     }
 
@@ -114,7 +113,7 @@ namespace RobustEngine.Graphics
         /// <summary>Additive blending.</summary>
         Additive = 2,
         /// <summary>Inverse modulated blending.</summary>
-		ModulatedInverse = 4,
+        ModulatedInverse = 4,
         /// <summary>Color blending.</summary>
         Color = 8,
         /// <summary>Additive color.</summary>
