@@ -35,7 +35,7 @@ namespace RobustEngine
         public RenderTarget[] Rendertargets; // This may be unused due to Multiple Windows.
         public GameWindow GameScreen;
         public GameWindow AltScreens; // All other non gamescreen windows
-        public Shader CurrentShader;
+        public static Shader CurrentShader;
         public GraphicsContext Context;
         public DisplayDevice SelectedMonitor;
 
