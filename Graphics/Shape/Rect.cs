@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Drawing;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using SysRectangle = System.Drawing.Rectangle;
 
 namespace RobustEngine.Graphics.Shape
 {
-    public class Rectangle
+    public class Rect : IRenderable2D
     {
         #region Class Variables
 
@@ -13,29 +15,15 @@ namespace RobustEngine.Graphics.Shape
         public float Width;
         public float Height;
 
-        /// <summary>
-        /// Gets the left (x pos)
-        /// </summary>
-        /// <value>The left.</value>
         public float Left => X;
-
-        /// <summary>
-        /// Gets the top. (y pos)
-        /// </summary>
-        /// <value>The top.</value>
         public float Top => Y;
-
-        /// <summary>
-        /// Gets the right. (width)
-        /// </summary>
-        /// <value>The right.</value>
         public float Right => Width;
-
-        /// <summary>
-        /// Gets the bottom. (height)
-        /// </summary>
-        /// <value>The bottom.</value>
         public float Bottom => Height;
+
+        public Vector2 Origin;
+        public Vector2 Scale;
+        public float Rotation;
+        public Vector2 Position;
 
         public int VertexArrayID;
         public int VertexBufferID;
@@ -44,6 +32,8 @@ namespace RobustEngine.Graphics.Shape
 
         public Color FillColor;
         public Vertex[] VertexData;
+        public Matrix4 Matrix;
+
         #endregion Class Varables
 
         /// <summary>
@@ -53,7 +43,7 @@ namespace RobustEngine.Graphics.Shape
         /// <param name="posY">Position Y</param>
         /// <param name="sizeX">Size X.</param>
         /// <param name="sizeY">Size Y</param>
-        public Rectangle(float posX, float posY, float sizeX, float sizeY)
+        public Rect(float posX, float posY, float sizeX, float sizeY)
         {
             Create(posX, posY, sizeX, sizeY, Color.Transparent);
         }
@@ -65,9 +55,9 @@ namespace RobustEngine.Graphics.Shape
         /// <param name="posY">Position Y</param>
         /// <param name="sizeX">Size X.</param>
         /// <param name="sizeY">Size Y</param>
-        public Rectangle(int posX, int posY, int sizeX, int sizeY)
+        public Rect(int posX, int posY, int sizeX, int sizeY)
         {
-            Create((float)posX, (float)posY, (float)sizeX, (float)sizeY, Color.Transparent);
+            Create((float)posX, (float)posY, (float)sizeX, (float)sizeY, Color.Red);
         }
 
         /// <summary>
@@ -77,10 +67,23 @@ namespace RobustEngine.Graphics.Shape
         /// <param name="posY">Position Y</param>
         /// <param name="sizeX">Size X.</param>
         /// <param name="sizeY">Size Y</param>
-        public Rectangle(int posX, int posY, int sizeX, int sizeY, Color fc)
+        public Rect(int posX, int posY, int sizeX, int sizeY, Color fc)
         {
             Create(posX, posY, sizeX, sizeY, fc);
         }
+
+        /// <summary>
+        /// Rectangle Entity Constructor.,
+        /// </summary>
+        /// <param name="posX">Position X.</param>
+        /// <param name="posY">Position Y</param>
+        /// <param name="sizeX">Size X.</param>
+        /// <param name="sizeY">Size Y</param>
+        public Rect(SysRectangle rect)
+        {
+            Create(rect.X, rect.Y, rect.Width, rect.Height, Color.Red);
+        }
+
 
         private void Create(float posX, float posY, float sizeX, float sizeY, Color fillColor)
         {
@@ -89,6 +92,7 @@ namespace RobustEngine.Graphics.Shape
             Width = sizeX;
             Height = sizeY;
             FillColor = fillColor;
+            Matrix = Matrix4.Identity;
 
             VertexData = new Vertex[]
             {
@@ -102,13 +106,10 @@ namespace RobustEngine.Graphics.Shape
             {
                 VertexData[i].X += X;
                 VertexData[i].Y += Y;
+                VertexData[i].SetColor(FillColor);
             }
 
-            //Set W/H
-            VertexData[1].X += Width;
-            VertexData[2].X += Width;
-            VertexData[2].Y += Height;
-            VertexData[3].Y += Height;
+
 
             //Texture Data
             VertexData[0].Tx = 0;
@@ -122,6 +123,7 @@ namespace RobustEngine.Graphics.Shape
 
             VertexData[3].Tx = 0;
             VertexData[3].Ty = 0;
+
 
             Indicies = new int[]
             {
@@ -145,16 +147,16 @@ namespace RobustEngine.Graphics.Shape
             GL.EnableVertexAttribArray(0); // Layout 0 Vertex Data
 
             // Color Data
-            GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, Vertex.Stride, 12);
+            GL.VertexAttribPointer(1, 4, VertexAttribPointerType.Float, false, Vertex.Stride, 12);
             GL.EnableVertexAttribArray(1); // Layout 1 Color Data
 
             // Normal Data
-            GL.VertexAttribPointer(2, 3, VertexAttribPointerType.Float, false, Vertex.Stride, 24);
+            GL.VertexAttribPointer(2, 3, VertexAttribPointerType.Float, false, Vertex.Stride, 28);
             GL.EnableVertexAttribArray(2); // Layout 2 Normal Data
 
             // TextureUVCoords
-            GL.VertexAttribPointer(3, 2, VertexAttribPointerType.Float, false, Vertex.Stride, 36);
-            GL.EnableVertexAttribArray(3); // Layout 3 TexCoords
+            GL.VertexAttribPointer(3, 2, VertexAttribPointerType.Float, false, Vertex.Stride, 40);
+            GL.EnableVertexAttribArray(3); // Layout 3 
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
@@ -164,28 +166,87 @@ namespace RobustEngine.Graphics.Shape
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
 
             GL.BindVertexArray(0);
-
-
         }
 
-        public void Update()
+        #region Transformation
+        /// <summary>
+        /// Push a custom Matrix.
+        /// </summary>
+        /// <param name="mat"></param>
+        public void PushMatrix(Matrix4 mat)
         {
-            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferID);
-            GL.BufferData(BufferTarget.ArrayBuffer, VertexData.Length * Vertex.Stride, VertexData, BufferUsageHint.DynamicDraw);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            Matrix *= mat;
         }
 
-        public void BindVertexArray()
+        /// <summary>
+        /// Sets the matrix back to Identity.
+        /// </summary>
+        public void PopMatrix()
+        {
+            Matrix = Matrix4.Identity;
+        }
+
+        /// <summary>
+        /// Sets the origin of the sprite
+        /// </summary>
+        /// <param name="newScale"></param>
+        public void SetOrigin(Vector2 newOrigin)
+        {
+            Origin = newOrigin;
+            Matrix *= Matrix4.CreateTranslation(Origin.X, Origin.Y, 1);
+        }
+
+        /// <summary>
+        /// Sets the scale of the sprite
+        /// </summary>
+        /// <param name="newScale"></param>
+        public void SetScale(Vector2 newScale)
+        {
+            Scale = newScale;
+            Matrix *= Matrix4.CreateScale(Scale.X, Scale.Y, 1);
+        }
+
+        /// <summary>
+        /// Sets the rotation of the sprite. 
+        /// </summary>
+        /// <param name="newRotation"> new rotation</param>
+        public void SetRotation(float newRotation)
+        {
+            Rotation = newRotation;
+            Matrix *= Matrix4.CreateRotationZ(Rotation);
+        }
+
+        /// <summary>
+        /// Sets the world Position of the sprite
+        /// </summary>
+        /// <param name="newPosition">New position.</param>
+        public void SetPosition(Vector2 newPosition)
+        {
+            Position = newPosition;
+            Matrix *= Matrix4.CreateTranslation(Position.X, Position.Y, 1);
+
+        }
+        #endregion
+
+        #region Rendering
+
+        public void Bind()
+        {
+            BindVertexArray();
+            BindIndexBuffer();
+        }
+
+        internal void BindVertexArray()
         {
             GL.BindVertexArray(VertexArrayID);
         }
 
-        public void BindVertexBuffer()
+        internal void BindVertexBuffer()
         {
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferID);
         }
 
-        public void BindIndexBuffer()
+        internal void BindIndexBuffer()
         {
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, IndexBufferID);
         }
@@ -197,6 +258,35 @@ namespace RobustEngine.Graphics.Shape
             GL.BindVertexArray(0);
         }
 
+        public void Update()
+        {
+            for (int i = 0; i < VertexData.Length; i++)
+            {
+                VertexData[i].SetColor(FillColor);
+            }
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferID);
+            GL.BufferData(BufferTarget.ArrayBuffer, VertexData.Length * Vertex.Stride, VertexData, BufferUsageHint.DynamicDraw);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+            //  PopMatrix();
+        }
+
+        /// <summary>
+        /// Draw this instance. 
+        /// </summary>
+        public void Draw()
+        {
+            RobustEngine.CurrentShader.setUniform("ModelMatrix", Matrix);
+            BindVertexArray();
+            BindIndexBuffer();
+            GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);
+            Unbind();
+
+            PopMatrix();
+        }
+
+        #endregion Rendering
 
         /// <summary>
         /// Detects if a Rectangle collides or intersects each other.
@@ -206,10 +296,10 @@ namespace RobustEngine.Graphics.Shape
         public bool Intersects(Rectangle A)
         {
             // Collision X?
-            if (X + Width >= A.X && A.X + A.Width >= X)
+            if (Left + Right >= A.Left && A.Left + A.Right >= Left)
             {
                 //Collision Y?
-                if (Y + Height >= A.Y && A.Y + A.Height >= Y)
+                if (Top + Bottom >= A.Top && A.Top + A.Bottom >= Top)
                 {
                     return true; //Collision
                 }
@@ -217,14 +307,13 @@ namespace RobustEngine.Graphics.Shape
             return false;
         }
 
-
         public Rectangle Union(Rectangle A, Rectangle B)
         {
-            var x = Math.Min(A.Left, B.X);
-            var width = Math.Max(A.X + A.Width, B.X);
+            var x = Math.Min(A.Left, B.Left);
+            var width = Math.Max(A.Left + A.Right, B.Left);
 
-            var y = Math.Min(A.Y, B.Y);
-            var height = Math.Max(A.Y + A.Height, B.Y);
+            var y = Math.Min(A.Top, B.Top);
+            var height = Math.Max(A.Top + A.Bottom, B.Top);
 
             return new Rectangle(x, y, width, height);
         }
