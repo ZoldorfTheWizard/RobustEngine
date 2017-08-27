@@ -1,9 +1,9 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Drawing.Imaging;
 using OpenTK.Graphics.OpenGL;
 using GLPixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
-using System;
 
 namespace RobustEngine.Graphics
 {
@@ -11,7 +11,7 @@ namespace RobustEngine.Graphics
     {
 
         public int ID;
-        public Rectangle TextureAABB;
+        public Rectangle AABB;
 
         private Bitmap Bitmap;
         private BitmapData BitmapData;
@@ -58,17 +58,17 @@ namespace RobustEngine.Graphics
 
             Bitmap = new Bitmap(path);
 
-            TextureAABB = new Rectangle(0, 0, Bitmap.Width, Bitmap.Height);
-            PixelData = new Color[TextureAABB.Width, TextureAABB.Height];
-            BitmapData = Bitmap.LockBits(TextureAABB, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            AABB = new Rectangle(0, 0, Bitmap.Width, Bitmap.Height);
+            PixelData = new Color[AABB.Width, AABB.Height];
+            BitmapData = Bitmap.LockBits(AABB, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
             GL.TexImage2D
             (
                 TextureTarget.Texture2D,
                 0,
                 PIF,
-                TextureAABB.Width,
-                TextureAABB.Height,
+                AABB.Width,
+                AABB.Height,
                 0,
                 GLPixelFormat.Bgra,
                 PixelType.UnsignedByte,
@@ -92,6 +92,8 @@ namespace RobustEngine.Graphics
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
 
             //TODO Mipmap + Bump map here maybe?
+
+            Unbind();
 
         }
 
