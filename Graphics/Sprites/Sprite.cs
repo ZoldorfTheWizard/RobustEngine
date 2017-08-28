@@ -21,8 +21,7 @@ namespace RobustEngine.Graphics.Sprites
         public Vector2 Scale => Rect.Scale;
         public float Rotation => Rect.Rotation;
         public Vector2 Position => Rect.Position;
-
-        public bool Wireframe;
+        public Debug DebugMode => Rect.DebugMode;
 
         /// <summary>
         /// Sprite Constructor. 
@@ -94,13 +93,8 @@ namespace RobustEngine.Graphics.Sprites
         public void Draw()
         {
             Texture.Bind();
-            //Rect.BindVertexArray();
-            ////GL.DrawArrays(PrimitiveType.Triangles, 0, 4);
-            //Rect.BindIndexBuffer();
-            //GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);
             Rect.Draw();
             Texture.Unbind();
-
         }
 
     }
