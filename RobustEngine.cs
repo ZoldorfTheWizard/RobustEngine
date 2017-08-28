@@ -205,4 +205,15 @@ namespace RobustEngine
         # endregion Global Error Checking
 
     }
+
+
+    public enum Debug
+    {
+        None,
+        Points,
+        Wireframe,
+
+    }
+
+
 }
