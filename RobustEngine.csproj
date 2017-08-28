@@ -54,7 +54,7 @@
     <Compile Include="Graphics\Render\RenderTarget.cs" />
     <Compile Include="Graphics\Shaders\ShaderTechnique.cs" />
     <Compile Include="Graphics\Shape\Line.cs" />
-    <Compile Include="Graphics\Shape\Rectangle.cs" />
+    <Compile Include="Graphics\Shape\Rect.cs" />
     <Compile Include="Graphics\Shape\Triangle.cs" />
     <Compile Include="Graphics\Sprites\AnimatedSprite.cs" />
     <Compile Include="Graphics\Sprites\Sprite.cs" />
@@ -89,7 +89,6 @@
     <Content Include="packages\OpenTK.3.0.0-pre\content\OpenTK.dll.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Visible>false</Visible>
-      <Link>%(Filename)%(Extension)</Link>
     </Content>
     <None Include="packages.config" />
   </ItemGroup>
