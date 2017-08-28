@@ -34,6 +34,8 @@ namespace RobustEngine.Graphics.Shape
         public Vertex[] VertexData;
         public Matrix4 Matrix;
 
+        public Debug DebugMode;
+
         #endregion Class Varables
 
         /// <summary>
@@ -278,10 +280,19 @@ namespace RobustEngine.Graphics.Shape
         public void Draw()
         {
             RobustEngine.CurrentShader.setUniform("ModelMatrix", Matrix);
-            BindVertexArray();
-            BindIndexBuffer();
+
+
+            switch (DebugMode)
+            {
+                case Debug.Points: GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Point); break;
+                case Debug.Wireframe: GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line); break;
+            }
+
+            Bind();
             GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);
             Unbind();
+
+            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
 
             PopMatrix();
         }
