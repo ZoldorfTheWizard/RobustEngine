@@ -10,14 +10,14 @@ namespace RobustEngine.Graphics.Shaders
     {
         private int VSID;
         private int FSID;
-        private int PID;   
+        private int PID;
 
         private string VIDDump;
         private string FIDDump;
 
         private bool DEBUG;
 
-        private Dictionary<string,int> UniformLocations;
+        private Dictionary<string, int> UniformLocations;
 
         /// <summary>
         /// Construct a new Shader.
@@ -37,7 +37,7 @@ namespace RobustEngine.Graphics.Shaders
         public Shader(string VertexFilePath, string FragFilePath)
         {
             Compile(VertexFilePath, FragFilePath);
-        }     
+        }
 
         /// <summary>
         /// Compiles the vertex/fragment shader. Reports any compile-time issues.
@@ -53,38 +53,34 @@ namespace RobustEngine.Graphics.Shaders
 
             GL.ShaderSource(VSID, VIDDump);
             GL.ShaderSource(FSID, FIDDump);
-           
-            int VertexCompiled;
-            int FragmentCompiled;
-            int ProgramComplied;
 
             GL.CompileShader(VSID);
-            GL.GetShader(VSID, ShaderParameter.CompileStatus, out VertexCompiled);
-            if(VertexCompiled != 1)
+            GL.GetShader(VSID, ShaderParameter.CompileStatus, out int VertexCompiled);
+            if (VertexCompiled != 1)
             {
-               RobustConsole.Write(LogLevel.Critical , this, GL.GetShaderInfoLog(VSID));
+                RobustConsole.Write(LogLevel.Critical, this, GL.GetShaderInfoLog(VSID));
             }
 
             GL.CompileShader(FSID);
-            GL.GetShader(FSID, ShaderParameter.CompileStatus, out FragmentCompiled);
+            GL.GetShader(FSID, ShaderParameter.CompileStatus, out int FragmentCompiled);
             if (FragmentCompiled != 1)
             {
                 RobustConsole.Write(LogLevel.Critical, this, GL.GetShaderInfoLog(FSID));
             }
 
             PID = GL.CreateProgram();
-        
+
             GL.AttachShader(PID, VSID);
             GL.AttachShader(PID, FSID);
             GL.LinkProgram(PID);
 
-            GL.GetProgram(PID, GetProgramParameterName.LinkStatus, out ProgramComplied);
+            GL.GetProgram(PID, GetProgramParameterName.LinkStatus, out int ProgramComplied);
 
             if (ProgramComplied != 1)
             {
                 RobustConsole.Write(LogLevel.Critical, this, GL.GetShaderInfoLog(PID));
             }
-            
+
             GL.DetachShader(PID, VSID);
             GL.DetachShader(PID, FSID);
             GL.DeleteShader(VSID);
@@ -126,9 +122,9 @@ namespace RobustEngine.Graphics.Shaders
         #region Set Uniforms
         public void setUniform(string VarName, float f)
         {
-           GL.Uniform1(getUniformLoc(VarName), f);     
+            GL.Uniform1(getUniformLoc(VarName), f);
         }
-        
+
         public void setUniform(string VarName, Vector2 vec2)
         {
             GL.Uniform2(getUniformLoc(VarName), vec2);
@@ -146,7 +142,7 @@ namespace RobustEngine.Graphics.Shaders
 
         public void setUniform(string VarName, Matrix2 mat2)
         {
-            GL.UniformMatrix2(getUniformLoc(VarName),false, ref mat2);
+            GL.UniformMatrix2(getUniformLoc(VarName), false, ref mat2);
         }
 
         public void setUniform(string VarName, Matrix3 mat3)
@@ -161,7 +157,7 @@ namespace RobustEngine.Graphics.Shaders
 
         public void setUniform(string VarName, Texture2D texture)
         {
-           
+
 
         }
         #endregion  
