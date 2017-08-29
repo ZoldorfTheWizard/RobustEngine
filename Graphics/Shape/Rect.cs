@@ -34,6 +34,8 @@ namespace RobustEngine.Graphics.Shape
         public Vertex[] VertexData;
         public Matrix4 Matrix;
 
+        private Matrix4 TEst;
+
         public Debug DebugMode;
 
         #endregion Class Varables
@@ -95,6 +97,8 @@ namespace RobustEngine.Graphics.Shape
             Height = sizeY;
             FillColor = fillColor;
             Matrix = Matrix4.Identity;
+            SetScale(Vector2.One);
+            SetPosition(new Vector2(posX, posY));
 
             VertexData = new Vertex[]
             {
@@ -110,8 +114,6 @@ namespace RobustEngine.Graphics.Shape
                 VertexData[i].Y += Y;
                 VertexData[i].SetColor(FillColor);
             }
-
-
 
             //Texture Data
             VertexData[0].Tx = 0;
@@ -195,7 +197,7 @@ namespace RobustEngine.Graphics.Shape
         public void SetOrigin(Vector2 newOrigin)
         {
             Origin = newOrigin;
-            Matrix *= Matrix4.CreateTranslation(Origin.X, Origin.Y, 1);
+            Matrix *= Matrix4.CreateTranslation(Origin.X, Origin.Y, 0);
         }
 
         /// <summary>
@@ -205,7 +207,7 @@ namespace RobustEngine.Graphics.Shape
         public void SetScale(Vector2 newScale)
         {
             Scale = newScale;
-            Matrix *= Matrix4.CreateScale(Scale.X, Scale.Y, 1);
+            Matrix *= Matrix4.CreateScale(Scale.X, Scale.Y, 0);
         }
 
         /// <summary>
@@ -225,7 +227,7 @@ namespace RobustEngine.Graphics.Shape
         public void SetPosition(Vector2 newPosition)
         {
             Position = newPosition;
-            Matrix *= Matrix4.CreateTranslation(Position.X, Position.Y, 1);
+            Matrix *= Matrix4.CreateTranslation(Position.X, Position.Y, 0);
 
         }
         #endregion
