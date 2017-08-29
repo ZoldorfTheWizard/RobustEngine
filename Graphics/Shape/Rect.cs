@@ -34,8 +34,6 @@ namespace RobustEngine.Graphics.Shape
         public Vertex[] VertexData;
         public Matrix4 Matrix;
 
-        private Matrix4 TEst;
-
         public Debug DebugMode;
 
         #endregion Class Varables
