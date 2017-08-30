@@ -10,26 +10,32 @@ namespace RobustEngine.Graphics.Shape
     {
         #region Class Variables
 
+        //Position
         public float X;
         public float Y;
         public float Width;
         public float Height;
 
+        //BoundingBox
         public float Left => X;
         public float Top => Y;
-        public float Right => Width;
-        public float Bottom => Height;
+        public float Right => X + Width;
+        public float Bottom => Y + Height;
+        public Vector2 Center;
 
+        //Transformation Vars       
         public Vector2 Origin;
         public Vector2 Scale;
         public float Rotation;
         public Vector2 Position;
 
+        //Opengl VBO's
         public int VertexArrayID;
         public int VertexBufferID;
         public int IndexBufferID;
         public int[] Indicies;
 
+        // Rect Specific
         public Color FillColor;
         public Vertex[] VertexData;
         public Matrix4 Matrix;
@@ -47,7 +53,7 @@ namespace RobustEngine.Graphics.Shape
         /// <param name="sizeY">Size Y</param>
         public Rect(float posX, float posY, float sizeX, float sizeY)
         {
-            Create(posX, posY, sizeX, sizeY, Color.Transparent);
+            Create(posX, posY, sizeX, sizeY, Color.Maroon);
         }
 
         /// <summary>
@@ -59,7 +65,7 @@ namespace RobustEngine.Graphics.Shape
         /// <param name="sizeY">Size Y</param>
         public Rect(int posX, int posY, int sizeX, int sizeY)
         {
-            Create((float)posX, (float)posY, (float)sizeX, (float)sizeY, Color.Red);
+            Create((float)posX, (float)posY, (float)sizeX, (float)sizeY, Color.Maroon);
         }
 
         /// <summary>
@@ -83,7 +89,7 @@ namespace RobustEngine.Graphics.Shape
         /// <param name="sizeY">Size Y</param>
         public Rect(SysRectangle rect)
         {
-            Create(rect.X, rect.Y, rect.Width, rect.Height, Color.Red);
+            Create(rect.X, rect.Y, rect.Width, rect.Height, Color.Maroon);
         }
 
 
@@ -93,8 +99,11 @@ namespace RobustEngine.Graphics.Shape
             Y = posY;
             Width = sizeX;
             Height = sizeY;
+            Center = new Vector2(Width / 2, Height / 2);
+
             FillColor = fillColor;
             Matrix = Matrix4.Identity;
+
             SetScale(Vector2.One);
             SetPosition(new Vector2(posX, posY));
 
@@ -113,7 +122,13 @@ namespace RobustEngine.Graphics.Shape
                 VertexData[i].SetColor(FillColor);
             }
 
-            //Texture Data
+            //Size
+            VertexData[1].X *= Width;
+            VertexData[2].X *= Width;
+            VertexData[2].Y *= Height;
+            VertexData[3].Y *= Height;
+
+            //Texture[] Data 
             VertexData[0].Tx = 0;
             VertexData[0].Ty = 1;
 
@@ -170,6 +185,15 @@ namespace RobustEngine.Graphics.Shape
             GL.BindVertexArray(0);
         }
 
+        public void SetFillColor(Color col)
+        {
+            FillColor = col;
+            for (int i = 0; i < VertexData.Length; i++)
+            {
+                VertexData[i].SetColor(FillColor);
+            }
+        }
+
         #region Transformation
         /// <summary>
         /// Push a custom Matrix.
@@ -195,7 +219,7 @@ namespace RobustEngine.Graphics.Shape
         public void SetOrigin(Vector2 newOrigin)
         {
             Origin = newOrigin;
-            Matrix *= Matrix4.CreateTranslation(Origin.X, Origin.Y, 0);
+            Matrix *= Matrix4.CreateTranslation(-Origin.X, -Origin.Y, 0);
         }
 
         /// <summary>
