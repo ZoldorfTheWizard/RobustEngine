@@ -1,13 +1,15 @@
-﻿using System;
-using OpenTK;
+﻿using OpenTK;
 
 namespace RobustEngine.Graphics
 {
-    public interface ITransformable2D
+    interface ITransformable2D
     {
-        void SetOrigin(Vector2 origin);
-        void SetScale(Vector2 scale);
-        void SetRotation(float rotate, Axis axis);
-        void SetPosition(Vector2 newpos);
+        void SetScale(Vector2 Scale);
+        void SetRotation(float Rotation);
+        void SetPosition(Vector2 Position);
+
+        void Scale(Vector2 Scale);
+        void Rotate(float Rotation);
+        void Move(Vector2 Position);
     }
 }
