@@ -6,21 +6,23 @@ using RobustEngine.Graphics.Shape;
 
 namespace RobustEngine.Graphics.Sprites
 {
-    public class Sprite : IRenderable2D
+    public class Sprite : IRenderable2D, ITransformable2D
     {
 
         public string ID;
-        public Rect Rect;
-
 
         public Texture2D Texture;
         public Rectangle AABB;
-        public Color Color;
+        public Rect Rect;
+
+
+        public Color Color => Rect.FillColor;
 
         public Vector2 Origin => Rect.Origin;
         public Vector2 Scale => Rect.Scale;
         public float Rotation => Rect.Rotation;
         public Vector2 Position => Rect.Position;
+
         public Debug DebugMode => Rect.DebugMode;
 
         /// <summary>
@@ -32,7 +34,6 @@ namespace RobustEngine.Graphics.Sprites
         {
             ID = id;
             Texture = texture;
-            Color = Color.Blue;
             Setup();
         }
 
@@ -43,7 +44,6 @@ namespace RobustEngine.Graphics.Sprites
         {
             AABB = Texture.AABB;
             Rect = new Rect(AABB);
-            Rect.FillColor = Color;
         }
 
         public void Update()
@@ -73,9 +73,9 @@ namespace RobustEngine.Graphics.Sprites
         /// Sets the rotation of the sprite. 
         /// </summary>
         /// <param name="newRotation"> new rotation</param>
-        public void SetRotation(float newRotation)
+        public void SetRotation(float newRotation, Axis axis)
         {
-            Rect.SetRotation(newRotation);
+            Rect.SetRotation(newRotation, axis);
         }
 
         /// <summary>
@@ -88,10 +88,28 @@ namespace RobustEngine.Graphics.Sprites
         }
 
         /// <summary>
+        /// Sets the Fill Color of the sprite.
+        /// </summary>
+        /// <param name="color">Color.</param>
+        public void SetColor(Color color)
+        {
+            Rect.FillColor = color;
+        }
+
+
+        /// <summary>
         /// Draws the sprite.
         /// </summary> 
         public void Draw()
         {
+
+            if (Texture != null)
+            {
+
+                Rect.Draw();
+                return;
+            }
+
             Texture.Bind();
             Rect.Draw();
             Texture.Unbind();
