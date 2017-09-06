@@ -6,7 +6,7 @@ using SysRectangle = System.Drawing.Rectangle;
 
 namespace RobustEngine.Graphics.Shape
 {
-    public class Rect : IRenderable2D
+    public class Rect : IRenderable2D, ITransformable2D
     {
         #region Class Variables
 
@@ -21,6 +21,12 @@ namespace RobustEngine.Graphics.Shape
         public float Top => Y;
         public float Right => X + Width;
         public float Bottom => Y + Height;
+
+        //Point Coords
+        public Vector2 BottomLeft;
+        public Vector2 BottomRight;
+        public Vector2 TopRight;
+        public Vector2 TopLeft;
         public Vector2 Center;
 
         //Transformation Vars       
@@ -99,13 +105,8 @@ namespace RobustEngine.Graphics.Shape
             Y = posY;
             Width = sizeX;
             Height = sizeY;
-            Center = new Vector2(Width / 2, Height / 2);
 
-            FillColor = fillColor;
             Matrix = Matrix4.Identity;
-
-            SetScale(Vector2.One);
-            SetPosition(new Vector2(posX, posY));
 
             VertexData = new Vertex[]
             {
@@ -115,18 +116,23 @@ namespace RobustEngine.Graphics.Shape
                 Vertex.UnitY
             };
 
-            for (int i = 0; i < VertexData.Length; i++)
-            {
-                VertexData[i].X += X;
-                VertexData[i].Y += Y;
-                VertexData[i].SetColor(FillColor);
-            }
+            SetScale(Vector2.One);
+            SetPosition(new Vector2(posX, posY));
+            SetFillColor(fillColor);
 
-            //Size
+
+            //Size  
             VertexData[1].X *= Width;
             VertexData[2].X *= Width;
             VertexData[2].Y *= Height;
             VertexData[3].Y *= Height;
+
+            //Point Coords
+            BottomLeft = VertexData[0].ToVector2();
+            BottomRight = VertexData[1].ToVector2();
+            TopRight = VertexData[2].ToVector2();
+            TopLeft = VertexData[3].ToVector2();
+            Center = new Vector2(Width / 2, Height / 2);
 
             //Texture[] Data 
             VertexData[0].Tx = 0;
@@ -161,7 +167,7 @@ namespace RobustEngine.Graphics.Shape
 
             // Vertex Data
             GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, Vertex.Stride, 0);
-            GL.EnableVertexAttribArray(0); // Layout 0 Vertex Data
+            GL.EnableVertexAttribArray(0); // Layout 0 Position Data
 
             // Color Data
             GL.VertexAttribPointer(1, 4, VertexAttribPointerType.Float, false, Vertex.Stride, 12);
@@ -173,7 +179,7 @@ namespace RobustEngine.Graphics.Shape
 
             // TextureUVCoords
             GL.VertexAttribPointer(3, 2, VertexAttribPointerType.Float, false, Vertex.Stride, 40);
-            GL.EnableVertexAttribArray(3); // Layout 3 
+            GL.EnableVertexAttribArray(3); // Layout 3 Texture Data
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
@@ -236,14 +242,22 @@ namespace RobustEngine.Graphics.Shape
         /// Sets the rotation of the sprite. 
         /// </summary>
         /// <param name="newRotation"> new rotation</param>
-        public void SetRotation(float newRotation)
+        /// <param name="axis"> Axis to rotate around </param>
+        public void SetRotation(float newRotation, Axis axis)
         {
             Rotation = newRotation;
-            Matrix *= Matrix4.CreateRotationZ(Rotation);
+            switch (axis)
+            {
+                case Axis.X: Matrix *= Matrix4.CreateRotationX(Rotation); break;
+                case Axis.Y: Matrix *= Matrix4.CreateRotationY(Rotation); break;
+                case Axis.Z: Matrix *= Matrix4.CreateRotationZ(Rotation); break;
+            }
+
+
         }
 
         /// <summary>
-        /// Sets the world Position of the sprite
+        /// Sets the world Position of the 2D Sprite
         /// </summary>
         /// <param name="newPosition">New position.</param>
         public void SetPosition(Vector2 newPosition)
@@ -328,7 +342,7 @@ namespace RobustEngine.Graphics.Shape
         /// </summary>
         /// <returns>The intersects.</returns>
         /// <param name="A">A.</param>
-        public bool Intersects(Rectangle A)
+        public bool Intersects(Rect A)
         {
             // Collision X?
             if (Left + Right >= A.Left && A.Left + A.Right >= Left)
@@ -342,7 +356,7 @@ namespace RobustEngine.Graphics.Shape
             return false;
         }
 
-        public Rectangle Union(Rectangle A, Rectangle B)
+        public Rect Union(Rect A, Rect B)
         {
             var x = Math.Min(A.Left, B.Left);
             var width = Math.Max(A.Left + A.Right, B.Left);
@@ -350,7 +364,7 @@ namespace RobustEngine.Graphics.Shape
             var y = Math.Min(A.Top, B.Top);
             var height = Math.Max(A.Top + A.Bottom, B.Top);
 
-            return new Rectangle(x, y, width, height);
+            return new Rect(x, y, width, height);
         }
 
 
