@@ -76,7 +76,6 @@
     <Compile Include="Window\RobustWindow.cs" />
     <Compile Include="Graphics\Shape\Cube.cs" />
     <Compile Include="Graphics\TextureAtlas.cs" />
-    <Compile Include="Graphics\IGeometric2D.cs" />
     <Compile Include="Graphics\ITransformable2D.cs" />
   </ItemGroup>
   <ItemGroup>
