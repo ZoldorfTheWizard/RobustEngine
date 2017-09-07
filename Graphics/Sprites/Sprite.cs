@@ -103,9 +103,8 @@ namespace RobustEngine.Graphics.Sprites
         public void Draw()
         {
 
-            if (Texture != null)
+            if (Texture == null)
             {
-
                 Rect.Draw();
                 return;
             }
