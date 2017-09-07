@@ -62,7 +62,6 @@
     <Compile Include="Graphics\Sprites\TextSprite.cs" />
     <Compile Include="Graphics\Texture2D.cs" />
     <Compile Include="Graphics\Shaders\Shader.cs" />
-    <Compile Include="Graphics\BufferObject.cs" />
     <Compile Include="Graphics\Vertex.cs" />
     <Compile Include="Graphics\View.cs" />
     <Compile Include="RobustEngine.cs" />
