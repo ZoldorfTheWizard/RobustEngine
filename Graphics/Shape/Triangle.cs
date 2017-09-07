@@ -103,7 +103,7 @@ namespace RobustEngine.Graphics.Shape
             VertexData[1].Tx = 0;
             VertexData[1].Tx = 1;
 
-            VertexData[2].Tx = 1;
+            VertexData[2].Tx = .5f;
             VertexData[2].Tx = 1;
 
             Indicies = new int[]
@@ -134,7 +134,7 @@ namespace RobustEngine.Graphics.Shape
 
             // TextureUVCoords
             GL.VertexAttribPointer(3, 2, VertexAttribPointerType.Float, false, Vertex.Stride, 40);
-            GL.EnableVertexAttribArray(3); // Layout 3 Texture Data
+            GL.EnableVertexAttribArray(3); // Layout 3 Texture Coord Data
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
