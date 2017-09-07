@@ -120,7 +120,6 @@ namespace RobustEngine.Graphics.Shape
             SetPosition(new Vector2(posX, posY));
             SetFillColor(fillColor);
 
-
             //Size  
             VertexData[1].X *= Width;
             VertexData[2].X *= Width;
@@ -146,7 +145,6 @@ namespace RobustEngine.Graphics.Shape
 
             VertexData[3].Tx = 0;
             VertexData[3].Ty = 0;
-
 
             Indicies = new int[]
             {
