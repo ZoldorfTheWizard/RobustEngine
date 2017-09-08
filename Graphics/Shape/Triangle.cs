@@ -98,13 +98,13 @@ namespace RobustEngine.Graphics.Shape
             Center = new Vector2((XAverage / 3), (YAverage / 3));
 
             VertexData[0].Tx = 0;
-            VertexData[0].Tx = 0;
+            VertexData[0].Ty = 1;
 
-            VertexData[1].Tx = 0;
             VertexData[1].Tx = 1;
+            VertexData[1].Ty = 1;
 
-            VertexData[2].Tx = .5f;
             VertexData[2].Tx = 1;
+            VertexData[2].Ty = 0;
 
             Indicies = new int[]
             {
