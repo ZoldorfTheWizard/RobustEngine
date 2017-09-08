@@ -298,16 +298,9 @@ namespace RobustEngine.Graphics.Shape
 
         public void Update()
         {
-            for (int i = 0; i < VertexData.Length; i++)
-            {
-                VertexData[i].SetColor(FillColor);
-            }
-
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferID);
             GL.BufferData(BufferTarget.ArrayBuffer, VertexData.Length * Vertex.Stride, VertexData, BufferUsageHint.DynamicDraw);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-
-            //  PopMatrix();
         }
 
         /// <summary>
@@ -316,7 +309,7 @@ namespace RobustEngine.Graphics.Shape
         public void Draw()
         {
             RobustEngine.CurrentShader.setUniform("ModelMatrix", Matrix);
-
+            RobustEngine.CurrentShader.setUniform("UsingTexture", GL.GetInteger(GetPName.TextureBinding2D));
 
             switch (DebugMode)
             {
