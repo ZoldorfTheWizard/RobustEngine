@@ -148,9 +148,9 @@ namespace RobustEngine.Graphics.Shape
 
         }
 
-        public void SetFillColor(Color col)
+        public void SetFillColor(Color color)
         {
-            FillColor = col;
+            FillColor = color;
             for (int i = 0; i < VertexData.Length; i++)
             {
                 VertexData[i].SetColor(FillColor);
@@ -210,7 +210,6 @@ namespace RobustEngine.Graphics.Shape
                 case Axis.Y: Matrix *= Matrix4.CreateRotationY(Rotation); break;
                 case Axis.Z: Matrix *= Matrix4.CreateRotationZ(Rotation); break;
             }
-
         }
 
         /// <summary>
@@ -268,7 +267,7 @@ namespace RobustEngine.Graphics.Shape
         public void Draw()
         {
             RobustEngine.CurrentShader.setUniform("ModelMatrix", Matrix);
-
+            RobustEngine.CurrentShader.setUniform("UsingTexture", GL.GetInteger(GetPName.TextureBinding2D));
 
             switch (DebugMode)
             {
@@ -286,14 +285,5 @@ namespace RobustEngine.Graphics.Shape
         }
 
         #endregion Rendering
-
-
-
-
-
-
-
-
-
     }
 }
