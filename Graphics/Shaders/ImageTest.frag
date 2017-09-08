@@ -4,14 +4,21 @@ in vec2 TexCoord;
 in vec4 Color;
 
 uniform sampler2D BoundTexture;
-
+uniform bool UsingTexture;
 
 out vec4 FragColor;
 
 void main()
 {
-    FragColor = texture(BoundTexture,TexCoord);
-   // FragColor = Color;
+    if(UsingTexture)
+    {
+        FragColor = texture(BoundTexture,TexCoord);
+    }
+    else
+    {
+        FragColor = Color; 
+    }  
+   
 }
 
 
