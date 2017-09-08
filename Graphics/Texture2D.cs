@@ -102,7 +102,7 @@ namespace RobustEngine.Graphics
             Bitmap.Dispose();
         }
 
-        public bool IsOpaque(int x, int y)
+        public bool IsOpaqueAt(int x, int y)
         {
             return PixelData[x, y].A != 0;
         }
