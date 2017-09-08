@@ -63,6 +63,7 @@ namespace RobustEngine.Graphics.Shape
 
             X2 = x2;
             Y2 = y2;
+
             Matrix = Matrix4.Identity;
 
             VertexData = new Vertex[]
@@ -77,10 +78,9 @@ namespace RobustEngine.Graphics.Shape
 
             Center = new Vector2(X2 / 2, Y2 / 2);
 
-
             Indicies = new int[]
             {
-                0, 1, 2
+                0, 1
             };
 
             VertexArrayID = GL.GenVertexArray();
@@ -116,8 +116,6 @@ namespace RobustEngine.Graphics.Shape
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
 
             GL.BindVertexArray(0);
-
-
         }
 
         public void SetFillColor(Color col)
@@ -240,7 +238,7 @@ namespace RobustEngine.Graphics.Shape
         public void Draw()
         {
             RobustEngine.CurrentShader.setUniform("ModelMatrix", Matrix);
-
+            RobustEngine.CurrentShader.setUniform("UsingTexture", GL.GetInteger(GetPName.TextureBinding2D));
 
             switch (DebugMode)
             {
@@ -249,7 +247,7 @@ namespace RobustEngine.Graphics.Shape
             }
 
             Bind();
-            GL.DrawElements(PrimitiveType.Triangles, 3, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(PrimitiveType.Lines, 2, DrawElementsType.UnsignedInt, 0);
             Unbind();
 
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
