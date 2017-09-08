@@ -125,6 +125,11 @@ namespace RobustEngine.Graphics.Shaders
             GL.Uniform1(getUniformLoc(VarName), f);
         }
 
+        public void setUniform(string VarName, int b)
+        {
+            GL.Uniform1(getUniformLoc(VarName), b);
+        }
+
         public void setUniform(string VarName, Vector2 vec2)
         {
             GL.Uniform2(getUniformLoc(VarName), vec2);
