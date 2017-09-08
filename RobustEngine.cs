@@ -102,6 +102,8 @@ namespace RobustEngine
 
             var ImageTestFile = Path.Combine(Environment.CurrentDirectory, "Graphics", "Shaders", "ImageTest");
 
+            CurrentShader = new Shader(ImageTestFile + ".vert", ImageTestFile + ".frag");
+
 
             //TESTING
             Texture = new Texture2D("Devtexture_Floor.png");
@@ -113,8 +115,6 @@ namespace RobustEngine
             TriangleTest = new Triangle(0, 0, 256, 256);
 
 
-
-            CurrentShader = new Shader(ImageTestFile + ".vert", ImageTestFile + ".frag");
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.ClearColor(Color.Gray);
@@ -172,15 +172,16 @@ namespace RobustEngine
             // Sprite.Rect.SetFillColor(Color.Blue);
 
 
-            Texture.Bind();
+
             TriangleTest.SetFillColor(Color.Blue);
-            TriangleTest.SetOrigin(TriangleTest.Center);
+            TriangleTest.SetOrigin(TriangleTest.BottomLeft);
             TriangleTest.SetScale(scal);
             TriangleTest.SetRotation(-mov, Axis.Z);
             TriangleTest.SetPosition(new Vector2(scale, scale));
             TriangleTest.Update();
             TriangleTest.Draw();
-            Texture.Unbind();
+
+
             //Sprite.SetOrigin(Sprite.Rect.Center);
             //Sprite.SetScale(new Vector2(scale, scale)); //+ (.001f * x), scale + (.001f * y)));
             //Sprite.SetRotation(mov, Axis.Z);
