@@ -53,9 +53,6 @@
     <Compile Include="Graphics\Render\OffscreenTarget.cs" />
     <Compile Include="Graphics\Render\RenderTarget.cs" />
     <Compile Include="Graphics\Shaders\ShaderTechnique.cs" />
-    <Compile Include="Graphics\Shape\Line.cs" />
-    <Compile Include="Graphics\Shape\Rect.cs" />
-    <Compile Include="Graphics\Shape\Triangle.cs" />
     <Compile Include="Graphics\Sprites\AnimatedSprite.cs" />
     <Compile Include="Graphics\Sprites\Sprite.cs" />
     <Compile Include="Graphics\Sprites\SpriteBatch.cs" />
@@ -74,10 +71,12 @@
     <Compile Include="Window\RobustPopup.cs" />
     <Compile Include="Window\RobustSettings.cs" />
     <Compile Include="Window\RobustWindow.cs" />
-    <Compile Include="Graphics\Shape\Cube.cs" />
     <Compile Include="Graphics\TextureAtlas.cs" />
     <Compile Include="Graphics\ITransformable2D.cs" />
-    <Compile Include="Graphics\Shape\Point.cs" />
+    <Compile Include="Graphics\Shapes\Line2D.cs" />
+    <Compile Include="Graphics\Shapes\Point2D.cs" />
+    <Compile Include="Graphics\Shapes\Rect2D.cs" />
+    <Compile Include="Graphics\Shapes\Triangle2D.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.config" />

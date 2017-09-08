@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
-namespace RobustEngine.Graphics.Shape
+namespace RobustEngine.Graphics.Shapes
 {
-    public class Triangle : IRenderable2D, ITransformable2D
+    public class Triangle2D : IRenderable2D, ITransformable2D
     {
         //
         public float X;
@@ -41,16 +41,17 @@ namespace RobustEngine.Graphics.Shape
         public Matrix4 Matrix;
         public Debug DebugMode;
 
-        public Triangle(int posX, int posY, int width, int height)
+        public Triangle2D(int posX, int posY, int width, int height)
         {
             Create(posX, posY, width, height, Color.DarkMagenta);
         }
-        public Triangle(double posX, double posY, double width, double height)
+
+        public Triangle2D(double posX, double posY, double width, double height)
         {
             Create((float)posX, (float)posY, (float)width, (float)height, Color.DarkMagenta);
         }
 
-        public Triangle(float posX, float posY, float width, float height)
+        public Triangle2D(float posX, float posY, float width, float height)
         {
             Create(posX, posY, width, height, Color.DarkMagenta);
         }

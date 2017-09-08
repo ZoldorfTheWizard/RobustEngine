@@ -2,7 +2,7 @@
 using System.Drawing;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using RobustEngine.Graphics.Shape;
+using RobustEngine.Graphics.Shapes;
 
 namespace RobustEngine.Graphics.Sprites
 {
@@ -13,7 +13,7 @@ namespace RobustEngine.Graphics.Sprites
 
         public Texture2D Texture;
         public Rectangle AABB;
-        public Rect Rect;
+        public Rect2D Rect;
 
 
         public Color Color => Rect.FillColor;
@@ -43,7 +43,7 @@ namespace RobustEngine.Graphics.Sprites
         private void Setup()
         {
             AABB = Texture.AABB;
-            Rect = new Rect(AABB);
+            Rect = new Rect2D(AABB);
         }
 
         public void Update()

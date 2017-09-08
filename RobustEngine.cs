@@ -13,7 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using RobustEngine.Graphics.Shape;
+using RobustEngine.Graphics.Shapes;
 
 namespace RobustEngine
 {
@@ -55,7 +55,8 @@ namespace RobustEngine
         public Clock Timekeeper;
         public SpriteBatch Spritebatch;
         public Texture2D Texture;
-        public Triangle TriangleTest;
+        public Triangle2D TriangleTest;
+        public Line2D LineTest;
 
         public Sprite Sprite;
 
@@ -107,17 +108,18 @@ namespace RobustEngine
 
             //TESTING
             Texture = new Texture2D("Devtexture_Floor.png");
-            PlayerView = new View(Vector2.One, 0, 10);
-            //   Spritebatch = new SpriteBatch(1920, 1080);
+            LineTest = new Line2D(0, 0, 0, 0, 1);
+            //LineTest = new Line(0, 0, 1, 1, 1);
+
+            TriangleTest = new Triangle2D(0, 0, 256, 256);
             Sprite = new Sprite("test", Texture);
             Sprite.SetPosition(new Vector2(.4f, .4f));
 
-            TriangleTest = new Triangle(0, 0, 256, 256);
-
+            PlayerView = new View(Vector2.One, 0, 10);
 
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            GL.ClearColor(Color.Gray);
+            GL.ClearColor(Color.DimGray);
             //  GL.Viewport(0, 0, -1500, -1500);
 
 
@@ -171,15 +173,27 @@ namespace RobustEngine
             // Sprite.Rect.DebugMode = Debug.None;
             // Sprite.Rect.SetFillColor(Color.Blue);
 
+            LineTest.SetFillColor(Color.Red);
+            LineTest.SetOrigin(LineTest.Center);
+            //    LineTest.SetPosition(new Vector2(.10f * x, .10f * y));
+            // LineTest.SetRotation(mov, Axis.Z);
+            LineTest.Update();
+            LineTest.Draw();
 
+            //LineTest.SetFillColor(Color.Blue);
+            //LineTest.SetOrigin(LineTest.Center);
+            ////    LineTest.SetPosition(new Vector2(.10f * x, .10f * y));
+            //LineTest.SetRotation(90f, Axis.Z);
+            //LineTest.Update();
+            //LineTest.Draw();
 
-            TriangleTest.SetFillColor(Color.Blue);
-            TriangleTest.SetOrigin(TriangleTest.BottomLeft);
-            TriangleTest.SetScale(scal);
-            TriangleTest.SetRotation(-mov, Axis.Z);
-            TriangleTest.SetPosition(new Vector2(scale, scale));
-            TriangleTest.Update();
-            TriangleTest.Draw();
+            //TriangleTest.SetFillColor(Color.Blue);
+            //TriangleTest.SetOrigin(TriangleTest.BottomLeft);
+            //TriangleTest.SetScale(scal);
+            //TriangleTest.SetRotation(-mov, Axis.Z);
+            //TriangleTest.SetPosition(new Vector2(scale, scale));
+            //TriangleTest.Update();
+            //TriangleTest.Draw();
 
 
             //Sprite.SetOrigin(Sprite.Rect.Center);

@@ -1,171 +1,105 @@
-﻿using System;
-using System.Drawing;
-using OpenTK;
+﻿using OpenTK;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL;
-using SysRectangle = System.Drawing.Rectangle;
+using System.Drawing;
 
-namespace RobustEngine.Graphics.Shape
+namespace RobustEngine.Graphics.Shapes
 {
-    public class Rect : IRenderable2D, ITransformable2D
+    public class Line2D : IRenderable2D, ITransformable2D
     {
-        #region Class Variables
-
-        //Position
-        public float X;
-        public float Y;
+        //Line
+        public float X1;
+        public float Y1;
+        public float X2;
+        public float Y2;
         public float Width;
-        public float Height;
 
-        //BoundingBox
-        public float Left => X;
-        public float Top => Y;
-        public float Right => X + Width;
-        public float Bottom => Y + Height;
+        //Points
+        public Vector2 Center; // Centroid
 
-        //Point Coords
-        public Vector2 BottomLeft;
-        public Vector2 BottomRight;
-        public Vector2 TopRight;
-        public Vector2 TopLeft;
-        public Vector2 Center;
-
-        //Transformation Vars       
+        //Transformation
         public Vector2 Origin;
         public Vector2 Scale;
         public float Rotation;
         public Vector2 Position;
 
-        //Opengl VBO's
+        //Buffers
         public int VertexArrayID;
         public int VertexBufferID;
         public int IndexBufferID;
         public int[] Indicies;
 
-        // Rect Specific
+        //Line Specific
         public Color FillColor;
         public Vertex[] VertexData;
         public Matrix4 Matrix;
-
         public Debug DebugMode;
 
-        #endregion Class Varables
-
-        /// <summary>
-        /// Rectangle Entity Constructor.
-        /// </summary>
-        /// <param name="posX">Position X.</param>
-        /// <param name="posY">Position Y</param>
-        /// <param name="sizeX">Size X.</param>
-        /// <param name="sizeY">Size Y</param>
-        public Rect(float posX, float posY, float sizeX, float sizeY)
+        public Line2D(int startX, int startY, int endX, int endY, int width = 1)
         {
-            Create(posX, posY, sizeX, sizeY, Color.Maroon);
+            Create(startX, startY, endX, endY, width, Color.DarkMagenta);
         }
 
-        /// <summary>
-        /// Rectangle Entity Constructor.
-        /// </summary>
-        /// <param name="posX">Position X.</param>
-        /// <param name="posY">Position Y</param>
-        /// <param name="sizeX">Size X.</param>
-        /// <param name="sizeY">Size Y</param>
-        public Rect(int posX, int posY, int sizeX, int sizeY)
+        public Line2D(double startX, double startY, double endX, double endY, double width = 1.0)
         {
-            Create((float)posX, (float)posY, (float)sizeX, (float)sizeY, Color.Maroon);
+            Create((float)startX, (float)startY, (float)endX, (float)endY, (float)width, Color.DarkMagenta);
         }
 
-        /// <summary>
-        /// Rectangle Entity Constructor.
-        /// </summary>
-        /// <param name="posX">Position X.</param>
-        /// <param name="posY">Position Y</param>
-        /// <param name="sizeX">Size X.</param>
-        /// <param name="sizeY">Size Y</param>
-        public Rect(int posX, int posY, int sizeX, int sizeY, Color fc)
+        public Line2D(float startX, float startY, float endX, float endY, float width = 1.0f)
         {
-            Create(posX, posY, sizeX, sizeY, fc);
-        }
-
-        /// <summary>
-        /// Rectangle Entity Constructor.,
-        /// </summary>
-        /// <param name="posX">Position X.</param>
-        /// <param name="posY">Position Y</param>
-        /// <param name="sizeX">Size X.</param>
-        /// <param name="sizeY">Size Y</param>
-        public Rect(SysRectangle rect)
-        {
-            Create(rect.X, rect.Y, rect.Width, rect.Height, Color.Maroon);
+            Create(startX, startY, endX, endY, width, Color.DarkMagenta);
         }
 
 
-        private void Create(float posX, float posY, float sizeX, float sizeY, Color fillColor)
+        private void Create(float x1, float y1, float x2, float y2, float width, Color fillcolor)
         {
-            X = posX;
-            Y = posY;
-            Width = sizeX;
-            Height = sizeY;
+            X1 = x1;
+            Y1 = y1;
+
+            X2 = x2;
+            Y2 = y2;
 
             Matrix = Matrix4.Identity;
 
             VertexData = new Vertex[]
             {
                 Vertex.Zero,
-                Vertex.UnitX,
-                Vertex.One,
-                Vertex.UnitY
+                Vertex.One
             };
 
+            VertexData[1].X *= X2;
+            VertexData[1].Y *= Y2;
+
+            //    GL.PointSize(6f);
+            GL.LineWidth(width);
+
             SetScale(Vector2.One);
-            SetPosition(new Vector2(posX, posY));
-            SetFillColor(fillColor);
+            SetPosition(new Vector2(X1, Y1));
+            SetFillColor(fillcolor);
 
-            //Size  
-            VertexData[1].X *= Width;
-            VertexData[2].X *= Width;
-            VertexData[2].Y *= Height;
-            VertexData[3].Y *= Height;
-
-            //Point Coords
-            BottomLeft = VertexData[0].ToVector2();
-            BottomRight = VertexData[1].ToVector2();
-            TopRight = VertexData[2].ToVector2();
-            TopLeft = VertexData[3].ToVector2();
-            Center = new Vector2(Width / 2, Height / 2);
-
-            //Texture[] Data 
-            VertexData[0].Tx = 0;
-            VertexData[0].Ty = 1;
-
-            VertexData[1].Tx = 1;
-            VertexData[1].Ty = 1;
-
-            VertexData[2].Tx = 1;
-            VertexData[2].Ty = 0;
-
-            VertexData[3].Tx = 0;
-            VertexData[3].Ty = 0;
+            Center = new Vector2(X2 / 2, Y2 / 2);
 
             Indicies = new int[]
             {
-                  0, 1, 2, // First Triangle
-                  2, 3, 0  // Second Triangle
+                0, 1
             };
 
             VertexArrayID = GL.GenVertexArray();
             GL.BindVertexArray(VertexArrayID);
 
-            //Generate Buffers
             VertexBufferID = GL.GenBuffer();
             IndexBufferID = GL.GenBuffer();
 
-            // VBO
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferID);
-            GL.BufferData(BufferTarget.ArrayBuffer, VertexData.Length * Vertex.Stride, VertexData, BufferUsageHint.DynamicDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, VertexData.Length, IntPtr.Zero, BufferUsageHint.DynamicDraw);
 
             // Vertex Data
             GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, Vertex.Stride, 0);
-            GL.EnableVertexAttribArray(0); // Layout 0 Position Data
+            GL.EnableVertexAttribArray(0); // Layout 0 Position
 
             // Color Data
             GL.VertexAttribPointer(1, 4, VertexAttribPointerType.Float, false, Vertex.Stride, 12);
@@ -177,7 +111,7 @@ namespace RobustEngine.Graphics.Shape
 
             // TextureUVCoords
             GL.VertexAttribPointer(3, 2, VertexAttribPointerType.Float, false, Vertex.Stride, 40);
-            GL.EnableVertexAttribArray(3); // Layout 3 Texture Coord Data
+            GL.EnableVertexAttribArray(3); // Layout 3 Texture Data
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
@@ -195,6 +129,7 @@ namespace RobustEngine.Graphics.Shape
             for (int i = 0; i < VertexData.Length; i++)
             {
                 VertexData[i].SetColor(FillColor);
+                VertexData[i].A = .5f;
             }
         }
 
@@ -240,7 +175,7 @@ namespace RobustEngine.Graphics.Shape
         /// Sets the rotation of the sprite. 
         /// </summary>
         /// <param name="newRotation"> new rotation</param>
-        /// <param name="axis"> Axis to rotate around </param>
+        /// <param name="axis"> axis to rotate </param>
         public void SetRotation(float newRotation, Axis axis)
         {
             Rotation = newRotation;
@@ -251,11 +186,10 @@ namespace RobustEngine.Graphics.Shape
                 case Axis.Z: Matrix *= Matrix4.CreateRotationZ(Rotation); break;
             }
 
-
         }
 
         /// <summary>
-        /// Sets the world Position of the 2D Sprite
+        /// Sets the world Position of the sprite
         /// </summary>
         /// <param name="newPosition">New position.</param>
         public void SetPosition(Vector2 newPosition)
@@ -318,46 +252,13 @@ namespace RobustEngine.Graphics.Shape
             }
 
             Bind();
-            GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(PrimitiveType.Lines, 2, DrawElementsType.UnsignedInt, 0);
             Unbind();
 
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
 
             PopMatrix();
         }
-
         #endregion Rendering
-
-        /// <summary>
-        /// Detects if a Rectangle collides or intersects each other.
-        /// </summary>
-        /// <returns>The intersects.</returns>
-        /// <param name="A">A.</param>
-        public bool Intersects(Rect A)
-        {
-            // Collision X?
-            if (Left + Right >= A.Left && A.Left + A.Right >= Left)
-            {
-                //Collision Y?
-                if (Top + Bottom >= A.Top && A.Top + A.Bottom >= Top)
-                {
-                    return true; //Collision
-                }
-            }
-            return false;
-        }
-
-        public Rect Union(Rect A, Rect B)
-        {
-            var x = Math.Min(A.Left, B.Left);
-            var width = Math.Max(A.Left + A.Right, B.Left);
-
-            var y = Math.Min(A.Top, B.Top);
-            var height = Math.Max(A.Top + A.Bottom, B.Top);
-
-            return new Rect(x, y, width, height);
-        }
-
-
     }
 }
