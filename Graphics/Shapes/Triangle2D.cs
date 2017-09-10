@@ -204,7 +204,7 @@ namespace RobustEngine.Graphics.Shapes
         /// <param name="axis"> axis to rotate </param>
         public void SetRotation(float newRotation, Axis axis)
         {
-            Rotation = newRotation;
+            Rotation = MathHelper.DegreesToRadians(newRotation);
             switch (axis)
             {
                 case Axis.X: Matrix *= Matrix4.CreateRotationX(Rotation); break;

@@ -37,7 +37,7 @@ namespace RobustEngine.Graphics.Shapes
         public Color FillColor;
         public Vertex[] VertexData;
         public Matrix4 Matrix;
-        public Debug DebugMode;
+
 
         public Line2D(int startX, int startY, int endX, int endY, int width = 1)
         {
@@ -53,7 +53,6 @@ namespace RobustEngine.Graphics.Shapes
         {
             Create(startX, startY, endX, endY, width, Color.DarkMagenta);
         }
-
 
         private void Create(float x1, float y1, float x2, float y2, float width, Color fillcolor)
         {
@@ -74,7 +73,7 @@ namespace RobustEngine.Graphics.Shapes
             VertexData[1].X *= X2;
             VertexData[1].Y *= Y2;
 
-            //    GL.PointSize(6f);
+            GL.PointSize(5f);
             GL.LineWidth(width);
 
             SetScale(Vector2.One);
@@ -133,6 +132,20 @@ namespace RobustEngine.Graphics.Shapes
             }
         }
 
+        public void SetLineWidth(float width)
+        {
+            Width = width;
+            GL.LineWidth(Width);
+        }
+
+        public void SetPointSize(float size)
+        {
+            GL.PointSize(size);
+        }
+
+
+
+
         #region Transformation
         /// <summary>
         /// Push a custom Matrix.
@@ -178,14 +191,19 @@ namespace RobustEngine.Graphics.Shapes
         /// <param name="axis"> axis to rotate </param>
         public void SetRotation(float newRotation, Axis axis)
         {
-            Rotation = newRotation;
+            Rotation = MathHelper.DegreesToRadians(newRotation);
             switch (axis)
             {
-                case Axis.X: Matrix *= Matrix4.CreateRotationX(Rotation); break;
-                case Axis.Y: Matrix *= Matrix4.CreateRotationY(Rotation); break;
-                case Axis.Z: Matrix *= Matrix4.CreateRotationZ(Rotation); break;
+                case Axis.X:
+                    Matrix *= Matrix4.CreateRotationX(Rotation);
+                    break;
+                case Axis.Y:
+                    Matrix *= Matrix4.CreateRotationY(Rotation);
+                    break;
+                case Axis.Z:
+                    Matrix *= Matrix4.CreateRotationZ(Rotation);
+                    break;
             }
-
         }
 
         /// <summary>
@@ -245,11 +263,6 @@ namespace RobustEngine.Graphics.Shapes
             RobustEngine.CurrentShader.setUniform("ModelMatrix", Matrix);
             RobustEngine.CurrentShader.setUniform("UsingTexture", GL.GetInteger(GetPName.TextureBinding2D));
 
-            switch (DebugMode)
-            {
-                case Debug.Points: GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Point); break;
-                case Debug.Wireframe: GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line); break;
-            }
 
             Bind();
             GL.DrawElements(PrimitiveType.Lines, 2, DrawElementsType.UnsignedInt, 0);

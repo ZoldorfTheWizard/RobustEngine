@@ -239,19 +239,17 @@ namespace RobustEngine.Graphics.Shapes
         /// <summary>
         /// Sets the rotation of the sprite. 
         /// </summary>
-        /// <param name="newRotation"> new rotation</param>
+        /// <param name="newRotation"> Degrees to rotate by</param>
         /// <param name="axis"> Axis to rotate around </param>
         public void SetRotation(float newRotation, Axis axis)
         {
-            Rotation = newRotation;
+            Rotation = MathHelper.DegreesToRadians(newRotation);
             switch (axis)
             {
                 case Axis.X: Matrix *= Matrix4.CreateRotationX(Rotation); break;
                 case Axis.Y: Matrix *= Matrix4.CreateRotationY(Rotation); break;
                 case Axis.Z: Matrix *= Matrix4.CreateRotationZ(Rotation); break;
             }
-
-
         }
 
         /// <summary>
