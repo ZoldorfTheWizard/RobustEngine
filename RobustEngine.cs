@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using RobustEngine.Graphics.Shapes;
 
 namespace RobustEngine
 {
@@ -35,7 +36,7 @@ namespace RobustEngine
         public RenderTarget[] Rendertargets; // This may be unused due to Multiple Windows.
         public GameWindow GameScreen;
         public GameWindow AltScreens; // All other non gamescreen windows
-        public Shader CurrentShader;
+        public static Shader CurrentShader;
         public GraphicsContext Context;
         public DisplayDevice SelectedMonitor;
 
@@ -54,6 +55,8 @@ namespace RobustEngine
         public Clock Timekeeper;
         public SpriteBatch Spritebatch;
         public Texture2D Texture;
+        public Triangle2D TriangleTest;
+        public Line2D LineTest;
 
         public Sprite Sprite;
 
@@ -79,6 +82,8 @@ namespace RobustEngine
             //GameScreen.Title = "Space Station 14";
             //GameScreen.Visible = true;
 
+            // GameScreen.VSync = VSyncMode.Off;
+
             GameScreen.MakeCurrent(); //OPENGL CONTEXT STARTS HERE
 
             GLINFO += "\n\n------------------------------------------------------------------";
@@ -91,22 +96,32 @@ namespace RobustEngine
             GameScreen.RenderFrame += Render;
             GameScreen.UpdateFrame += Update;
             GL.Enable(EnableCap.Texture2D);
-            //GL.Enable(EnableCap.VertexArray);
+
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+            GL.ClearColor(0, 0, 0, 0);            //GL.Enable(EnableCap.VertexArray);
 
             var ImageTestFile = Path.Combine(Environment.CurrentDirectory, "Graphics", "Shaders", "ImageTest");
+
+            CurrentShader = new Shader(ImageTestFile + ".vert", ImageTestFile + ".frag");
 
 
             //TESTING
             Texture = new Texture2D("Devtexture_Floor.png");
-            PlayerView = new View(Vector2.One, 0, 10);
-            //   Spritebatch = new SpriteBatch(1920, 1080);
+            LineTest = new Line2D(0, 0, 0, 0, 1);
+            //LineTest = new Line(0, 0, 1, 1, 1);
+
+            TriangleTest = new Triangle2D(0, 0, 256, 256);
             Sprite = new Sprite("test", Texture);
-            CurrentShader = new Shader(ImageTestFile + ".vert", ImageTestFile + ".frag");
+            Sprite.SetPosition(new Vector2(.4f, .4f));
+
+            PlayerView = new View(Vector2.One, 0, 10);
+
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            GL.ClearColor(Color.Gray);
-            GL.Viewport(0, 0, 800, 600);
-            GL.Ortho(-400, 400, -300, 300, 0, 1);
+            GL.ClearColor(Color.DimGray);
+            //  GL.Viewport(0, 0, -1500, -1500);
+
 
 
             //Context = new GraphicsContext(GraphicsMode.Default, GameScreen.WindowInfo,4,4,GraphicsContextFlags.Default);
@@ -124,6 +139,7 @@ namespace RobustEngine
 
             RobustConsole.Write(LogLevel.Warning, "RobustEngine", "Starting Run loop...");
 
+            Timekeeper.Start();
             GameScreen.Run(60);
 
         }
@@ -131,39 +147,98 @@ namespace RobustEngine
         public void Update(object Sender, FrameEventArgs E)
         {
             GameScreen.ProcessEvents();
-            Sprite.update();
-            mov += .0001f;
+            // Sprite.Update();
+            mov += .01f;
+
         }
 
-        float mov;
+        float mov = .002f;
+
+        float scale = 1 / 256f;
+
         int frames;
+        Vector2 scal = new Vector2(1 / 256f, 1 / 256f);
 
         public void Render(object Sender, FrameEventArgs E)
         {
-            Timekeeper.Start();
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            // PlayerView.Setup(800, 800);
-            // PlayerView.Update();
-            //Spritebatch.Begin();
-            Texture.Bind();
-            //    GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
+            //   PlayerView.Setup(800, 800);
+            //   PlayerView.Update();
+            //   Spritebatch.Begin();
+
+
             CurrentShader.Enable();
-            Sprite.mov(mov);
-            Sprite.Draw();
+            // Sprite.Rect.DebugMode = Debug.None;
+            // Sprite.Rect.SetFillColor(Color.Blue);
+
+            LineTest.SetFillColor(Color.Red);
+            LineTest.SetOrigin(LineTest.Center);
+            //    LineTest.SetPosition(new Vector2(.10f * x, .10f * y));
+            // LineTest.SetRotation(mov, Axis.Z);
+            LineTest.Update();
+            LineTest.Draw();
+
+            //LineTest.SetFillColor(Color.Blue);
+            //LineTest.SetOrigin(LineTest.Center);
+            ////    LineTest.SetPosition(new Vector2(.10f * x, .10f * y));
+            //LineTest.SetRotation(90f, Axis.Z);
+            //LineTest.Update();
+            //LineTest.Draw();
+
+            //TriangleTest.SetFillColor(Color.Blue);
+            //TriangleTest.SetOrigin(TriangleTest.BottomLeft);
+            //TriangleTest.SetScale(scal);
+            //TriangleTest.SetRotation(-mov, Axis.Z);
+            //TriangleTest.SetPosition(new Vector2(scale, scale));
+            //TriangleTest.Update();
+            //TriangleTest.Draw();
+
+
+            //Sprite.SetOrigin(Sprite.Rect.Center);
+            //Sprite.SetScale(new Vector2(scale, scale)); //+ (.001f * x), scale + (.001f * y)));
+            //Sprite.SetRotation(mov, Axis.Z);
+            //Sprite.SetPosition(new Vector2(scale, scale));
+            //Sprite.Update();
+            //Sprite.Draw();
+
+            ////    Sprite.SetOrigin(new Vector2(-.5f, -.5f));
+            //Sprite.SetScale(new Vector2(scale, scale));
+            //Sprite.SetRotation(mov);
+            //Sprite.SetPosition(new Vector2(scale * x, -scale * y));
+            //Sprite.Update();
+            //Sprite.Draw();
+
+            ////   Sprite.SetOrigin(new Vector2(-.5f, -.5f));
+            //Sprite.SetScale(new Vector2(scale, scale));
+            //Sprite.SetRotation(mov);
+            //Sprite.SetPosition(new Vector2(-scale * x, scale * y));
+            //Sprite.Update();
+            //Sprite.Draw();
+
+            ////  Sprite.Rect.DebugMode = Debug.Wireframe;
+            ////    Sprite.SetOrigin(new Vector2(-.5f, -.5f));
+            //Sprite.SetScale(new Vector2(scale, scale)); ;
+            //Sprite.SetRotation(mov);
+            //Sprite.SetPosition(new Vector2(scale * x, scale * y));
+            //Sprite.Update();
+            //Sprite.Draw();
+
+
+            //  Texture.Unbind();
             CurrentShader.Disable();
 
-            //  GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+
             GameScreen.SwapBuffers();
 
 
 
             frames++;
-            if (Timekeeper.GetElapsed().Seconds == 1)
+            if (Timekeeper.GetElapsed().Seconds >= 1)
             {
                 RobustConsole.Write(LogLevel.Debug, "RobustEngine", "Render() FPS " + frames);
-                Timekeeper.Reset();
+                Timekeeper.Start();
                 frames = 0;
             }
             // RobustConsole.Write(LogLevel.Debug, "RobustEngine", "Render() MS " + Timekeeper.GetTime().Milliseconds.ToString());
@@ -205,4 +280,15 @@ namespace RobustEngine
         # endregion Global Error Checking
 
     }
+
+
+    public enum Debug
+    {
+        None,
+        Points,
+        Wireframe,
+
+    }
+
+
 }

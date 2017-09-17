@@ -90,6 +90,17 @@ namespace RobustEngine.Graphics
             A = color.A;
         }
 
+        public Vector2 ToVector2()
+        {
+            return new Vector2(X, Y);
+        }
+
+        public Vector3 ToVector3()
+        {
+            return new Vector3(X, Y, Z);
+        }
+
+
         #endregion
 
         public static Vertex operator *(Vertex A, Vector3 B)
@@ -182,8 +193,16 @@ namespace RobustEngine.Graphics
         }
         #endregion INT MATH
 
+
         #endregion
 
 
+    }
+
+    public enum Axis
+    {
+        X,
+        Y,
+        Z
     }
 }

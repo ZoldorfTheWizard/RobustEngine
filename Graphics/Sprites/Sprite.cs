@@ -1,32 +1,30 @@
-﻿using System.Drawing;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using RobustEngine.Graphics.Shapes;
 
 namespace RobustEngine.Graphics.Sprites
 {
-    public class Sprite : IRenderable2D
+    public class Sprite : IRenderable2D, ITransformable2D
     {
 
-        public string ID;               
-           
-        //GL VBO'S
-        public int VertexBuffer;
-        public int IndexBuffer;
+        public string ID;
 
-        public Color Color;
-        public Rectangle AABB;
         public Texture2D Texture;
+        public Rectangle AABB;
+        public Rect2D Rect;
 
-        public Vector2 Scale;
-        public Vector2 Position;
-        public Vector2 Size;
-        public float Rotation;
 
-        private Matrix4 Matrix;
-        private BufferObject VBO;
+        public Color Color => Rect.FillColor;
 
-             
+        public Vector2 Origin => Rect.Origin;
+        public Vector2 Scale => Rect.Scale;
+        public float Rotation => Rect.Rotation;
+        public Vector2 Position => Rect.Position;
+
+        public Debug DebugMode => Rect.DebugMode;
+
         /// <summary>
         /// Sprite Constructor. 
         /// </summary>
@@ -37,51 +35,48 @@ namespace RobustEngine.Graphics.Sprites
             ID = id;
             Texture = texture;
             Setup();
-        }   
+        }
 
         /// <summary>
-        /// Setup defaults. Push the Identity Matrix on the Matrix Stack.
+        /// Setup defaults.
         /// </summary>
         private void Setup()
-        {          
-            AABB  = Texture.TextureAABB;
-            Size        = new Vector2(AABB.Width, AABB.Height);
-            Rotation    = 0.0f;
-            Scale       = Vector2.One;
-            Position    = Vector2.Zero;
-            Matrix      = Matrix4.Identity;
-
-            VBO = new BufferObject();
-        }
-            
-        /// <summary>
-        /// Push a custom Matrix.
-        /// </summary>
-        /// <param name="mat"></param>
-        public void PushMatrix(Matrix4 mat)
         {
-            Matrix *= mat;
+            AABB = Texture.AABB;
+            Rect = new Rect2D(AABB);
+        }
+
+        public void Update()
+        {
+            Rect.Update();
         }
 
         /// <summary>
-        /// Sets the matrix back to Identity.
+        /// Sets the origin of the sprite
         /// </summary>
-        public void PopMatrix()
+        /// <param name="newScale"></param>
+        public void SetOrigin(Vector2 newOrigin)
         {
-            Matrix = Matrix4.Identity;
+            Rect.SetOrigin(newOrigin);
+        }
+
+        /// <summary>
+        /// Sets the scale of the sprite
+        /// </summary>
+        /// <param name="newScale"></param>
+        public void SetScale(Vector2 newScale)
+        {
+            Rect.SetScale(newScale);
         }
 
         /// <summary>
         /// Sets the rotation of the sprite. 
         /// </summary>
         /// <param name="newRotation"> new rotation</param>
-        public void SetRotation(float newRotation)
+        public void SetRotation(float newRotation, Axis axis)
         {
-            Rotation = newRotation;
-
-            Matrix *= Matrix4.CreateRotationY(Rotation);
+            Rect.SetRotation(newRotation, axis);
         }
-
 
         /// <summary>
         /// Sets the world Position of the sprite
@@ -89,42 +84,34 @@ namespace RobustEngine.Graphics.Sprites
         /// <param name="newPosition">New position.</param>
         public void SetPosition(Vector2 newPosition)
         {
-            Position = newPosition;
-
-            Matrix *= Matrix4.CreateTranslation(Position.X, Position.Y, 1);
+            Rect.SetPosition(newPosition);
         }
 
-        public void mov(float move)
-        {
-            VBO.move(move);
-        }
-
-        public void update()
-        {
-            VBO.Update();
-        }
         /// <summary>
-        /// Sets the scale of the sprite
+        /// Sets the Fill Color of the sprite.
         /// </summary>
-        /// <param name="newScale"></param>
-        public void SetScale(Vector2 newScale)
+        /// <param name="color">Color.</param>
+        public void SetColor(Color color)
         {
-            Scale = newScale;
-
-            Matrix *= Matrix4.CreateScale(Scale.X, Scale.Y, 1);
+            Rect.FillColor = color;
         }
+
 
         /// <summary>
         /// Draws the sprite.
         /// </summary> 
         public void Draw()
         {
-			Texture.Bind();
-            VBO.BindVertexArray();
-            //GL.DrawArrays(PrimitiveType.Triangles, 0, 4);
-            VBO.BindIndexBuffer();
-            GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);
-			Texture.Unbind();
+
+            if (Texture == null)
+            {
+                Rect.Draw();
+                return;
+            }
+
+            Texture.Bind();
+            Rect.Draw();
+            Texture.Unbind();
         }
 
     }

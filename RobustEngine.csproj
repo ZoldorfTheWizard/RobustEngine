@@ -34,9 +34,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OpenTK, Version=2.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>packages\OpenTK.2.0.0\lib\net20\OpenTK.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="OpenTK, Version=3.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>packages\OpenTK.3.0.0-pre\lib\net20\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -54,16 +53,12 @@
     <Compile Include="Graphics\Render\OffscreenTarget.cs" />
     <Compile Include="Graphics\Render\RenderTarget.cs" />
     <Compile Include="Graphics\Shaders\ShaderTechnique.cs" />
-    <Compile Include="Graphics\Shape\Line.cs" />
-    <Compile Include="Graphics\Shape\Rectangle.cs" />
-    <Compile Include="Graphics\Shape\Triangle.cs" />
     <Compile Include="Graphics\Sprites\AnimatedSprite.cs" />
     <Compile Include="Graphics\Sprites\Sprite.cs" />
     <Compile Include="Graphics\Sprites\SpriteBatch.cs" />
     <Compile Include="Graphics\Sprites\TextSprite.cs" />
     <Compile Include="Graphics\Texture2D.cs" />
     <Compile Include="Graphics\Shaders\Shader.cs" />
-    <Compile Include="Graphics\BufferObject.cs" />
     <Compile Include="Graphics\Vertex.cs" />
     <Compile Include="Graphics\View.cs" />
     <Compile Include="RobustEngine.cs" />
@@ -76,24 +71,29 @@
     <Compile Include="Window\RobustPopup.cs" />
     <Compile Include="Window\RobustSettings.cs" />
     <Compile Include="Window\RobustWindow.cs" />
-    <Compile Include="Graphics\Shape\Cube.cs" />
     <Compile Include="Graphics\TextureAtlas.cs" />
+    <Compile Include="Graphics\ITransformable2D.cs" />
+    <Compile Include="Graphics\Shapes\Line2D.cs" />
+    <Compile Include="Graphics\Shapes\Point2D.cs" />
+    <Compile Include="Graphics\Shapes\Rect2D.cs" />
+    <Compile Include="Graphics\Shapes\Triangle2D.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="Graphics\Shaders\ImageTest.frag">
+    <Content Include="App.config" />
+    <Content Include="Graphics\Shaders\ImageTest.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Graphics\Shaders\ImageTest.vert">
+    </Content>
+    <Content Include="Graphics\Shaders\ImageTest.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
+    </Content>
+    <Content Include="packages\OpenTK.3.0.0-pre\content\OpenTK.dll.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Visible>false</Visible>
+    </Content>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Audio\" />
-    <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Devtexture_Floor.png">
