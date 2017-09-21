@@ -24,7 +24,7 @@ namespace RobustEngine.System.Settings
         public VideoSettings()
         {
             VSync = VSyncMode.Off;
-            Size = new Size(800,600);
+            Size = new Size(1024, 860);
             Fullscreen = false;
         }
 
