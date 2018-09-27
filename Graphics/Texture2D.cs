@@ -1,9 +1,11 @@
 ﻿using System;
-using System.Drawing;
-using System.Drawing.Imaging;
+using RobustEngine.Graphics.Shapes2D;
 using OpenTK.Graphics.OpenGL;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using Color = System.Drawing.Color;
 using GLPixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
-using PixelFormat = System.Drawing.Imaging.PixelFormat;
+
 
 namespace RobustEngine.Graphics
 {
@@ -11,11 +13,9 @@ namespace RobustEngine.Graphics
     {
 
         public int ID;
-        public Rectangle AABB;
+        public Rect2D AABB;
 
         private int TextureSlot;
-        private Bitmap Bitmap;
-        private BitmapData BitmapData;
         private Color[,] PixelData;
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace RobustEngine.Graphics
         /// Bind Texture.   
         /// </summary>
         /// <returns>The bind.</returns>
-        /// <param name="TextureUnit">Specify which TextureUnit you want to bind to. 0-16.</param>
+        /// <optional name="TextureUnit">Specify which TextureUnit you want to bind to. 0-16.</optional>
         public void Bind(int TexUnit = 0)
         {
             TextureSlot = TexUnit;
@@ -61,34 +61,33 @@ namespace RobustEngine.Graphics
 
             Bind();
 
-            Bitmap = new Bitmap(path);
-
-            AABB = new Rectangle(0, 0, Bitmap.Width, Bitmap.Height);
-            PixelData = new Color[AABB.Width, AABB.Height];
-            BitmapData = Bitmap.LockBits(AABB, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            // Bitmap = new Bitmap(path);
+            // AABB = new Rect2D(0, 0, Bitmap.Width, Bitmap.Height);
+            // PixelData = new Color[AABB.Width, AABB.Height];
+            // BitmapData = Bitmap.LockBits(AABB, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
             GL.TexImage2D
             (
                 TextureTarget.Texture2D,
                 0,
                 PIF,
-                AABB.Width,
-                AABB.Height,
+                1,//AABB.Width,
+                1,//AABB.Height,
                 0,
                 GLPixelFormat.Bgra,
                 PixelType.UnsignedByte,
-                BitmapData.Scan0
+                IntPtr.Zero //BitmapData.Scan0
             );
 
-            Bitmap.UnlockBits(BitmapData);
+            // Bitmap.UnlockBits(BitmapData);
 
-            for (int x = 0; x < Bitmap.Width; x++)
-            {
-                for (int y = 0; y < Bitmap.Height; y++)
-                {
-                    PixelData[x, y] = Bitmap.GetPixel(x, y);
-                }
-            }
+            // for (int x = 0; x < Bitmap.Width; x++)
+            // {
+            //     for (int y = 0; y < Bitmap.Height; y++)
+            //     {
+            //         PixelData[x, y] = Bitmap.GetPixel(x, y);
+            //     }
+            // }
 
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp);
@@ -99,7 +98,7 @@ namespace RobustEngine.Graphics
             //TODO Mipmap + Bump map here maybe?
 
             Unbind();
-            Bitmap.Dispose();
+           // Bitmap.Dispose();
         }
 
         public bool IsOpaqueAt(int x, int y)

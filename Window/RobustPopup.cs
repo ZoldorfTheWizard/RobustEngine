@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using OpenTK;
+﻿using OpenTK;
 using OpenTK.Graphics;
 
 

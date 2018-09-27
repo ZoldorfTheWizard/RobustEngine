@@ -1,20 +1,38 @@
 ﻿using System;
-using System.Drawing;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using SysRectangle = System.Drawing.Rectangle;
 
-namespace RobustEngine.Graphics.Shapes
+namespace RobustEngine.Graphics.Shapes2D
 {
     public class Rect2D : IRenderable2D, ITransformable2D
     {
         #region Class Variables
 
         //Position
-        public float X;
-        public float Y;
-        public float Width;
-        public float Height;
+        public Vector2 Position;
+        public Vector2 Size;
+        public float X 
+        {
+            get { return Position.X; } 
+            set { SetPosition(new Vector2(value, Y)); }
+        }
+        
+        public float Y
+         {
+            get { return Position.Y; } 
+            set { SetPosition(new Vector2(X, value)); }
+        }
+        public float Width
+        {
+            get { return Size.X; } 
+            set { SetPosition(new Vector2(value, Y)); }
+        }
+        public float Height
+        {
+            get { return Size.X; } 
+            set { SetPosition(new Vector2(value, Y)); } 
+        }
+
 
         //BoundingBox
         public float Left => X;
@@ -33,7 +51,7 @@ namespace RobustEngine.Graphics.Shapes
         public Vector2 Origin;
         public Vector2 Scale;
         public float Rotation;
-        public Vector2 Position;
+        public Vector2 Transform;
 
         //Opengl VBO's
         public int VertexArrayID;
@@ -93,7 +111,7 @@ namespace RobustEngine.Graphics.Shapes
         /// <param name="posY">Position Y</param>
         /// <param name="sizeX">Size X.</param>
         /// <param name="sizeY">Size Y</param>
-        public Rect2D(SysRectangle rect)
+        public Rect2D(Rect2D rect)
         {
             Create(rect.X, rect.Y, rect.Width, rect.Height, Color.Maroon);
         }
@@ -108,13 +126,7 @@ namespace RobustEngine.Graphics.Shapes
 
             Matrix = Matrix4.Identity;
 
-            VertexData = new Vertex[]
-            {
-                Vertex.Zero,
-                Vertex.UnitX,
-                Vertex.One,
-                Vertex.UnitY
-            };
+            VertexData = Vertex.DataIdentity;       
 
             SetScale(Vector2.One);
             SetPosition(new Vector2(posX, posY));

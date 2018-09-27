@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
+
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
 
-
 namespace RobustEngine.Graphics
 {
-    public struct Vertex
+    public struct Vertex 
     {
 
         public float X, Y, Z;      // Position
@@ -25,6 +24,8 @@ namespace RobustEngine.Graphics
         public static Vertex UnitY = new Vertex(0, 1);
         public static Vertex One = new Vertex(1, 1);
 
+        public static Vertex[] DataIdentity = new Vertex[]{Vertex.Zero, Vertex.UnitX, Vertex.One, Vertex.UnitY};
+ 
         public static readonly int Stride = 48;
 
         #endregion Readonly

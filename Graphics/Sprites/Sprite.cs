@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using RobustEngine.Graphics.Shapes;
+using RobustEngine.Graphics.Shapes2D;
+using Color = OpenTK.Color;
 
 namespace RobustEngine.Graphics.Sprites
 {
@@ -12,7 +12,7 @@ namespace RobustEngine.Graphics.Sprites
         public string ID;
 
         public Texture2D Texture;
-        public Rectangle AABB;
+        public Rect2D AABB;
         public Rect2D Rect;
 
 

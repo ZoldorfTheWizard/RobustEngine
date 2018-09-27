@@ -1,24 +1,25 @@
-﻿using OpenTK;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using System.Drawing;
 
-namespace RobustEngine.Graphics.Shapes
+namespace RobustEngine.Graphics.Shapes2D
 {
-    public class Line2D : IRenderable2D, ITransformable2D
+    public class Triangle2D : IRenderable2D, ITransformable2D
     {
-        //Line
-        public float X1;
-        public float Y1;
-        public float X2;
-        public float Y2;
+        //
+        public float X;
+        public float Y;
         public float Width;
+        public float Height;
 
         //Points
+        public Vector2 BottomLeft;
+        public Vector2 BottomRight;
+        public Vector2 CenterTop;
         public Vector2 Center; // Centroid
 
         //Transformation
@@ -33,58 +34,81 @@ namespace RobustEngine.Graphics.Shapes
         public int IndexBufferID;
         public int[] Indicies;
 
-        //Line Specific
+        //Tri Specific
         public Color FillColor;
         public Vertex[] VertexData;
         public Matrix4 Matrix;
+        public Debug DebugMode;
 
-
-        public Line2D(int startX, int startY, int endX, int endY, int width = 1)
+        public Triangle2D(int posX, int posY, int width, int height)
         {
-            Create(startX, startY, endX, endY, width, Color.DarkMagenta);
+            Create(posX, posY, width, height, Color.DarkMagenta);
         }
 
-        public Line2D(double startX, double startY, double endX, double endY, double width = 1.0)
+        public Triangle2D(double posX, double posY, double width, double height)
         {
-            Create((float)startX, (float)startY, (float)endX, (float)endY, (float)width, Color.DarkMagenta);
+            Create((float)posX, (float)posY, (float)width, (float)height, Color.DarkMagenta);
         }
 
-        public Line2D(float startX, float startY, float endX, float endY, float width = 1.0f)
+        public Triangle2D(float posX, float posY, float width, float height)
         {
-            Create(startX, startY, endX, endY, width, Color.DarkMagenta);
+            Create(posX, posY, width, height, Color.DarkMagenta);
         }
 
-        private void Create(float x1, float y1, float x2, float y2, float width, Color fillcolor)
-        {
-            X1 = x1;
-            Y1 = y1;
 
-            X2 = x2;
-            Y2 = y2;
+        private void Create(float posX, float posY, float width, float height, Color fillcolor)
+        {
+            X = posX;
+            Y = posY;
+            Width = width;
+            Height = height;
+            FillColor = fillcolor;
 
             Matrix = Matrix4.Identity;
 
             VertexData = new Vertex[]
             {
                 Vertex.Zero,
+                Vertex.UnitX,
                 Vertex.One
             };
 
-            VertexData[1].X *= X2;
-            VertexData[1].Y *= Y2;
-
-            GL.PointSize(5f);
-            GL.LineWidth(width);
-
             SetScale(Vector2.One);
-            SetPosition(new Vector2(X1, Y1));
+            SetPosition(new Vector2(X, Y));
             SetFillColor(fillcolor);
 
-            Center = new Vector2(X2 / 2, Y2 / 2);
+            VertexData[0].X *= Width;
+            VertexData[1].X *= Width;
+            VertexData[2].X *= Width;
+            VertexData[2].Y *= Height;
+
+            BottomLeft = VertexData[0].ToVector2();
+            CenterTop = VertexData[1].ToVector2();
+            BottomRight = VertexData[2].ToVector2();
+
+            float XAverage = 0;
+            float YAverage = 0;
+
+            for (int i = 0; i < VertexData.Length; i++)
+            {
+                XAverage += VertexData[i].X;
+                YAverage += VertexData[i].Y;
+            }
+
+            Center = new Vector2((XAverage / 3), (YAverage / 3));
+
+            VertexData[0].Tx = 0;
+            VertexData[0].Ty = 1;
+
+            VertexData[1].Tx = 1;
+            VertexData[1].Ty = 1;
+
+            VertexData[2].Tx = 1;
+            VertexData[2].Ty = 0;
 
             Indicies = new int[]
             {
-                0, 1
+                0, 1, 2
             };
 
             VertexArrayID = GL.GenVertexArray();
@@ -110,7 +134,7 @@ namespace RobustEngine.Graphics.Shapes
 
             // TextureUVCoords
             GL.VertexAttribPointer(3, 2, VertexAttribPointerType.Float, false, Vertex.Stride, 40);
-            GL.EnableVertexAttribArray(3); // Layout 3 Texture Data
+            GL.EnableVertexAttribArray(3); // Layout 3 Texture Coord Data
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
@@ -120,31 +144,19 @@ namespace RobustEngine.Graphics.Shapes
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
 
             GL.BindVertexArray(0);
+
+
         }
 
-        public void SetFillColor(Color col)
+        public void SetFillColor(Color color)
         {
-            FillColor = col;
+            FillColor = color;
             for (int i = 0; i < VertexData.Length; i++)
             {
                 VertexData[i].SetColor(FillColor);
                 VertexData[i].A = .5f;
             }
         }
-
-        public void SetLineWidth(float width)
-        {
-            Width = width;
-            GL.LineWidth(Width);
-        }
-
-        public void SetPointSize(float size)
-        {
-            GL.PointSize(size);
-        }
-
-
-
 
         #region Transformation
         /// <summary>
@@ -194,15 +206,9 @@ namespace RobustEngine.Graphics.Shapes
             Rotation = MathHelper.DegreesToRadians(newRotation);
             switch (axis)
             {
-                case Axis.X:
-                    Matrix *= Matrix4.CreateRotationX(Rotation);
-                    break;
-                case Axis.Y:
-                    Matrix *= Matrix4.CreateRotationY(Rotation);
-                    break;
-                case Axis.Z:
-                    Matrix *= Matrix4.CreateRotationZ(Rotation);
-                    break;
+                case Axis.X: Matrix *= Matrix4.CreateRotationX(Rotation); break;
+                case Axis.Y: Matrix *= Matrix4.CreateRotationY(Rotation); break;
+                case Axis.Z: Matrix *= Matrix4.CreateRotationZ(Rotation); break;
             }
         }
 
@@ -263,15 +269,21 @@ namespace RobustEngine.Graphics.Shapes
             RobustEngine.CurrentShader.setUniform("ModelMatrix", Matrix);
             RobustEngine.CurrentShader.setUniform("UsingTexture", GL.GetInteger(GetPName.TextureBinding2D));
 
+            switch (DebugMode)
+            {
+                case Debug.Points: GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Point); break;
+                case Debug.Wireframe: GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line); break;
+            }
 
             Bind();
-            GL.DrawElements(PrimitiveType.Lines, 2, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(PrimitiveType.Triangles, 3, DrawElementsType.UnsignedInt, 0);
             Unbind();
 
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
 
             PopMatrix();
         }
+
         #endregion Rendering
     }
 }

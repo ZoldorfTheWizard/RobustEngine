@@ -1,4 +1,7 @@
-﻿using OpenTK;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using RobustEngine.Graphics;
@@ -9,11 +12,8 @@ using RobustEngine.System;
 using RobustEngine.System.Settings;
 using RobustEngine.System.Time;
 using RobustEngine.Window;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using RobustEngine.Graphics.Shapes;
+
+using RobustEngine.Graphics.Shapes2D;
 
 namespace RobustEngine
 {

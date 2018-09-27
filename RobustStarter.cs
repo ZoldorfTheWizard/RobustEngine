@@ -1,5 +1,4 @@
-﻿
-using OpenTK;
+﻿using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using RobustEngine.Graphics;
@@ -8,8 +7,6 @@ using RobustEngine.Graphics.Shaders;
 using RobustEngine.Graphics.Sprites;
 using RobustEngine.System;
 using RobustEngine.Window;
-using System.Drawing;
-
 
 
 namespace RobustEngine
