@@ -1,22 +1,27 @@
 ﻿using System;
-using RobustEngine.Graphics.Shapes2D;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using OpenTK.Graphics.OpenGL;
+using RobustEngine.Graphics.Shapes2D;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Advanced;
+using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using Color = System.Drawing.Color;
 using GLPixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
-
+using SLImage = SixLabors.ImageSharp.Image;
 
 namespace RobustEngine.Graphics
 {
     public class Texture2D
     {
 
-        public int ID;
+        public int ID; 
         public Rect2D AABB;
-
+        public Image<Rgba32>[] Images;
         private int TextureSlot;
-        private Color[,] PixelData;
+        private IntPtr PixelDataMemLoc;
 
         /// <summary>
         /// Constructs a new 2D Texture 
@@ -55,7 +60,7 @@ namespace RobustEngine.Graphics
         /// </summary>
         /// <param name="PIF">Pixel Internal Format</param>
         /// <param name="path">Path.</param>
-        private void Load(string path, PixelInternalFormat PIF)
+        private unsafe void Load(string path, PixelInternalFormat PIF)
         {
             ID = GL.GenTexture();
 
@@ -66,44 +71,44 @@ namespace RobustEngine.Graphics
             // PixelData = new Color[AABB.Width, AABB.Height];
             // BitmapData = Bitmap.LockBits(AABB, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
-            GL.TexImage2D
-            (
-                TextureTarget.Texture2D,
-                0,
-                PIF,
-                1,//AABB.Width,
-                1,//AABB.Height,
-                0,
-                GLPixelFormat.Bgra,
-                PixelType.UnsignedByte,
-                IntPtr.Zero //BitmapData.Scan0
-            );
+            using (Image<Rgba32> img = Image.Load(path))
+            {       
+                var ImgBox = img.Bounds();
 
-            // Bitmap.UnlockBits(BitmapData);
+                AABB = new Rect2D(ImgBox.X, ImgBox.Y, ImgBox.Width, ImgBox.Height);
 
-            // for (int x = 0; x < Bitmap.Width; x++)
-            // {
-            //     for (int y = 0; y < Bitmap.Height; y++)
-            //     {
-            //         PixelData[x, y] = Bitmap.GetPixel(x, y);
-            //     }
-            // }
+                fixed (void* pin = &MemoryMarshal.GetReference(img.GetPixelSpan()))
+                {
+                    PixelDataMemLoc = (IntPtr) pin;             
+                }
 
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp);
+                GL.TexImage2D
+                (
+                    TextureTarget.Texture2D,
+                    0,
+                    PIF,
+                    (int) AABB.Width,
+                    (int) AABB.Height,
+                    0,
+                    GLPixelFormat.Bgra,
+                    PixelType.UnsignedByte,
+                    PixelDataMemLoc
+                );
+            
+            }
+                //TODO Mipmap + Bump map here maybe?
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp);
 
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-
-            //TODO Mipmap + Bump map here maybe?
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
 
             Unbind();
-           // Bitmap.Dispose();
         }
 
-        public bool IsOpaqueAt(int x, int y)
+        public bool IsOpaqueAt(int x, int y, int level = 0)
         {
-            return PixelData[x, y].A != 0;
+            return Images[level].GetPixelRowSpan(y)[x].A == 255 ? true : false ;
         }
 
 
