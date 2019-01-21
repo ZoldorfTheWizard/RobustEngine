@@ -1,4 +1,4 @@
-﻿using OpenTK;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -38,14 +38,11 @@ namespace RobustEngine.Graphics
 
         public void Update()
         {
-            GL.MultMatrix(ref ViewMatrix);
+           RobustEngine.CurrentShader.setUniform("ViewMatrix", ViewMatrix);
         }
 
         public void Setup(int ScreenW, int ScreenH)
         {
-
-      
-
             Matrix4 Transform = Matrix4.Identity;
 
             Transform = Matrix4.Mult(Transform, Matrix4.CreateTranslation(-Position.X, -Position.Y, 0));
@@ -53,7 +50,7 @@ namespace RobustEngine.Graphics
             Transform = Matrix4.Mult(Transform, Matrix4.CreateScale((float)Zoom, (float)Zoom, 0.0f));
             ViewMatrix = Transform;
 
-            GL.MultMatrix(ref Transform);
+            Update();
         }
 
 

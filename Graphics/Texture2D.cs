@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -66,36 +66,30 @@ namespace RobustEngine.Graphics
 
             Bind();
 
-            // Bitmap = new Bitmap(path);
-            // AABB = new Rect2D(0, 0, Bitmap.Width, Bitmap.Height);
-            // PixelData = new Color[AABB.Width, AABB.Height];
-            // BitmapData = Bitmap.LockBits(AABB, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-
+            
             using (Image<Rgba32> img = Image.Load(path))
             {       
                 var ImgBox = img.Bounds();
 
                 AABB = new Rect2D(ImgBox.X, ImgBox.Y, ImgBox.Width, ImgBox.Height);
 
-                fixed (void* pin = &MemoryMarshal.GetReference(img.GetPixelSpan()))
+                fixed (Rgba32* pin = &MemoryMarshal.GetReference(img.GetPixelSpan()))
                 {
-                    PixelDataMemLoc = (IntPtr) pin;             
-                }
-
-                GL.TexImage2D
-                (
-                    TextureTarget.Texture2D,
-                    0,
-                    PIF,
-                    (int) AABB.Width,
-                    (int) AABB.Height,
-                    0,
-                    GLPixelFormat.Bgra,
-                    PixelType.UnsignedByte,
-                    PixelDataMemLoc
-                );
-            
+                    GL.TexImage2D
+                    (   
+                        TextureTarget.Texture2D,
+                        0,
+                        PIF,
+                        (int) AABB.Width,
+                        (int) AABB.Height,
+                        0,
+                        GLPixelFormat.Rgba,
+                        PixelType.UnsignedByte,
+                       (IntPtr) pin
+                    );                 
+                }             
             }
+
                 //TODO Mipmap + Bump map here maybe?
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp);
