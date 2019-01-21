@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 namespace RobustEngine.Graphics.Shapes2D
 {
     public class Point2D

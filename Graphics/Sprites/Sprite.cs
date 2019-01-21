@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using RobustEngine.Graphics.Shapes2D;

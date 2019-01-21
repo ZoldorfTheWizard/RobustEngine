@@ -55,7 +55,10 @@ namespace RobustEngine
         public Clock Timekeeper;
         public SpriteBatch Spritebatch;
         public Texture2D Texture;
+
+        public Rect2D RectTest;
         public Triangle2D TriangleTest;
+        public Triangle2D TriangleTest2;
         public Line2D LineTest;
 
         public Sprite Sprite;
@@ -67,14 +70,14 @@ namespace RobustEngine
 
         public void Init()
         {
-            RobustConsole.ClearConsole();
+           // RobustConsole.ClearConsole();
             RobustConsole.SetLogLevel(LogLevel.Debug);
-            RobustConsole.Write(LogLevel.Debug, "RobustEngine", "Init() Intializing...");
+            RobustConsole.Write(LogLevel.Info, "RobustEngine", "Init() Intializing...");
 
             Timekeeper = new Clock();
             VSettings = new VideoSettings(); //TODO import video settings here
 
-            GameScreen = new GameWindow(800, 800, GraphicsMode.Default, "RobustWando", GameWindowFlags.Default, DisplayDevice.Default, 3, 3, GraphicsContextFlags.Debug);
+            GameScreen = new GameWindow(800, 800, GraphicsMode.Default, "RobustWando", GameWindowFlags.Default, DisplayDevice.Default, 3, 3, GraphicsContextFlags.Default);
 
             //GameScreen = new GameWindow();
             //GameScreen.Size = VSettings.Size;
@@ -86,7 +89,8 @@ namespace RobustEngine
 
             GameScreen.MakeCurrent(); //OPENGL CONTEXT STARTS HERE
 
-            GLINFO += "\n\n------------------------------------------------------------------";
+            GLINFO += "\n\n-------------- OpenGL Initialization Report -----------------------";
+            GLINFO += "\n "; 
             GLINFO += "\n OpenGL Version: " + GL.GetString(StringName.Version);
             GLINFO += "\n Vendor: " + GL.GetString(StringName.Vendor);
             GLINFO += "\n GLSL Version: " + GL.GetString(StringName.ShadingLanguageVersion);
@@ -95,11 +99,13 @@ namespace RobustEngine
             RobustConsole.Write(LogLevel.Info, this, GLINFO);
             GameScreen.RenderFrame += Render;
             GameScreen.UpdateFrame += Update;
-            GL.Enable(EnableCap.Texture2D);
+          
 
-            GL.Enable(EnableCap.Blend);
-            GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
-            GL.ClearColor(0, 0, 0, 0);            //GL.Enable(EnableCap.VertexArray);
+            // GL.Enable(EnableCap.Blend);
+            // GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+            RobustEngine.CheckGLErrors();
+            GL.ClearColor(0, 0, 0, 0);           
+
 
             var ImageTestFile = Path.Combine(Environment.CurrentDirectory, "Graphics", "Shaders", "ImageTest");
 
@@ -108,20 +114,23 @@ namespace RobustEngine
 
             //TESTING
             Texture = new Texture2D("Devtexture_Floor.png");
-            LineTest = new Line2D(0, 0, 0, 0, 1);
+            LineTest = new Line2D(0, 0, 1, 0, 1);
             //LineTest = new Line(0, 0, 1, 1, 1);
 
-            TriangleTest = new Triangle2D(0, 0, 256, 256);
-            Sprite = new Sprite("test", Texture);
-            Sprite.SetPosition(new Vector2(.4f, .4f));
 
-            PlayerView = new View(Vector2.One, 0, 10);
+            RectTest = new Rect2D(0,0,1,1,Color.Red);
+            TriangleTest = new Triangle2D(0, 0, 256, 256);
+            TriangleTest2 = new Triangle2D(0, 0, 256, 256);
+            Sprite = new Sprite("test", Texture);
+            //  Sprite.SetPosition(new Vector2(.4f, .4f));
+
+            PlayerView = new View(Vector2.One, 0, 100);
+            
 
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.ClearColor(Color.DimGray);
-            //  GL.Viewport(0, 0, -1500, -1500);
-
+            //GL.Viewport(0, 0, 800, 800);
 
 
             //Context = new GraphicsContext(GraphicsMode.Default, GameScreen.WindowInfo,4,4,GraphicsContextFlags.Default);
@@ -129,7 +138,7 @@ namespace RobustEngine
             //(Context as IGraphicsContextInternal).LoadAll();
             //GL.Enable(EnableCap.Blend);
 
-            RobustConsole.Write(LogLevel.Debug, "RobustEngine", "Init() Done.");
+            RobustConsole.Write(LogLevel.Info, "RobustEngine", "Init() Done.");
             ReadyToRun = true;
         }
 
@@ -147,75 +156,93 @@ namespace RobustEngine
         public void Update(object Sender, FrameEventArgs E)
         {
             GameScreen.ProcessEvents();
-            // Sprite.Update();
-            mov += .01f;
-
+            mov += .09f;
+            
         }
 
-        float mov = .002f;
+        float mov = .02f;
 
         float scale = 1 / 256f;
 
         int frames;
-        Vector2 scal = new Vector2(1 / 256f, 1 / 256f);
+        Vector2 scal = new Vector2(1f, 1f);
 
         public void Render(object Sender, FrameEventArgs E)
         {
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            //   PlayerView.Setup(800, 800);
-            //   PlayerView.Update();
+          
+           
             //   Spritebatch.Begin();
-
+            PlayerView.Setup(800, 800);
+            PlayerView.Update();
 
             CurrentShader.Enable();
-            // Sprite.Rect.DebugMode = Debug.None;
-            // Sprite.Rect.SetFillColor(Color.Blue);
 
             LineTest.SetFillColor(Color.Red);
-            LineTest.SetOrigin(LineTest.Center);
-            //    LineTest.SetPosition(new Vector2(.10f * x, .10f * y));
-            // LineTest.SetRotation(mov, Axis.Z);
+                        
+            LineTest.SetRotation(mov, Axis.Z);
             LineTest.Update();
             LineTest.Draw();
 
-            //LineTest.SetFillColor(Color.Blue);
-            //LineTest.SetOrigin(LineTest.Center);
-            ////    LineTest.SetPosition(new Vector2(.10f * x, .10f * y));
-            //LineTest.SetRotation(90f, Axis.Z);
-            //LineTest.Update();
-            //LineTest.Draw();
+          //  LineTest.SetFillColor(Color.Red);
+          //  LineTest.SetOrigin(LineTest.Center);
+        //   LineTest.SetScale(new Vector2(.5f,.5f));
+          //  LineTest.SetPosition(new Vector2(.10f , .10f ));
+         //   LineTest.SetRotation(180f, Axis.Z);
+          //  LineTest.Update();
+         //   LineTest.Draw();
 
-            //TriangleTest.SetFillColor(Color.Blue);
-            //TriangleTest.SetOrigin(TriangleTest.BottomLeft);
-            //TriangleTest.SetScale(scal);
-            //TriangleTest.SetRotation(-mov, Axis.Z);
-            //TriangleTest.SetPosition(new Vector2(scale, scale));
-            //TriangleTest.Update();
-            //TriangleTest.Draw();
+        //     TriangleTest.SetFillColor(Color.Blue);
+        //     TriangleTest.DebugMode = Debug.Wireframe;
+        //     //TriangleTest.SetOrigin(TriangleTest.CenterTop);
+        //   //  TriangleTest.SetScale(new Vector2(.1f, .1f));
+        //   //  TriangleTest.SetRotation(-mov, Axis.Z);
+        //     TriangleTest.SetPosition(new Vector2(0.5f, 0.5f));
+        //     TriangleTest.Update();
+        //     TriangleTest.Draw();
+
+            TriangleTest2.SetFillColor(Color.Blue);
+            TriangleTest2.DebugMode = Debug.Wireframe;
+            //TriangleTest.SetOrigin(TriangleTest.CenterTop);
+          //  TriangleTest.SetScale(new Vector2(.1f, .1f));
+          //  TriangleTest.SetRotation(-mov, Axis.Z);
+            TriangleTest2.SetPosition(new Vector2(0.0f, 0.0f));
+            TriangleTest2.Update();
+            TriangleTest2.Draw();
+            
+            // RectTest.SetFillColor(Color.Red);
+            // RectTest.SetScale(new Vector2(.1f, .1f));
+            // RectTest.SetPosition(new Vector2(0f,0f));
+            // RectTest.Update();
+            // RectTest.Draw();
 
 
-            //Sprite.SetOrigin(Sprite.Rect.Center);
-            //Sprite.SetScale(new Vector2(scale, scale)); //+ (.001f * x), scale + (.001f * y)));
-            //Sprite.SetRotation(mov, Axis.Z);
-            //Sprite.SetPosition(new Vector2(scale, scale));
-            //Sprite.Update();
-            //Sprite.Draw();
+            Sprite.SetOrigin(Sprite.Rect.TopRight);
+            Sprite.SetScale(new Vector2(.005f, .005f)); //+ (.001f * x), scale + (.001f * y)));
+            Sprite.SetRotation(mov, Axis.Z);
+           // Sprite.SetPosition(new Vector2(.1f, .1f));
+            Sprite.Update();
+            Sprite.Draw();
 
-            ////    Sprite.SetOrigin(new Vector2(-.5f, -.5f));
+        //     ////    Sprite.SetOrigin(new Vector2(-.5f, -.5f));
             //Sprite.SetScale(new Vector2(scale, scale));
             //Sprite.SetRotation(mov);
             //Sprite.SetPosition(new Vector2(scale * x, -scale * y));
             //Sprite.Update();
             //Sprite.Draw();
 
-            ////   Sprite.SetOrigin(new Vector2(-.5f, -.5f));
-            //Sprite.SetScale(new Vector2(scale, scale));
-            //Sprite.SetRotation(mov);
-            //Sprite.SetPosition(new Vector2(-scale * x, scale * y));
-            //Sprite.Update();
-            //Sprite.Draw();
+          //  Sprite.SetOrigin(new Vector2(-.5f, -.5f));
+          //  Sprite.SetScale(new Vector2(scale, scale));
+         //   Sprite.SetRotation(mov, Axis.Z);
+          //  Sprite.SetPosition(new Vector2(-scale * x, scale * y));
+         //   Sprite.Update();
+           // Sprite.Draw();
+
+          //  Sprite.Rect.Draw();
+
+            
 
             ////  Sprite.Rect.DebugMode = Debug.Wireframe;
             ////    Sprite.SetOrigin(new Vector2(-.5f, -.5f));
@@ -225,8 +252,6 @@ namespace RobustEngine
             //Sprite.Update();
             //Sprite.Draw();
 
-
-            //  Texture.Unbind();
             CurrentShader.Disable();
 
 
