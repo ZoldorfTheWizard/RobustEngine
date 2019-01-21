@@ -11,27 +11,11 @@ namespace RobustEngine.Graphics.Shapes2D
         //Position
         public Vector2 Position;
         public Vector2 Size;
-        public float X 
-        {
-            get { return Position.X; } 
-            set { SetPosition(new Vector2(value, Y)); }
-        }
-        
-        public float Y
-         {
-            get { return Position.Y; } 
-            set { SetPosition(new Vector2(X, value)); }
-        }
-        public float Width
-        {
-            get { return Size.X; } 
-            set { SetPosition(new Vector2(value, Y)); }
-        }
-        public float Height
-        {
-            get { return Size.X; } 
-            set { SetPosition(new Vector2(value, Y)); } 
-        }
+        public float X ;      
+        public float Y;
+        public float Width; 
+        public float Height;
+       
 
 
         //BoundingBox
