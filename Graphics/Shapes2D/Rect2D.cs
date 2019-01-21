@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
@@ -126,7 +126,14 @@ namespace RobustEngine.Graphics.Shapes2D
 
             Matrix = Matrix4.Identity;
 
-            VertexData = Vertex.DataIdentity;       
+            VertexData = new Vertex[]
+            {
+                Vertex.Zero,
+                Vertex.UnitX,
+                Vertex.One,
+                Vertex.UnitY
+            };
+
 
             SetScale(Vector2.One);
             SetPosition(new Vector2(posX, posY));
