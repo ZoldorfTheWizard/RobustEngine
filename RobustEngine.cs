@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using OpenTK;
@@ -86,7 +86,8 @@ namespace RobustEngine
 
             GameScreen.MakeCurrent(); //OPENGL CONTEXT STARTS HERE
 
-            GLINFO += "\n\n------------------------------------------------------------------";
+            GLINFO += "\n\n-------------- OpenGL Initialization Report -----------------------";
+            GLINFO += "\n "; 
             GLINFO += "\n OpenGL Version: " + GL.GetString(StringName.Version);
             GLINFO += "\n Vendor: " + GL.GetString(StringName.Vendor);
             GLINFO += "\n GLSL Version: " + GL.GetString(StringName.ShadingLanguageVersion);
