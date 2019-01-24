@@ -53,7 +53,25 @@ namespace RobustEngine.Graphics
             Update();
         }
 
+        public void ScaleTo(Vector2 Scale)
+        {          
+            ViewMatrix *= Matrix4.CreateScale((float)Zoom, (float)Zoom, 0.0f);
+            Update();
+        }
 
+        public void RotateTo(float rot)
+        {          
+            ViewMatrix *= Matrix4.CreateRotationZ((float) -rot);
+            Update();
+        }
+
+        public void TranslateTo(Vector2 pos)
+        {          
+            ViewMatrix *= Matrix4.CreateTranslation(-pos.X, -pos.Y, 0);
+            Update();
+        }
+
+    
 
 
     }

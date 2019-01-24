@@ -24,12 +24,6 @@ namespace RobustEngine
         public string GLINFO;
 
 
-
-
-        //Add this to Atmos Engine.
-        public delegate void OnAtmosUpdate();
-
-
         //Rendering
         public Dictionary<string, NativeWindow> Windows;
 
@@ -124,13 +118,12 @@ namespace RobustEngine
             Sprite = new Sprite("test", Texture);
             //  Sprite.SetPosition(new Vector2(.4f, .4f));
 
-            PlayerView = new View(Vector2.One, 0, 100);
-            
+            PlayerView = new View(Vector2.Zero, 0, 100);            
 
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.ClearColor(Color.DimGray);
-            //GL.Viewport(0, 0, 800, 800);
+           // GL.Viewport(0, 0, 800, 800);
 
 
             //Context = new GraphicsContext(GraphicsMode.Default, GameScreen.WindowInfo,4,4,GraphicsContextFlags.Default);
@@ -156,11 +149,12 @@ namespace RobustEngine
         public void Update(object Sender, FrameEventArgs E)
         {
             GameScreen.ProcessEvents();
-            mov += .09f;
+            mov -= .01f;
+          
             
         }
 
-        float mov = .02f;
+        float mov = .01f;
 
         float scale = 1 / 256f;
 
@@ -171,15 +165,18 @@ namespace RobustEngine
         {
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
-
-          
+        
            
             //   Spritebatch.Begin();
-            PlayerView.Setup(800, 800);
-            PlayerView.Update();
-
+          
             CurrentShader.Enable();
-
+            PlayerView.Setup(1600, 1600);
+            PlayerView.Update();
+          //  PlayerView.RotateTo(.25f);
+            
+            
+            
+            
             LineTest.SetFillColor(Color.Red);
                         
             LineTest.SetRotation(mov, Axis.Z);
@@ -208,7 +205,7 @@ namespace RobustEngine
             //TriangleTest.SetOrigin(TriangleTest.CenterTop);
           //  TriangleTest.SetScale(new Vector2(.1f, .1f));
           //  TriangleTest.SetRotation(-mov, Axis.Z);
-            TriangleTest2.SetPosition(new Vector2(0.0f, 0.0f));
+            TriangleTest2.SetPosition(new Vector2(0.0f + mov, 0.0f+mov));
             TriangleTest2.Update();
             TriangleTest2.Draw();
             
@@ -220,8 +217,8 @@ namespace RobustEngine
 
 
             Sprite.SetOrigin(Sprite.Rect.TopRight);
-            Sprite.SetScale(new Vector2(.005f, .005f)); //+ (.001f * x), scale + (.001f * y)));
-            Sprite.SetRotation(mov, Axis.Z);
+         //   Sprite.SetScale(new Vector2(.005f, .005f)); //+ (.001f * x), scale + (.001f * y)));
+          //  Sprite.SetRotation(mov, Axis.Z);
            // Sprite.SetPosition(new Vector2(.1f, .1f));
             Sprite.Update();
             Sprite.Draw();

@@ -27,14 +27,12 @@ namespace RobustEngine.Graphics.Shapes2D
         public Vector2 Position;
 
         //Buffers
-        public int VertexArrayID;
-        public int VertexBufferID;
-        public int IndexBufferID;
-        public int[] Indicies;
+        public GLBuffers Buffers;
 
         //Line Specific
         public Color FillColor;
         public Vertex[] VertexData;
+        public int[] Indicies;
         public Matrix4 Matrix;
 
 
@@ -68,6 +66,11 @@ namespace RobustEngine.Graphics.Shapes2D
                 Vertex.Zero,
                 Vertex.One
             };
+            
+            Indicies = new int[]
+            {
+                0, 1
+            };
 
             VertexData[1].X *= X2;
             VertexData[1].Y *= Y2;
@@ -79,46 +82,9 @@ namespace RobustEngine.Graphics.Shapes2D
             SetPosition(new Vector2(X1, Y1));
             SetFillColor(fillcolor);
 
-            Center = new Vector2(X2 / 2, Y2 / 2);
-
-            Indicies = new int[]
-            {
-                0, 1
-            };
-
-            VertexArrayID = GL.GenVertexArray();
-            GL.BindVertexArray(VertexArrayID);
-
-            VertexBufferID = GL.GenBuffer();
-            IndexBufferID = GL.GenBuffer();
-
-            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferID);
-            GL.BufferData(BufferTarget.ArrayBuffer, VertexData.Length, IntPtr.Zero, BufferUsageHint.DynamicDraw);
-
-            // Vertex Data
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, Vertex.Stride, 0);
-            GL.EnableVertexAttribArray(0); // Layout 0 Position
-
-            // Color Data
-            GL.VertexAttribPointer(1, 4, VertexAttribPointerType.Float, false, Vertex.Stride, 12);
-            GL.EnableVertexAttribArray(1); // Layout 1 Color Data
-
-            // Normal Data
-            GL.VertexAttribPointer(2, 3, VertexAttribPointerType.Float, false, Vertex.Stride, 28);
-            GL.EnableVertexAttribArray(2); // Layout 2 Normal Data
-
-            // TextureUVCoords
-            GL.VertexAttribPointer(3, 2, VertexAttribPointerType.Float, false, Vertex.Stride, 40);
-            GL.EnableVertexAttribArray(3); // Layout 3 Texture Data
-
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-
-            //INDEX DATA
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, IndexBufferID);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(Indicies.Length * sizeof(float)), Indicies, BufferUsageHint.DynamicDraw);
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-
-            GL.BindVertexArray(0);
+            Center = new Vector2(X2 / 2, Y2 / 2);           
+            Buffers = new GLBuffers();
+            Buffers.Init(VertexData, Indicies);
         }
 
         public void SetFillColor(Color col)
@@ -219,39 +185,9 @@ namespace RobustEngine.Graphics.Shapes2D
 
         #region Rendering
 
-        public void Bind()
-        {
-            BindVertexArray();
-            BindIndexBuffer();
-        }
-
-        internal void BindVertexArray()
-        {
-            GL.BindVertexArray(VertexArrayID);
-        }
-
-        internal void BindVertexBuffer()
-        {
-            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferID);
-        }
-
-        internal void BindIndexBuffer()
-        {
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, IndexBufferID);
-        }
-
-        public void Unbind()
-        {
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-            GL.BindVertexArray(0);
-        }
-
         public void Update()
         {
-            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferID);
-            GL.BufferData(BufferTarget.ArrayBuffer, VertexData.Length * Vertex.Stride, VertexData, BufferUsageHint.DynamicDraw);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+           Buffers.UpdateElementBuffer(VertexData);
         }
 
         /// <summary>
@@ -263,9 +199,13 @@ namespace RobustEngine.Graphics.Shapes2D
             RobustEngine.CurrentShader.setUniform("UsingTexture", GL.GetInteger(GetPName.TextureBinding2D));
 
 
-            Bind();
+            Buffers.BindVertexArray();
+            Buffers.BindIndexBuffer();
+
             GL.DrawElements(PrimitiveType.Lines, 2, DrawElementsType.UnsignedInt, 0);
-            Unbind();
+            
+            Buffers.UnbindIndexBuffer();
+            Buffers.UnbindVertexArray();
 
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
 

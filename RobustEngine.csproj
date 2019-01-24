@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="opentk.netcore" Version="1.1.2749.6433" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0005" />
+    <PackageReference Include="xunit" Version="2.4.1" />
   </ItemGroup>
 
 </Project>
