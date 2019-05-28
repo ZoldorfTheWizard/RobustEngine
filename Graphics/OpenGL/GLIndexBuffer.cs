@@ -15,14 +15,14 @@ namespace RobustEngine.Graphics.OpenGL
         public void Init(int[] Indicies)
         {
             Bind();
-            GL.BufferData(GLBufferTarget, (IntPtr)(Indicies.Length * sizeof(float)), Indicies, GLBufferUsageHint);
+            GL.BufferData(GLBufferTarget, Indicies.Length * sizeof(float), Indicies, GLBufferUsageHint);
             Unbind();
         }
 
         public void Update(int[] Indicies)
         {
             Bind();
-            GL.BufferData(GLBufferTarget, (IntPtr)(Indicies.Length * sizeof(float)), Indicies, GLBufferUsageHint);
+            GL.BufferData(GLBufferTarget, Indicies.Length * sizeof(float), Indicies, GLBufferUsageHint);          
             Unbind();
         }
 
@@ -30,7 +30,7 @@ namespace RobustEngine.Graphics.OpenGL
         {
             BufferHint = UH;
             Bind();
-            GL.BufferData(GLBufferTarget, (IntPtr)(Indicies.Length * sizeof(float)), Indicies, GLBufferUsageHint);
+            GL.BufferData(GLBufferTarget,Indicies.Length * sizeof(float), Indicies, GLBufferUsageHint);
             Unbind();
         }
     }

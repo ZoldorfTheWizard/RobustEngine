@@ -15,9 +15,9 @@ namespace RobustEngine.Graphics.OpenGL
         public void Init(Vertex[] VertexData)
         {               
             Bind();
-            // Tell Opengl to create an empty sized buffer
-            GL.BufferData(GLBufferTarget, VertexData.Length, IntPtr.Zero, GLBufferUsageHint);
-            // Vertex Data
+            GL.BufferData(GLBufferTarget, VertexData.Length * Vertex.Stride, VertexData, GLBufferUsageHint);
+                       // Vertex Data
+            //TODO MOVE THIS INTO VAO OBJECT.
             GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, Vertex.Stride, 0);
             GL.EnableVertexAttribArray(0); // Layout 0 Position
             // Color Data
@@ -29,6 +29,7 @@ namespace RobustEngine.Graphics.OpenGL
             // TextureUVCoords
             GL.VertexAttribPointer(3, 2, VertexAttribPointerType.Float, false, Vertex.Stride, 40);
             GL.EnableVertexAttribArray(3); // Layout 3 Texture Data
+
             Unbind();
         }  
 

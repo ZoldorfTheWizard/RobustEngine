@@ -41,7 +41,7 @@ namespace RobustEngine
 
         public int Frame;
         public int FrameTime;
-
+       public int VAOID;
         private bool ReadyToRun;
 
 
@@ -107,7 +107,7 @@ namespace RobustEngine
 
             var ImageTestFile = Path.Combine(Environment.CurrentDirectory, "Graphics", "Shaders", "ImageTest");
 
-            CurrentShader = new Shader(ImageTestFile + ".vert", ImageTestFile + ".frag");
+           
 
 
             //TESTING
@@ -116,17 +116,24 @@ namespace RobustEngine
             //LineTest = new Line(0, 0, 1, 1, 1);
 
 
-            RectTest = new Rect2D(0,0,512,512);
+            RectTest = new Rect2D(0,0,1,1);
             RectTest.FillColor=Color.Red;
            // RectTest.SetFillColor(Color.Red);
           //  RectTest.SetScale(new Vector2(.1f, .1f));
        //     RectTest.SetPosition(new Vector2(0f,0f));
           //  RectTest.Update();
 
-
+           
+            CurrentShader = new Shader(ImageTestFile + ".vert", ImageTestFile + ".frag");
             VBUFF = new GLVertexBuffer(UsageHint.Dynamic | UsageHint.Write);
             IBUFF = new GLIndexBuffer(UsageHint.Dynamic | UsageHint.Write);
+            VAOID = GL.GenVertexArray();
+            GL.BindVertexArray(VAOID);  
+            VBUFF.Init(RectTest.VertexData);
+            IBUFF.Init(RectTest.Indicies);
+            GL.BindVertexArray(0);
 
+            RectTest.DebugMode = Debug.Wireframe;
             
 
             
@@ -134,10 +141,6 @@ namespace RobustEngine
 
 
           //  PlayerView = new View(Vector2.Zero, 0, 100);            
-
-
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            GL.ClearColor(Color.DimGray);
            // GL.Viewport(0, 0, 800, 800);
 
 
@@ -165,8 +168,7 @@ namespace RobustEngine
         {
             GameScreen.ProcessEvents();
             mov -= .01f;
-            VBUFF.Update(RectTest.VertexData);
-            IBUFF.Update(RectTest.Indicies);
+         
             
         }
 
@@ -236,13 +238,13 @@ namespace RobustEngine
                 case Debug.Wireframe: GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line); break;
                 default : break;
             }
-
-            VBUFF.Bind();
+ GL.BindVertexArray(VAOID);
+      //      VBUFF.Bind();
             IBUFF.Bind();
             GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);
-            VBUFF.Unbind();
+         //   VBUFF.Unbind();
             IBUFF.Unbind();
-
+ GL.BindVertexArray(0);
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
             RectTest.PopMatrix();
 
