@@ -1,108 +1,46 @@
+using System.IO;
 using System;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using OpenTK.Graphics.OpenGL;
-using RobustEngine.Graphics.Shapes2D;
+using RobustEngine.Graphics.OpenGL;
+using Color = System.Drawing.Color;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using Color = System.Drawing.Color;
-using GLPixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
-using SLImage = SixLabors.ImageSharp.Image;
-
 namespace RobustEngine.Graphics
-{
-    public class Texture2D
+{  
+
+
+    public class Texture2D 
     {
 
-        public int ID; 
-        public Rect2D AABB;
-        public Image<Rgba32>[] Images;
-        private int TextureSlot;
-        private IntPtr PixelDataMemLoc;
+        private GLTexture texture;
 
         /// <summary>
         /// Constructs a new 2D Texture 
         /// </summary>
         /// <param name="path">Path to texture.</param>
         /// <param name="PIF">Pixel format. Default is RGBA.</param>
-        public Texture2D(string path, PixelInternalFormat PIF = PixelInternalFormat.Rgba)
+        public Texture2D()
+        {     
+            texture = new GLTexture(TextureTarget.Texture2D);
+        }            
+
+        public void Load(string path, int slot = 0, InternalFormat Tf = InternalFormat.RGBA)
         {
-            Load(path, PIF);
-        }
-
-        /// <summary>
-        /// Bind Texture.   
-        /// </summary>
-        /// <returns>The bind.</returns>
-        /// <optional name="TextureUnit">Specify which TextureUnit you want to bind to. 0-16.</optional>
-        public void Bind(int TexUnit = 0)
-        {
-            TextureSlot = TexUnit;
-            GL.ActiveTexture(TextureUnit.Texture0 + TextureSlot);
-            GL.BindTexture(TextureTarget.Texture2D, ID);
-        }
-
-        /// <summary>
-        /// Unbind Texture
-        /// </summary>
-        public void Unbind()
-        {
-            GL.ActiveTexture(TextureUnit.Texture0 + TextureSlot);
-            GL.BindTexture(TextureTarget.Texture2D, 0);
-        }
-
-
-        /// <summary>
-        /// Loads Textures into OpenGL Using Bitmaps. Supports PNG and JPG.
-        /// </summary>
-        /// <param name="PIF">Pixel Internal Format</param>
-        /// <param name="path">Path.</param>
-        private unsafe void Load(string path, PixelInternalFormat PIF)
-        {
-            ID = GL.GenTexture();
-
-            Bind();
-
-            
-            using (Image<Rgba32> img = Image.Load(path))
-            {       
-                var ImgBox = img.Bounds();
-
-                AABB = new Rect2D(ImgBox.X, ImgBox.Y, ImgBox.Width, ImgBox.Height);
-
-                fixed (Rgba32* pin = &MemoryMarshal.GetReference(img.GetPixelSpan()))
+            using( FileStream strem = File.Open(path, FileMode.Open))
+            {
+                using (Image<Rgba32> image = Image.Load(strem))
                 {
-                    GL.TexImage2D
-                    (   
-                        TextureTarget.Texture2D,
-                        0,
-                        PIF,
-                        (int) AABB.Width,
-                        (int) AABB.Height,
-                        0,
-                        GLPixelFormat.Rgba,
-                        PixelType.UnsignedByte,
-                       (IntPtr) pin
-                    );                 
-                }             
+                    texture.Load(image, 0, InternalFormat.RGBA);
+                }
             }
 
-                //TODO Mipmap + Bump map here maybe?
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp);
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp);
-
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-
-            Unbind();
         }
 
         public bool IsOpaqueAt(int x, int y, int level = 0)
         {
-            return Images[level].GetPixelRowSpan(y)[x].A == 255 ? true : false ;
+           // return Images[level].GetPixelRowSpan(y)[x].A == 255 ? true : false ;
+           return false;
         }
 
 

@@ -12,7 +12,8 @@ using RobustEngine.System;
 using RobustEngine.System.Settings;
 using RobustEngine.System.Time;
 using RobustEngine.Window;
-
+using RobustEngine.Graphics.OpenGL;
+using RobustEngine.Graphics.Interfaces;
 using RobustEngine.Graphics.Shapes2D;
 
 namespace RobustEngine
@@ -54,6 +55,9 @@ namespace RobustEngine
         public Triangle2D TriangleTest;
         public Triangle2D TriangleTest2;
         public Line2D LineTest;
+
+        public GLVertexBuffer VBUFF;
+        public GLIndexBuffer IBUFF;
 
         public Sprite Sprite;
 
@@ -107,18 +111,29 @@ namespace RobustEngine
 
 
             //TESTING
-            Texture = new Texture2D("Devtexture_Floor.png");
-            LineTest = new Line2D(0, 0, 1, 0, 1);
+         //   Texture = new Texture2D("Devtexture_Floor.png");
+          //  LineTest = new Line2D(0, 0, 1, 0, 1);
             //LineTest = new Line(0, 0, 1, 1, 1);
 
 
-            RectTest = new Rect2D(0,0,1,1,Color.Red);
-            TriangleTest = new Triangle2D(0, 0, 256, 256);
-            TriangleTest2 = new Triangle2D(0, 0, 256, 256);
-            Sprite = new Sprite("test", Texture);
-            //  Sprite.SetPosition(new Vector2(.4f, .4f));
+            RectTest = new Rect2D(0,0,512,512);
+            RectTest.FillColor=Color.Red;
+           // RectTest.SetFillColor(Color.Red);
+          //  RectTest.SetScale(new Vector2(.1f, .1f));
+       //     RectTest.SetPosition(new Vector2(0f,0f));
+          //  RectTest.Update();
 
-            PlayerView = new View(Vector2.Zero, 0, 100);            
+
+            VBUFF = new GLVertexBuffer(UsageHint.Dynamic | UsageHint.Write);
+            IBUFF = new GLIndexBuffer(UsageHint.Dynamic | UsageHint.Write);
+
+            
+
+            
+
+
+
+          //  PlayerView = new View(Vector2.Zero, 0, 100);            
 
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -150,7 +165,8 @@ namespace RobustEngine
         {
             GameScreen.ProcessEvents();
             mov -= .01f;
-          
+            VBUFF.Update(RectTest.VertexData);
+            IBUFF.Update(RectTest.Indicies);
             
         }
 
@@ -170,84 +186,73 @@ namespace RobustEngine
             //   Spritebatch.Begin();
           
             CurrentShader.Enable();
-            PlayerView.Setup(1600, 1600);
-            PlayerView.Update();
+            //PlayerView.Setup(1600, 1600);
+           // PlayerView.Update();
           //  PlayerView.RotateTo(.25f);
             
             
             
             
-            LineTest.SetFillColor(Color.Red);
+            /* LineTest.SetFillColor(Color.Red);
                         
             LineTest.SetRotation(mov, Axis.Z);
             LineTest.Update();
             LineTest.Draw();
 
-          //  LineTest.SetFillColor(Color.Red);
-          //  LineTest.SetOrigin(LineTest.Center);
-        //   LineTest.SetScale(new Vector2(.5f,.5f));
-          //  LineTest.SetPosition(new Vector2(.10f , .10f ));
-         //   LineTest.SetRotation(180f, Axis.Z);
-          //  LineTest.Update();
-         //   LineTest.Draw();
+            LineTest.SetFillColor(Color.Red);
+            LineTest.SetOrigin(LineTest.Center);
+            LineTest.SetScale(new Vector2(.5f,.5f));
+            LineTest.SetPosition(new Vector2(.10f , .10f ));
+            LineTest.SetRotation(180f, Axis.Z);
+            LineTest.Update();
+            LineTest.Draw();
 
-        //     TriangleTest.SetFillColor(Color.Blue);
-        //     TriangleTest.DebugMode = Debug.Wireframe;
-        //     //TriangleTest.SetOrigin(TriangleTest.CenterTop);
-        //   //  TriangleTest.SetScale(new Vector2(.1f, .1f));
-        //   //  TriangleTest.SetRotation(-mov, Axis.Z);
-        //     TriangleTest.SetPosition(new Vector2(0.5f, 0.5f));
-        //     TriangleTest.Update();
-        //     TriangleTest.Draw();
+            TriangleTest.SetFillColor(Color.Blue);
+            TriangleTest.DebugMode = Debug.Wireframe;
+            TriangleTest.SetOrigin(TriangleTest.CenterTop);
+            TriangleTest.SetScale(new Vector2(.1f, .1f));
+            TriangleTest.SetRotation(-mov, Axis.Z);
+            TriangleTest.SetPosition(new Vector2(0.5f, 0.5f));
+            TriangleTest.Update();
+            TriangleTest.Draw();
 
             TriangleTest2.SetFillColor(Color.Blue);
             TriangleTest2.DebugMode = Debug.Wireframe;
-            //TriangleTest.SetOrigin(TriangleTest.CenterTop);
-          //  TriangleTest.SetScale(new Vector2(.1f, .1f));
-          //  TriangleTest.SetRotation(-mov, Axis.Z);
+            TriangleTest.SetOrigin(TriangleTest.CenterTop);
+            TriangleTest.SetScale(new Vector2(.1f, .1f));
+            TriangleTest.SetRotation(-mov, Axis.Z);
             TriangleTest2.SetPosition(new Vector2(0.0f + mov, 0.0f+mov));
             TriangleTest2.Update();
-            TriangleTest2.Draw();
+            TriangleTest2.Draw(); */
             
-            // RectTest.SetFillColor(Color.Red);
-            // RectTest.SetScale(new Vector2(.1f, .1f));
-            // RectTest.SetPosition(new Vector2(0f,0f));
-            // RectTest.Update();
-            // RectTest.Draw();
+           
+             
+            RobustEngine.CurrentShader.setUniform("ModelMatrix", RectTest.ModelMatrix);
+            RobustEngine.CurrentShader.setUniform("UsingTexture", GL.GetInteger(GetPName.TextureBinding2D));
 
+            switch (RectTest.DebugMode)
+            {
+                case Debug.Points: GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Point); break;
+                case Debug.Wireframe: GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line); break;
+                default : break;
+            }
 
+            VBUFF.Bind();
+            IBUFF.Bind();
+            GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);
+            VBUFF.Unbind();
+            IBUFF.Unbind();
+
+            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+            RectTest.PopMatrix();
+
+/* 
             Sprite.SetOrigin(Sprite.Rect.TopRight);
-         //   Sprite.SetScale(new Vector2(.005f, .005f)); //+ (.001f * x), scale + (.001f * y)));
-          //  Sprite.SetRotation(mov, Axis.Z);
-           // Sprite.SetPosition(new Vector2(.1f, .1f));
+            Sprite.SetScale(new Vector2(.005f, .005f)); //+ (.001f * x), scale + (.001f * y)));
+            Sprite.SetRotation(mov, Axis.Z);
+            Sprite.SetPosition(new Vector2(.1f, .1f));
             Sprite.Update();
-            Sprite.Draw();
-
-        //     ////    Sprite.SetOrigin(new Vector2(-.5f, -.5f));
-            //Sprite.SetScale(new Vector2(scale, scale));
-            //Sprite.SetRotation(mov);
-            //Sprite.SetPosition(new Vector2(scale * x, -scale * y));
-            //Sprite.Update();
-            //Sprite.Draw();
-
-          //  Sprite.SetOrigin(new Vector2(-.5f, -.5f));
-          //  Sprite.SetScale(new Vector2(scale, scale));
-         //   Sprite.SetRotation(mov, Axis.Z);
-          //  Sprite.SetPosition(new Vector2(-scale * x, scale * y));
-         //   Sprite.Update();
-           // Sprite.Draw();
-
-          //  Sprite.Rect.Draw();
-
-            
-
-            ////  Sprite.Rect.DebugMode = Debug.Wireframe;
-            ////    Sprite.SetOrigin(new Vector2(-.5f, -.5f));
-            //Sprite.SetScale(new Vector2(scale, scale)); ;
-            //Sprite.SetRotation(mov);
-            //Sprite.SetPosition(new Vector2(scale * x, scale * y));
-            //Sprite.Update();
-            //Sprite.Draw();
+            Sprite.Draw(); */
 
             CurrentShader.Disable();
 
@@ -265,6 +270,26 @@ namespace RobustEngine
             }
             // RobustConsole.Write(LogLevel.Debug, "RobustEngine", "Render() MS " + Timekeeper.GetTime().Milliseconds.ToString());
         }
+
+
+       /*  public void Draw(IShape2D Shape)
+        {
+            RobustEngine.CurrentShader.setUniform("ModelMatrix", Shape.ModelMatrix);
+            RobustEngine.CurrentShader.setUniform("UsingTexture", GL.GetInteger(GetPName.TextureBinding2D));
+
+            switch (Debug.None)
+            {
+                case Debug.Points: GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Point); break;
+                case Debug.Wireframe: GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line); break;
+            }
+//
+  //          Bind();
+            GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);
+    //        Unbind();
+
+            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+            //popmatrix;
+        } */
 
         public void Stop()
         {

@@ -6,10 +6,10 @@ using Color = OpenTK.Color;
 
 namespace RobustEngine.Graphics.Sprites
 {
-    public class Sprite : IRenderable2D, ITransformable2D
+    public class Sprite  //IRenderable2D, ITransformable2D
     {
 
-        public string ID;
+        /* public string ID;
 
         public Texture2D Texture;
         public Rect2D AABB;
@@ -112,7 +112,7 @@ namespace RobustEngine.Graphics.Sprites
             Texture.Bind();
             Rect.Draw();
             Texture.Unbind();
-        }
+        } */
 
     }
 }

@@ -9,7 +9,7 @@ namespace RobustEngine.Graphics.Sprites
 {
     public class AnimatedSprite
     {
-        public string Key;
+      /*     public string Key;
         public bool  IsLooping;
         public int   FPS;
         public int   CurrentFrame;
@@ -78,7 +78,7 @@ namespace RobustEngine.Graphics.Sprites
         {
             CurrentDirection = dir;
         }
-
+ */
 
 
     }
