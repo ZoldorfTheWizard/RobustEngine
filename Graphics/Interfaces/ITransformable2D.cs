@@ -9,7 +9,7 @@ namespace RobustEngine.Graphics
         Vector2 Position {get; set;}
         Vector2 Scale    {get; set;}
         Vector2 Size     {get; set;}
-        Vector2 Rotation {get; set;}
+        Vector3 Rotation {get; set;}
 
                
         /// <summary>
@@ -28,7 +28,7 @@ namespace RobustEngine.Graphics
         /// Sets the rotation of the model. 
         /// </summary>
         /// <param name="newRotation"> Degrees to rotate by per axis</param>
-        void SetRotation(Vector2 rotation);
+        void SetRotation(Vector3 rotation);
  
         /// <summary>
         /// Sets the scale of the model

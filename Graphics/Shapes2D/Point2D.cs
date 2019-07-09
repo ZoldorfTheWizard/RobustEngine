@@ -1,4 +1,3 @@
-using System;
 using RobustEngine.Graphics.OpenGL;
 using OpenTK;
 

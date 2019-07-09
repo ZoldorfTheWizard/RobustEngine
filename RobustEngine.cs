@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
@@ -31,7 +32,7 @@ namespace RobustEngine
         public RenderTarget[] Rendertargets; // This may be unused due to Multiple Windows.
         public GameWindow GameScreen;
         public GameWindow AltScreens; // All other non gamescreen windows
-        public static Shader CurrentShader;
+        public static Shader CurrentShader; public static Shader CurrentShader2;
         public GraphicsContext Context;
         public DisplayDevice SelectedMonitor;
 
@@ -42,6 +43,8 @@ namespace RobustEngine
         public int Frame;
         public int FrameTime;
        public int VAOID;
+       public int VAOID2;
+       public int[] intdata;
         private bool ReadyToRun;
 
 
@@ -52,9 +55,13 @@ namespace RobustEngine
         public Texture2D Texture;
 
         public Rect2D RectTest;
+        public Rect2D RectTest2;
+        public Vertex VertTest0,VertTest1,VertTest2,VertTest3;
+        public Vertex[] vertdata;
         public Triangle2D TriangleTest;
         public Triangle2D TriangleTest2;
         public Line2D LineTest;
+        public Shape2DBatch Shape2DBatchTest;
 
         public GLVertexBuffer VBUFF;
         public GLIndexBuffer IBUFF;
@@ -76,6 +83,7 @@ namespace RobustEngine
             VSettings = new VideoSettings(); //TODO import video settings here
 
             GameScreen = new GameWindow(800, 800, GraphicsMode.Default, "RobustWando", GameWindowFlags.Default, DisplayDevice.Default, 3, 3, GraphicsContextFlags.Default);
+            AltScreens = new GameWindow(800, 800, GraphicsMode.Default, "RobustWando2", GameWindowFlags.Default, DisplayDevice.Default, 3, 3, GraphicsContextFlags.Default);
 
             //GameScreen = new GameWindow();
             //GameScreen.Size = VSettings.Size;
@@ -84,8 +92,10 @@ namespace RobustEngine
             //GameScreen.Visible = true;
 
             // GameScreen.VSync = VSyncMode.Off;
-
+            AltScreens.MakeCurrent();
             GameScreen.MakeCurrent(); //OPENGL CONTEXT STARTS HERE
+            AltScreens.Visible=true;
+
 
             GLINFO += "\n\n-------------- OpenGL Initialization Report -----------------------";
             GLINFO += "\n "; 
@@ -97,6 +107,9 @@ namespace RobustEngine
             RobustConsole.Write(LogLevel.Info, this, GLINFO);
             GameScreen.RenderFrame += Render;
             GameScreen.UpdateFrame += Update;
+            AltScreens.RenderFrame += Render;
+            AltScreens.UpdateFrame += Update;
+          
           
 
             // GL.Enable(EnableCap.Blend);
@@ -104,44 +117,59 @@ namespace RobustEngine
             RobustEngine.CheckGLErrors();
             GL.ClearColor(0, 0, 0, 0);           
 
-
             var ImageTestFile = Path.Combine(Environment.CurrentDirectory, "Graphics", "Shaders", "ImageTest");
 
+            RectTest = new Rect2D();
            
+            RectTest.SetOrigin(RectTest.Center);  
+            //RectTest.SetRotation(new Vector3(0,0,45));
+            //RectTest.SetFillColor(Color.DarkBlue);
+            AltScreens.MakeCurrent();
 
-
-            //TESTING
-         //   Texture = new Texture2D("Devtexture_Floor.png");
-          //  LineTest = new Line2D(0, 0, 1, 0, 1);
-            //LineTest = new Line(0, 0, 1, 1, 1);
-
-
-            RectTest = new Rect2D(0,0,1,1);
-            RectTest.FillColor=Color.Red;
-           // RectTest.SetFillColor(Color.Red);
-          //  RectTest.SetScale(new Vector2(.1f, .1f));
-       //     RectTest.SetPosition(new Vector2(0f,0f));
-          //  RectTest.Update();
-
-           
-            CurrentShader = new Shader(ImageTestFile + ".vert", ImageTestFile + ".frag");
             VBUFF = new GLVertexBuffer(UsageHint.Dynamic | UsageHint.Write);
             IBUFF = new GLIndexBuffer(UsageHint.Dynamic | UsageHint.Write);
-            VAOID = GL.GenVertexArray();
+
+            VAOID = GL.GenVertexArray();    
             GL.BindVertexArray(VAOID);  
-            VBUFF.Init(RectTest.VertexData);
-            IBUFF.Init(RectTest.Indicies);
+            VBUFF.Init();
+            IBUFF.Init();            
+            CurrentShader = new Shader(ImageTestFile + ".vert", ImageTestFile + ".frag");
             GL.BindVertexArray(0);
 
-            RectTest.DebugMode = Debug.Wireframe;
+            VBUFF.Update(RectTest.VertexData);
+            IBUFF.Update(RectTest.Indicies);
             
+            GameScreen.MakeCurrent();
+            Shape2DBatchTest = new Shape2DBatch("test", 800,800);
+            VAOID2 = GL.GenVertexArray(); 
+            GL.BindVertexArray(VAOID2);  
+            Shape2DBatchTest.Setup();
+            CurrentShader2 = new Shader(ImageTestFile + ".vert", ImageTestFile + ".frag");         
+            GL.BindVertexArray(0);
 
+            int b = 10;
+            Vector3 rot = new Vector3(0,0,45);
+            for(int ix=0; ix < b; ix++)            
+            {   
+                for(int iy=0; iy < b; iy++)
+                {                  
+                   Vector2 pos = new Vector2((((float)ix/b)-0.5f),((float)iy/b)-.5f);
+                    RectTest2 = new Rect2D(0,0,.1f,.1f);   
+                    RectTest2.SetRotation(rot);
+                    RectTest2.SetPosition(pos);
+                    Shape2DBatchTest.Queue(RectTest2);
+                }
+            }
             
+            Timekeeper.Start();
+            Shape2DBatchTest.Process(); 
+            Timekeeper.Stop();
 
-
-
-          //  PlayerView = new View(Vector2.Zero, 0, 100);            
-           // GL.Viewport(0, 0, 800, 800);
+            Console.WriteLine(Shape2DBatchTest.BatchSize + " total time: " + Timekeeper.GetElapsed().TotalMilliseconds);    
+           // Shape2DBatchTest.BatchSize=166464;     
+          //  Shape2DBatchTest.BatchModelMatrix*= Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(-90));
+            //PlayerView = new View(Vector2.Zero, 0, 100);            
+            //GL.Viewport(0, 0, 800, 800);
 
 
             //Context = new GraphicsContext(GraphicsMode.Default, GameScreen.WindowInfo,4,4,GraphicsContextFlags.Default);
@@ -161,137 +189,103 @@ namespace RobustEngine
 
             Timekeeper.Start();
             GameScreen.Run(60);
-
+            AltScreens.Run(60);
         }
 
+        Vector3 newrott = Vector3.One;
         public void Update(object Sender, FrameEventArgs E)
         {
-            GameScreen.ProcessEvents();
-            mov -= .01f;
-         
+            mov=.05f;
+
+           
             
+            //RectTest.SetRotation(newrott);
+            //VBUFF.Update(RectTest.VertexData);
+             Shape2DBatchTest.ShapeQueue.ForEach(delegate(Shape2D shape){shape.SetRotation(newrott);});  
+             Shape2DBatchTest.BatchModelMatrix*=Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(.05f));
+            //Shape2DBatchTest.Process();
+
+            GameScreen.ProcessEvents();
+            AltScreens.ProcessEvents();
+            //Shape2DBatchTest.BatchSize+=1;
+           // Console.WriteLine(Shape2DBatchTest.BatchSize);
+
+            // Shape2DBatchTest.BatchModelMatrix*= Matrix4.CreateRotationZ(.005f);
+            // Shape2DBatchTest.BatchModelMatrix*= Matrix4.CreateRotationY(.005f);
+           RectTest.SetRotation(new Vector3(0,0,-mov));
         }
 
-        float mov = .01f;
+        float mov = 0f;
 
         float scale = 1 / 256f;
 
         int frames;
         Vector2 scal = new Vector2(1f, 1f);
+        bool dirty=true;
 
         public void Render(object Sender, FrameEventArgs E)
-        {
-
-            GL.Clear(ClearBufferMask.ColorBufferBit);
+        {        
+    
+            GameScreen.MakeCurrent();
         
-           
-            //   Spritebatch.Begin();
-          
-            CurrentShader.Enable();
-            //PlayerView.Setup(1600, 1600);
-           // PlayerView.Update();
-          //  PlayerView.RotateTo(.25f);
-            
-            
-            
-            
-            /* LineTest.SetFillColor(Color.Red);
-                        
-            LineTest.SetRotation(mov, Axis.Z);
-            LineTest.Update();
-            LineTest.Draw();
-
-            LineTest.SetFillColor(Color.Red);
-            LineTest.SetOrigin(LineTest.Center);
-            LineTest.SetScale(new Vector2(.5f,.5f));
-            LineTest.SetPosition(new Vector2(.10f , .10f ));
-            LineTest.SetRotation(180f, Axis.Z);
-            LineTest.Update();
-            LineTest.Draw();
-
-            TriangleTest.SetFillColor(Color.Blue);
-            TriangleTest.DebugMode = Debug.Wireframe;
-            TriangleTest.SetOrigin(TriangleTest.CenterTop);
-            TriangleTest.SetScale(new Vector2(.1f, .1f));
-            TriangleTest.SetRotation(-mov, Axis.Z);
-            TriangleTest.SetPosition(new Vector2(0.5f, 0.5f));
-            TriangleTest.Update();
-            TriangleTest.Draw();
-
-            TriangleTest2.SetFillColor(Color.Blue);
-            TriangleTest2.DebugMode = Debug.Wireframe;
-            TriangleTest.SetOrigin(TriangleTest.CenterTop);
-            TriangleTest.SetScale(new Vector2(.1f, .1f));
-            TriangleTest.SetRotation(-mov, Axis.Z);
-            TriangleTest2.SetPosition(new Vector2(0.0f + mov, 0.0f+mov));
-            TriangleTest2.Update();
-            TriangleTest2.Draw(); */
-            
-           
-             
-            RobustEngine.CurrentShader.setUniform("ModelMatrix", RectTest.ModelMatrix);
-            RobustEngine.CurrentShader.setUniform("UsingTexture", GL.GetInteger(GetPName.TextureBinding2D));
-
-            switch (RectTest.DebugMode)
-            {
-                case Debug.Points: GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Point); break;
-                case Debug.Wireframe: GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line); break;
-                default : break;
-            }
- GL.BindVertexArray(VAOID);
-      //      VBUFF.Bind();
-            IBUFF.Bind();
-            GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);
-         //   VBUFF.Unbind();
-            IBUFF.Unbind();
- GL.BindVertexArray(0);
-            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
-            RectTest.PopMatrix();
-
-/* 
-            Sprite.SetOrigin(Sprite.Rect.TopRight);
-            Sprite.SetScale(new Vector2(.005f, .005f)); //+ (.001f * x), scale + (.001f * y)));
-            Sprite.SetRotation(mov, Axis.Z);
-            Sprite.SetPosition(new Vector2(.1f, .1f));
-            Sprite.Update();
-            Sprite.Draw(); */
-
-            CurrentShader.Disable();
-
-
+                GL.Clear(ClearBufferMask.ColorBufferBit);
+                //Spritebatch.Begin();          
+                CurrentShader.Enable();
+                //PlayerView.Setup(1600, 1600);
+                //PlayerView.Update();
+                //PlayerView.RotateTo(.25f);        
+                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);     
+                RobustEngine.CurrentShader.setUniform("ModelMatrix",Shape2DBatchTest.BatchModelMatrix );
+                GL.BindVertexArray(VAOID2);                   
+                Shape2DBatchTest.Draws();  
+                GL.BindVertexArray(0); 
+                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+                CurrentShader.Disable();
             GameScreen.SwapBuffers();
 
+         
+            AltScreens.MakeCurrent();   
+              GL.Clear(ClearBufferMask.ColorBufferBit);        
+                CurrentShader2.Enable();
+                RobustEngine.CurrentShader2.setUniform("ModelMatrix", RectTest.ModelMatrix );
+                //RobustEngine.CurrentShader.setUniform("UsingTexture", GL.GetInteger(GetPName.TextureBinding2D));
+                GL.BindVertexArray(VAOID);                   
+                   GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);     
+                IBUFF.Bind();
 
+                GL.LineWidth(40f);
+                RectTest.SetFillColor(Color.Blue);
+                VBUFF.Update(RectTest.VertexData);
+                GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);
+                   
+                RectTest.SetFillColor(Color.DarkMagenta);
+                GL.LineWidth(1f);
+                VBUFF.Update(RectTest.VertexData);      
+                GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);
 
+                IBUFF.Unbind();                
+                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+                GL.BindVertexArray(0); 
+                
+                CurrentShader2.Disable();
+            AltScreens.SwapBuffers();  
+            dirty=false;
+            
+
+            
+     
+            
             frames++;
             if (Timekeeper.GetElapsed().Seconds >= 1)
             {
                 RobustConsole.Write(LogLevel.Debug, "RobustEngine", "Render() FPS " + frames);
                 Timekeeper.Start();
                 frames = 0;
+                CheckGLErrors();
             }
             // RobustConsole.Write(LogLevel.Debug, "RobustEngine", "Render() MS " + Timekeeper.GetTime().Milliseconds.ToString());
         }
 
-
-       /*  public void Draw(IShape2D Shape)
-        {
-            RobustEngine.CurrentShader.setUniform("ModelMatrix", Shape.ModelMatrix);
-            RobustEngine.CurrentShader.setUniform("UsingTexture", GL.GetInteger(GetPName.TextureBinding2D));
-
-            switch (Debug.None)
-            {
-                case Debug.Points: GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Point); break;
-                case Debug.Wireframe: GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line); break;
-            }
-//
-  //          Bind();
-            GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);
-    //        Unbind();
-
-            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
-            //popmatrix;
-        } */
 
         public void Stop()
         {

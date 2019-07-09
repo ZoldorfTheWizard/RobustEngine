@@ -23,8 +23,8 @@ namespace RobustEngine.Graphics.OpenGL
 
         private void Create(TextureTarget TT)
         {   
-            texture.Load(IntPtr.Zero,1,1);
-            depth.Load(IntPtr.Zero, 1, 1, 0, InternalFormat.Depth);
+            texture.Create(IntPtr.Zero,1,1);
+            depth.Create(IntPtr.Zero, 1, 1, 0, InternalFormat.Depth);
 
             GLTexTarget = GLHelper.CheckTextureTarget(TT);
 

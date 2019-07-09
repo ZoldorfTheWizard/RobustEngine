@@ -1,5 +1,5 @@
-using OpenTK;
 using System;
+using OpenTK;
 
 namespace RobustEngine.Graphics
 {

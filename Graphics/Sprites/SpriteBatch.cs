@@ -6,75 +6,35 @@ using OpenTK.Graphics.OpenGL;
 
 namespace RobustEngine.Graphics.Sprites
 {
-    public class SpriteBatch
+    public class SpriteBatch : Batch
     {
-        private int VAOID; // Vertex Array ObjectID
-        private int VBOID; // Vertex Buffer ObjectID
-        private int IBOID; // Index Buffer ObjectID
-
-        public string Key;
-        public float ScreenW;
-        public float ScreenH;
-
+    
         private Texture2D CurrentTexture;
-        private List<IRenderable2D> RenderQueue;
+        private List<Shape2D> RenderQueue;
 
         private Stack<Matrix4> MatrixStack;
 
 
-        public SpriteBatch(float screenwidth, float screenheight)
+        public SpriteBatch(string key, float width, float height) : base(key,width,height)
         {
-            ScreenW = screenwidth;
-            ScreenH = screenheight;
-
-            Setup();                     
+                     
         }
 
-
-        private void Setup()
-        {
-            VAOID = GL.GenVertexArray();
-            VBOID = GL.GenBuffer();
-
-
-            GL.BindBuffer(BufferTarget.ArrayBuffer, VBOID);
-
-           // GL.Enable(EnableCap.VertexArray);
-           //GL.BindVertexArray(VBOID);
-          
-          
-
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-           
-        }
-
-        public void Begin()
-        {
-            GL.MatrixMode(MatrixMode.Projection);
-            GL.LoadIdentity();
-            GL.Ortho(-ScreenW/2,ScreenW/2,ScreenH/2,-ScreenH/2,0f,1f); // 0,0 is center of world
-
-        }
 
 
 
         //TODO optimize
-        public void Draw(IRenderable2D Renderable)
+        public void Queue(Shape2D Renderable)
         {
-            RenderQueue.Add(Renderable);
+            Vector4 pos = Vector4.One;
+            Matrix4 mat = Renderable.ModelMatrix;
+            Vector4.Transform(ref pos, ref mat, out pos);
+            var y = Renderable.ModelMatrix.Row1[3];
         }
 
 
         //   VAOID = GL.GenBuffer();
         //    GL.BindBuffer(BufferTarget.ArrayBuffer, VAOID);
         //      GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length, &vertices[0], BufferUsageHint.DynamicDraw);
-          
-                   
-        
-
-        public void End()
-        {
-
-        }
     }
 }

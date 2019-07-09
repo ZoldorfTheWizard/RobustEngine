@@ -5,6 +5,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace RobustEngine.Graphics.OpenGL
 {
+    /// TODO CATCH UN INITIALIZED UPDATES
     public class GLVertexBuffer : GLBuffer , IVertexBuffer
     {  
         public GLVertexBuffer(UsageHint UH) : base(BufferTarget.ArrayBuffer)
@@ -12,12 +13,12 @@ namespace RobustEngine.Graphics.OpenGL
             BufferHint = UH;
         }
     
-        public void Init(Vertex[] VertexData)
+
+        public void Init() 
         {               
             Bind();
-            GL.BufferData(GLBufferTarget, VertexData.Length * Vertex.Stride, VertexData, GLBufferUsageHint);
-                       // Vertex Data
-            //TODO MOVE THIS INTO VAO OBJECT.
+            GL.BufferData(GLBufferTarget, 0, IntPtr.Zero, GLBufferUsageHint);
+            //Tell Opengl how to read Vertex 
             GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, Vertex.Stride, 0);
             GL.EnableVertexAttribArray(0); // Layout 0 Position
             // Color Data

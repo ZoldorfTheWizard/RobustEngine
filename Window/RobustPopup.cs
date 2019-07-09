@@ -11,7 +11,7 @@ namespace RobustEngine.Window
             Width = 300;
             Height = 300;
             Title = "Robust Popup";
-            Location = new Point(1920/2-150, 1080/2-150);
+           // Location = new Point(1920/2-150, 1080/2-150);
             ProcessEvents();
             base.Visible = true;
         }

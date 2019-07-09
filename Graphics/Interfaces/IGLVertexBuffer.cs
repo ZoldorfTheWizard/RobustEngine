@@ -3,10 +3,9 @@ namespace RobustEngine.Graphics.Interfaces
     public interface IVertexBuffer
     {   
         /// <summary>
-        ///  Initialize a GLBuffer as a Vertex Buffer with VertexData
+        ///  Initialize Empty Vertex Buffer
         /// </summary>
-        /// <param name="VertexData">Vertex Data</param>
-        void Init(Vertex[] VertexData); 
+        void Init(); 
         
         /// <summary>
         /// Update Vertex Buffer with new Vertex Data

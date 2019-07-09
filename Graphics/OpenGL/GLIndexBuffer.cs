@@ -12,10 +12,10 @@ namespace RobustEngine.Graphics.OpenGL
             BufferHint = UH;
         }
 
-        public void Init(int[] Indicies)
+        public void Init()
         {
             Bind();
-            GL.BufferData(GLBufferTarget, Indicies.Length * sizeof(float), Indicies, GLBufferUsageHint);
+            GL.BufferData(GLBufferTarget, 0, IntPtr.Zero, GLBufferUsageHint);
             Unbind();
         }
 

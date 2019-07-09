@@ -11,7 +11,7 @@ namespace RobustEngine.System.Settings
         public VSyncMode    VSync;
         public WindowBorder Border;
         public WindowIcon   Icon;
-        public Size         Size;
+      //  public Size         Size;
         public bool         Fullscreen;
         public int          Antialiasing;
         public int          Anistrophic;
@@ -23,7 +23,7 @@ namespace RobustEngine.System.Settings
         public VideoSettings()
         {
             VSync = VSyncMode.Off;
-            Size = new Size(800,600);
+           // Size = new Size(800,600);
             Fullscreen = false;
         }
 

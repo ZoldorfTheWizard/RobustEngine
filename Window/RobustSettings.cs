@@ -10,8 +10,8 @@ namespace RobustEngine.Window
         public DisplayDevice DD;
         public GraphicsMode GM;
 
-        public Point WindowPosition;
-        public Size WindowSize;
+        //public Point WindowPosition;
+        //public Size WindowSize;
         
 
     

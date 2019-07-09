@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -32,13 +32,13 @@ namespace RobustEngine.Graphics
         /// <param name="x">Pos X</param>
         /// <param name="y">Pos Y</param>
         /// <param name="z">Pos Z</param>
-        public Vertex(float x, float y, float z = 0)
+        public Vertex(float x=0, float y=0, float z = 0)
         {
             X = x;
             Y = y;
             Z = z;
 
-            R = 0f;
+            R = 255f;
             G = 0f;
             B = 0f;
             A = 1f;
@@ -50,6 +50,26 @@ namespace RobustEngine.Graphics
             Tx = 0f;
             Ty = 0f;
         }
+        
+        public Vertex(Vertex Copy)
+        {
+            X = Copy.X;
+            Y = Copy.Y;
+            Z = Copy.Z;
+
+            R = Copy.R;
+            G = Copy.G;
+            B = Copy.B;
+            A = Copy.A;
+
+            Nx = Copy.Nx;
+            Ny = Copy.Ny;
+            Nz = Copy.Nz;
+
+            Tx = Copy.Tx;
+            Ty = Copy.Ty;
+        }       
+
 
         #region OPERATORS OH BOY
 
@@ -142,6 +162,17 @@ namespace RobustEngine.Graphics
         {
             return new Vertex(A.X / B.X, A.Y / B.Y, A.Z / B.Z);
         }
+        
+        public static Vertex TransformVertex(ref Vertex vertex, Matrix4 mat4)
+        {
+            Vertex result = new Vertex(vertex);
+            result.X = Dot(vertex, mat4.Column0);
+
+            result.Y = Dot(vertex, mat4.Column1);
+
+            result.Z = Dot(vertex, mat4.Column2);
+            return result;
+        }
 
         #endregion VERTEX MATH 
 
@@ -166,6 +197,7 @@ namespace RobustEngine.Graphics
         {
             return new Vertex(A.X / B, A.Y / B, A.Z / B);
         }
+        
         #endregion INT MATH
 
         #region FLOAT MATH
@@ -188,6 +220,12 @@ namespace RobustEngine.Graphics
         {
             return new Vertex(A.X / B, A.Y / B, A.Z / B);
         }
+
+        public static float Dot(Vertex A, Vector4 Vec4)
+        {
+            return A.X * Vec4.X + A.Y * Vec4.Y + A.Z * Vec4.Z + Vec4.W;
+        }
+
         #endregion INT MATH
 
         #endregion

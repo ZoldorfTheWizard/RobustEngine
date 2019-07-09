@@ -3,10 +3,9 @@ namespace RobustEngine.Graphics.Interfaces
     public interface IGLIndexBuffer
     {
         /// <summary>
-        /// Initialize a GLBuffer as an Index Buffer with Index Data
+        /// Initialize Empty Index Buffer 
         /// </summary>
-        /// <param name="Indicies">Index data of a VBO</param>
-        void Init(int[] Indicies);
+        void Init();
 
         /// <summary>
         /// Update a Index Buffer with Index Data

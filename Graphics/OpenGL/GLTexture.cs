@@ -15,7 +15,6 @@ namespace RobustEngine.Graphics.OpenGL
 
         private int id;
         private int slot;
-        private readonly int MAX_GL_TEXTURE_IMAGE_UNITS = GL.GetInteger(GetPName.MaxTextureImageUnits);
 
         protected GLTextureTarget GLTextureTarget;
         protected PixelInternalFormat GLPixelInternalFormat;
@@ -38,7 +37,7 @@ namespace RobustEngine.Graphics.OpenGL
 
         private void CheckImageUnits(int unit)
         {   
-            if (unit >= MAX_GL_TEXTURE_IMAGE_UNITS)
+            if (unit >= GLLimits.MAX_GL_TEXTURE_IMAGE_UNITS)
             {
                 throw new Exception("Exceeded Maximum TextureImageUnits.");
             }
@@ -65,51 +64,7 @@ namespace RobustEngine.Graphics.OpenGL
             GL.BindTexture(GLTextureTarget.Texture2D, 0);            
         }
 
-        /// <summary>
-        /// Loads Textures into OpenGL Using Imagesharp.
-        /// </summary>
-        /// <param name="path"> Path to image </param>
-        /// <param name="slot"> TextureUnit Slot to bind to</param>
-        /// <param name="tf"> Pixel Internal Format to use </param>
-        public unsafe void Load(Image<Rgba32> img, int slot = 0, InternalFormat tf = InternalFormat.RGBA)
-        {         
-
-            using ( img )
-            {       
-                var ImgBox = img.Bounds();        
-                
-                GLPixelInternalFormat = GLHelper.CheckTextureFormat(tf);
-                Bind(slot);                       
-
-                fixed (Rgba32* pin = &MemoryMarshal.GetReference(img.GetPixelSpan()))
-                {
-                    //TODO TEXSTORAGE && TEXSUBIMAGE HERE
-                    GL.TexImage2D
-                    (
-                        GLTextureTarget.Texture2D,
-                        0,
-                        GLPixelInternalFormat,
-                        (int) ImgBox.Width,
-                        (int) ImgBox.Left,
-                        0,
-                        PixelFormat.Rgba,
-                        PixelType.UnsignedByte,
-                       (IntPtr) pin
-                    );        
-                }
-
-                //TODO Mipmap + Bump map here maybe? also move this to enum based
-                GL.TexParameter(GLTextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp);
-                GL.TexParameter(GLTextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp);
-
-                GL.TexParameter(GLTextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-                GL.TexParameter(GLTextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-
-                Unbind();          
-            }                
-        }
-
-        public void Load(IntPtr dataptr, int width, int height, int slot = 0,InternalFormat tf = InternalFormat.RGBA)
+        public void Create(IntPtr dataptr, int width, int height, int slot = 0, InternalFormat tf = InternalFormat.RGBA)
         {
            
             GLPixelInternalFormat = GLHelper.CheckTextureFormat(tf);

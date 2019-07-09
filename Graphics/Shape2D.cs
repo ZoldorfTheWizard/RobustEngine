@@ -10,7 +10,7 @@ namespace RobustEngine.Graphics
         private Vector2 position;
         private Vector2 scale;
         private Vector2 size;
-        private Vector2 rotation;
+        private Vector3 rotation;
 
         private Color fillcolor;
         private Debug debugmode;
@@ -49,7 +49,7 @@ namespace RobustEngine.Graphics
             set { SetSize(value); size=value; }
         }     
 
-        public Vector2 Rotation
+        public Vector3 Rotation
         {
             get { return rotation; }
             set { SetRotation(value); rotation=value;}
@@ -86,30 +86,24 @@ namespace RobustEngine.Graphics
 
         public void SetOrigin(Vector2 newOrigin)
         {
-            if (newOrigin == Vector2.Zero)
-            {
-                return;
-            }
             modelmatrix *= Matrix4.CreateTranslation(-newOrigin.X, -newOrigin.Y, 0);
         }
 
         public void SetPosition(Vector2 newPosition)
         {
-            if (newPosition == Vector2.Zero)
-            {
-                return;
-            }
             modelmatrix *= Matrix4.CreateTranslation(newPosition.X, newPosition.Y, 0);
         }
 
-        public void SetRotation(Vector2 newRotation)
+        public void SetRotation(Vector3 newRotation)
         {
           
             rotation.X = MathHelper.DegreesToRadians(newRotation.X);
             rotation.Y = MathHelper.DegreesToRadians(newRotation.Y);
-
-            modelmatrix *= Matrix4.CreateRotationX(newRotation.X);
-            modelmatrix *= Matrix4.CreateRotationY(newRotation.Y);             
+            rotation.Z = MathHelper.DegreesToRadians(newRotation.Z);
+            
+            modelmatrix *= Matrix4.CreateRotationX(rotation.X);
+            modelmatrix *= Matrix4.CreateRotationY(rotation.Y);             
+            modelmatrix *= Matrix4.CreateRotationZ(rotation.Z);             
         }
 
         public void SetScale(Vector2 newScale)
