@@ -15,7 +15,7 @@ namespace RobustEngine.Graphics
     public class Texture2D : GLTexture
     {
 
-        public Image<Rgba32> Texture;
+        public Image<Rgba32> Image;
 
         /// <summary>
         /// Constructs a new 2D Texture 
@@ -24,19 +24,29 @@ namespace RobustEngine.Graphics
         /// <param name="PIF">Pixel format. Default is RGBA.</param>
         public Texture2D() : base(TextureTarget.Texture2D)
         {     
-            
+            SetTextureParams(GLHelper.DefaultGLTextureParams);
         }            
 
-        public unsafe void Load(string path, int slot = 0, InternalFormat IF = InternalFormat.RGBA)
+        /// <summary>
+        /// Constructs a new 2D Texture 
+        /// </summary>
+        /// <param name="path">Path to texture.</param>
+        /// <param name="PIF">Pixel format. Default is RGBA.</param>
+        public Texture2D(TextureParams TP) : base(TextureTarget.Texture2D)
+        {     
+            SetTextureParams(GLHelper.CheckTextureParams(TP));
+        }    
+
+        public unsafe void LoadImage(string path, int slot = 0, InternalFormat IF = InternalFormat.RGBA)
         {
             using( FileStream stream = File.Open(path, FileMode.Open))
             {
-                using (Image<Rgba32> image = Image.Load(stream))
+                using (Image<Rgba32> image = SixLabors.ImageSharp.Image.Load(stream))
                 {
-                    Texture = image;
+                    Image = image;
                     fixed (Rgba32* pin = &MemoryMarshal.GetReference(image.GetPixelSpan()))
                     {
-                       Create((IntPtr)pin,image.Width,image.Height,slot,IF);
+                        GLCreate((IntPtr) pin, image.Width, image.Height, slot, IF);
                     }
                 }
             }
@@ -44,7 +54,7 @@ namespace RobustEngine.Graphics
 
         public bool IsOpaqueAt(int x, int y)
         {
-           return Texture.GetPixelRowSpan(y)[x].A == 255 ? true : false;
+           return Image.GetPixelRowSpan(y)[x].A == 255 ? true : false;
         }
 
 

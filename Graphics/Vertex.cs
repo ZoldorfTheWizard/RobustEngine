@@ -21,6 +21,8 @@ namespace RobustEngine.Graphics
         public static Vertex UnitX = new Vertex(1, 0);
         public static Vertex UnitY = new Vertex(0, 1);
         public static Vertex One = new Vertex(1, 1);
+        public static Vertex UnitXNegUnitY = new Vertex(1, -1);
+
 
         public static readonly int Stride = 48;
 

@@ -16,5 +16,5 @@ void main()
    gl_Position = ModelMatrix * vec4(PositionIn, 1);
   // gl_Position = vec4(PositionIn, 1);
    Color = ColorIn;
-  // TexCoord = UVCoordIn;  
+   TexCoord = UVCoordIn;  
 }

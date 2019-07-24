@@ -3,8 +3,19 @@ using OpenTK.Graphics.OpenGL;
 using RobustEngine.Graphics.Interfaces;
 
 
+
 namespace RobustEngine.Graphics.OpenGL
 {
+    public enum UsageHint
+    {
+        Read =1,
+        Write = 2,
+        Copy = 4,
+        Dynamic = 8,
+        Static = 16,
+        Stream = 32,
+    }
+
     public class GLBuffer : IGLBuffer
     {        
 

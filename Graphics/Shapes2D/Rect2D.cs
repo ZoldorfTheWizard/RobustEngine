@@ -19,52 +19,59 @@ namespace RobustEngine.Graphics.Shapes2D
         /// <summary>
         /// Constructor for a Rectangle Primitive 
         /// </summary>
-        /// <param name="x">Position X</param>
-        /// <param name="y">Position Y</param>
-        /// <param name="w">Size X.</param>
-        /// <param name="h">Size Y</param>
+        /// <param name="x">Local Space Position X</param>
+        /// <param name="y">Local Space Position Y</param>
+        /// <param name="w">Local Space Width/SizeX </param>
+        /// <param name="h">Local Space Height/SizeY </param>
         public Rect2D()
         {
             Create(0,0,1,1,Color.DarkMagenta);
         }
 
-        /// <summary>
+           /// <summary>
         /// Constructor for a Rectangle Primitive 
         /// </summary>
-        /// <param name="x">Position X</param>
-        /// <param name="y">Position Y</param>
-        /// <param name="w">Size X.</param>
-        /// <param name="h">Size Y</param>
+        /// <param name="x">Local Space Position X</param>
+        /// <param name="y">Local Space Position Y</param>
+        /// <param name="w">Local Space Width/SizeX </param>
+        /// <param name="h">Local Space Height/SizeY </param>
         public Rect2D(float x, float y, float w, float h)
         {
             Create(x, y, w, h, Color.DarkMagenta);
         }
 
-        /// <summary>
+            /// <summary>
         /// Constructor for a Rectangle Primitive 
         /// </summary>
-        /// <param name="x">Position X.</param>
-        /// <param name="y">Position Y</param>
-        /// <param name="w">Size X.</param>
-        /// <param name="h">Size Y</param>
+        /// <param name="x">Local Space Position X</param>
+        /// <param name="y">Local Space Position Y</param>
+        /// <param name="w">Local Space Width/SizeX </param>
+        /// <param name="h">Local Space Height/SizeY </param>
         public Rect2D(int x, int y, int w, int h)
         {
             Create((float)x, (float)y, (float)w, (float)h, Color.DarkMagenta);
         }
 
-        /// <summary>
-        /// Constructor for a Rectangle Primitive ,
+            /// <summary>
+        /// Constructor for a Rectangle Primitive 
         /// </summary>
-        /// <param name="x">Position X.</param>
-        /// <param name="y">Position Y</param>
-        /// <param name="w">Size X.</param>
-        /// <param name="h">Size Y</param>
+        /// <param name="x">Local Space Position X</param>
+        /// <param name="y">Local Space Position Y</param>
+        /// <param name="w">Local Space Width/SizeX </param>
+        /// <param name="h">Local Space Height/SizeY </param>
         public Rect2D(Rect2D rect)
         {
             Create(rect.Position.X, rect.Position.Y, rect.Size.X, rect.Size.Y, Color.DarkMagenta);
         }
 
-
+        /// <summary>
+        /// Create A Rectangle Primitive 
+        /// </summary>
+        /// <param name="x">Local Space Position X</param>
+        /// <param name="y">Local Space Position Y</param>
+        /// <param name="w">Local Space Width/SizeX </param>
+        /// <param name="h">Local Space Height/SizeY </param>
+        /// <param name="fillColor"></param>
         private void Create(float x, float y, float w, float h, Color fillColor)
         {
             VertexData = new Vertex[]
@@ -85,10 +92,10 @@ namespace RobustEngine.Graphics.Shapes2D
             Scale = Vector2.One; 
             Position = new Vector2(x,y);           
             Size = new Vector2(w,h);   
-          
-            PointSize = 1f;
-            LineWidth = 1f;
             FillColor = fillColor;  
+            
+            PointSize = 1f;
+            LineWidth = 1f;         
                      
             // Origin Helpers 
             BottomLeft  = VertexData[0].ToVector2();
@@ -97,6 +104,12 @@ namespace RobustEngine.Graphics.Shapes2D
             TopLeft     = VertexData[3].ToVector2();
             Center      = new Vector2( Size.X / 2, Size.Y / 2);
 
+            SetTextureMapping();
+        }
+
+        
+        public override void SetTextureMapping()
+        {
             //Texture Mapping
             VertexData[0].Tx = 0;
             VertexData[0].Ty = 1;
@@ -108,9 +121,8 @@ namespace RobustEngine.Graphics.Shapes2D
             VertexData[2].Ty = 0;
             
             VertexData[3].Tx = 0;
-            VertexData[3].Ty = 0;              
+            VertexData[3].Ty = 0;       
         }
-
 
         public override void SetSize(Vector2 newSize)
         {
@@ -120,7 +132,6 @@ namespace RobustEngine.Graphics.Shapes2D
             VertexData[3].Y *= newSize.Y;
         }     
 
-   
         public Rect2D Union(Rect2D A, Rect2D B)
         {
             var x = Math.Min(A.Position.X, B.Position.X);

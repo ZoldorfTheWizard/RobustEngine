@@ -22,7 +22,7 @@ namespace RobustEngine.Graphics
         public Matrix4 ModelMatrix
         { 
             get { return modelmatrix; }
-            protected set { modelmatrix = value; }
+            set { modelmatrix = value; }
         }  
 
         public Vector2 Origin 
@@ -95,8 +95,7 @@ namespace RobustEngine.Graphics
         }
 
         public void SetRotation(Vector3 newRotation)
-        {
-          
+        {          
             rotation.X = MathHelper.DegreesToRadians(newRotation.X);
             rotation.Y = MathHelper.DegreesToRadians(newRotation.Y);
             rotation.Z = MathHelper.DegreesToRadians(newRotation.Z);
@@ -109,27 +108,44 @@ namespace RobustEngine.Graphics
         public void SetScale(Vector2 newScale)
         {
             modelmatrix *= Matrix4.CreateScale(newScale.X, newScale.Y, 1);
-        }   
-
-        public virtual void SetSize(Vector2 newSize)
-        {
-         
         }
+
+        public virtual void SetSize(Vector2 newSize){}
+        
+        /// <summary>
+        /// Sets the Texture Mapping for the Vertex Data
+        /// </summary>
+        public virtual void SetTextureMapping(){}
    
-        public void SetFillColor(Color newColor)
+        /// <summary>
+        /// Sets the Color of all verticies or specified vertex in VertexData
+        /// </summary>
+        /// <param name="newColor"></param>
+        /// <param name="vertexAt">Selected vertex to recolor. Leave blank to color all vertex 
+        /// in VertexData</param>
+        public void SetFillColor(Color newColor, int vertexAt = -1)
         {
-            fillcolor = newColor;
-            for (int i = 0; i < VertexData.Length; i++)
+            if (vertexAt != -1)
             {
-                VertexData[i].SetColor(newColor);
+                VertexData[vertexAt].SetColor(newColor);
+            }
+            else
+            {
+                fillcolor = newColor;
+                for (int i = 0; i < VertexData.Length; i++)
+                {
+                    VertexData[i].SetColor(newColor);
+                }
             }
         }
 
+       
         public void PushMatrix(Matrix4 mat)
         {
             modelmatrix *= mat;
         }
 
+ 
         public void PopMatrix()
         {
             modelmatrix = Matrix4.Identity;

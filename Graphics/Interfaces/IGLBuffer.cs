@@ -6,11 +6,6 @@ namespace RobustEngine.Graphics.Interfaces
         /// GL Generated Buffer ID
         /// </summary>
         int ID {get; }
-
-        /// <summary>
-        /// Buffer Hint for Buffer Optimization
-        /// </summary>
-        UsageHint BufferHint {get; set;}
         
         /// <summary>
         /// Bind the buffer

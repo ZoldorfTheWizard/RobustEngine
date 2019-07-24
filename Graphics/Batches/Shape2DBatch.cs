@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using RobustEngine.Graphics;
+using RobustEngine.Graphics.Shapes2D;
 
-namespace RobustEngine.Graphics.Shapes2D
+namespace RobustEngine.Graphics.Batches
 {
     public class Shape2DBatch : Batch
     {
@@ -11,8 +10,6 @@ namespace RobustEngine.Graphics.Shapes2D
         public List<Shape2D> ShapeQueue;
         public List<Vertex> VertexQueue;
         private int offset;
-
-
         
         public Shape2DBatch(string name, float w, float h) : base(name,w,h)
         {
@@ -31,8 +28,8 @@ namespace RobustEngine.Graphics.Shapes2D
         {
             VertexQueue.Clear();
             ProcessRect2D();
-            BatchData = VertexQueue.ToArray();
-            VBO.Update(BatchData);
+            VertexData = VertexQueue.ToArray();
+            VBO.Update(VertexData);
         }
 
         public void Draws()
