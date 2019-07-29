@@ -250,9 +250,10 @@ namespace RobustEngine
         public void Render(object Sender, FrameEventArgs E)
         {        
     
-            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
+            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
 
             GameScreen.MakeCurrent();   
+               GL.BindVertexArray(VAOID2);    
                 GL.Clear(ClearBufferMask.ColorBufferBit);
                 CurrentShader.Enable();
                 Texture.Bind();  
@@ -261,58 +262,60 @@ namespace RobustEngine
                 RobustEngine.CurrentShader.setUniform("ModelMatrix",Shape2DBatchTest.ModelMatrix );
                 RobustEngine.CurrentShader.setUniform("UsingTexture", 1);
                
-                GL.BindVertexArray(VAOID2);                   
+                               
                 Shape2DBatchTest.Draws();  
                 GL.BindVertexArray(0); 
                
                
                 Texture.Unbind();
                 CurrentShader.Disable();
+                GL.BindVertexArray(0); 
             GameScreen.SwapBuffers();
 
          
             AltScreens.MakeCurrent();   
-                
+                GL.Clear(ClearBufferMask.ColorBufferBit);   
                 GL.BindVertexArray(VAOID); 
-                RenderTarget.Begin(); 
-                GL.Clear(ClearBufferMask.ColorBufferBit);                          
-                CurrentShader2.Enable();
-                Texture.Bind();
-                
                
-                CheckGLErrors();
+                RenderTarget.Begin(); 
+
+               // GL.Clear(ClearBufferMask.ColorBufferBit);        
+                      
+                CurrentShader2.Enable();
+                Texture.Bind();              
+                
 
                 VBUFF.Update(RectTest.VertexData);
                 IBUFF.Update(RectTest.Indicies);
                 IBUFF.Bind();
-
+   
                 RobustEngine.CurrentShader2.setUniform("ModelMatrix", RectTest.ModelMatrix );
                 RobustEngine.CurrentShader2.setUniform("UsingTexture",1);
-                
-                GL.DrawElements(PrimitiveType.LineStrip , 6, DrawElementsType.UnsignedInt, 0);
-                RenderTarget.End();
+                 CheckGLErrors();
+                GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);
+              
+               RenderTarget.End();
+               CheckGLErrors();
                 Texture.Unbind();
-               
+                IBUFF.Unbind();
                 
-                RenderTarget.Bind();                  
-     
-                GL.Clear(ClearBufferMask.ColorBufferBit);   
+                RenderTarget.Bind();
      
                 VBUFF.Update(RenderTarget.VertexData);
                 IBUFF.Update(RenderTarget.Indicies);
                 IBUFF.Bind();
 
                 RobustEngine.CurrentShader2.setUniform("ModelMatrix", RenderTarget.ModelMatrix );
-                RobustEngine.CurrentShader2.setUniform("UsingTexture", 1);
+                RobustEngine.CurrentShader2.setUniform("UsingTexture",1);
                 
-               // GL.DrawElements(PrimitiveType.LineStrip , 6, DrawElementsType.UnsignedInt, 0);
+                 GL.DrawElements(PrimitiveType.Triangles , 6, DrawElementsType.UnsignedInt, 0);
                
                 //GL.DrawArrays(PrimitiveType.Triangles,0,3);
                 IBUFF.Unbind();                
                 RenderTarget.Unbind();   
-               
-                GL.BindVertexArray(0);                 
                 CurrentShader2.Disable();
+                GL.BindVertexArray(0);                 
+               
             AltScreens.SwapBuffers();  
 
             frames++;

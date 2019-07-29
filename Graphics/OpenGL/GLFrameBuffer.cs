@@ -28,30 +28,28 @@ namespace RobustEngine.Graphics.OpenGL
             GLTexParams = GLHelper.DefaultGLTextureParams;       
         }
 
-        public void GLCreate(int w, int h, bool depth=true, bool stencil=false)
+        public void GLCreate(int w, int h, bool depth=false, bool stencil=false)
         {   
             ColorAttachment.GLCreate(IntPtr.Zero,w,h);
+            RobustEngine.CheckGLErrors();
             ColorAttachment.SetTextureParams(GLTexParams);    
 
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, FramebufferID);
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, GLTexTarget, ColorAttachment.ID, 0);
+ 
+            int rbo = GL.GenRenderbuffer();
+            GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer,rbo);
+            GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer,RenderbufferStorage.DepthComponent,w,h);
+            GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer,FramebufferAttachment.DepthAttachment,RenderbufferTarget.Renderbuffer,rbo);
+            GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer,0);
 
-            if(depth)
-            {
-                DepthAttachment.GLCreate(IntPtr.Zero, w, h, 0, InternalFormat.Depth);
-                GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, GLTexTarget, DepthAttachment.ID, 0);
+            GL.FramebufferTexture(FramebufferTarget.Framebuffer,FramebufferAttachment.ColorAttachment0,ColorAttachment.ID,0);
 
-            }
-
-            if (stencil)
-            {              
-                GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.Stencil, GLTexTarget, DepthAttachment.ID, 0);
-            }
 
             #if CHECKGLERRORS
-            RobustEngine.CheckGLErrors();
+            
             #endif
-
+RobustEngine.CheckGLErrors();
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);           
         }
 

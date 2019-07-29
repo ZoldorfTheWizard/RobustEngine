@@ -30,6 +30,10 @@ namespace RobustEngine.Graphics.Render
                 Vertex.UnitXNegUnitY,
                 Vertex.One,
                 Vertex.UnitXNegUnitY*-1
+                //  Vertex.Zero,
+                // Vertex.UnitX,
+                // Vertex.One,
+                // Vertex.UnitY
             };
 
             Indicies = new int[]
@@ -37,6 +41,20 @@ namespace RobustEngine.Graphics.Render
                 0,1,2,
                 2,3,0
             };
+
+         
+            VertexData[0].Tx = 0;
+            VertexData[0].Ty = 0;
+
+            VertexData[1].Tx = 0;
+            VertexData[1].Ty = 1;
+            
+            VertexData[2].Tx = 1;
+            VertexData[2].Ty = 1;
+            
+            VertexData[3].Tx = 1;
+            VertexData[3].Ty = 0; 
+
 
             ModelMatrix = Matrix4.Identity;
             PointSize=1f;
