@@ -38,7 +38,7 @@ namespace RobustEngine.Graphics
 
         public void Update()
         {
-           RobustEngine.CurrentShader.setUniform("ViewMatrix", ViewMatrix);
+          // TODO RobustEngine.CurrentShader.setUniform("ViewMatrix", ViewMatrix);
         }
 
         public void Setup(int ScreenW, int ScreenH)
@@ -50,25 +50,25 @@ namespace RobustEngine.Graphics
             Transform = Matrix4.Mult(Transform, Matrix4.CreateScale((float)Zoom, (float)Zoom, 0.0f));
             ViewMatrix = Transform;
 
-            Update();
+         
         }
 
         public void ScaleTo(Vector2 Scale)
         {          
             ViewMatrix *= Matrix4.CreateScale((float)Zoom, (float)Zoom, 0.0f);
-            Update();
+         
         }
 
         public void RotateTo(float rot)
         {          
             ViewMatrix *= Matrix4.CreateRotationZ((float) -rot);
-            Update();
+           
         }
 
         public void TranslateTo(Vector2 pos)
         {          
             ViewMatrix *= Matrix4.CreateTranslation(-pos.X, -pos.Y, 0);
-            Update();
+           
         }
 
     

@@ -4,7 +4,7 @@ using OpenTK.Input;
 using RobustEngine.Graphics;
 using RobustEngine.Graphics.Render;
 using RobustEngine.Graphics.Shaders;
-using RobustEngine.Graphics.Sprites;
+using RobustEngine.Graphics.Sprites2D;
 using RobustEngine.System;
 using RobustEngine.Window;
 

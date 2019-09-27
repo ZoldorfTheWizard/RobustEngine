@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using RobustEngine.Graphics.Shapes2D;
 
-namespace RobustEngine.Graphics.Sprites
+namespace RobustEngine.Graphics.Sprites2D
 {
-    public class AnimatedSprite
+    public class AnimatedSprite2D
     {
       /*     public string Key;
         public bool  IsLooping;

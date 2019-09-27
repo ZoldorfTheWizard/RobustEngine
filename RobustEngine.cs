@@ -8,13 +8,14 @@ using OpenTK.Graphics.OpenGL;
 using RobustEngine.Graphics;
 using RobustEngine.Graphics.Render;
 using RobustEngine.Graphics.Shaders;
-using RobustEngine.Graphics.Sprites;
+using RobustEngine.Graphics.Sprites2D;
+using RobustEngine.Graphics.Interfaces;
 using RobustEngine.System;
 using RobustEngine.System.Settings;
 using RobustEngine.System.Time;
 using RobustEngine.Window;
 using RobustEngine.Graphics.OpenGL;
-using RobustEngine.Graphics.Batches;
+using RobustEngine.Graphics.Batching2D;
 using RobustEngine.Graphics.Shapes2D;
 using RobustFrameBuffer = RobustEngine.Graphics.Render.Framebuffer;
 
@@ -25,7 +26,7 @@ namespace RobustEngine
         //Render engine. Handles all rendering.      
         public int version;
         public string GLINFO;
-
+        public string EXTENSIONS;
 
         //Rendering
         public Dictionary<string, NativeWindow> Windows;
@@ -51,8 +52,9 @@ namespace RobustEngine
 
         //Testing
         public View PlayerView;
+        public View SpritebatchView;
         public Clock Timekeeper;
-        public SpriteBatch Spritebatch;
+        public Sprite2DBatch Spritebatch;
         public Texture2D Texture;
 
         public Vertex VertTest0,VertTest1,VertTest2,VertTest3;
@@ -67,10 +69,10 @@ namespace RobustEngine
         public Point2D PointTest;
         public Shape2DBatch Shape2DBatchTest;
 
-        public GLVertexBuffer VBUFF;
-        public GLIndexBuffer IBUFF;
+        public IVertexBuffer VBUFF;
+        public IIndexBuffer IBUFF;
 
-        public Sprite Sprite;
+        public Sprite2D Sprite;
         public RobustFrameBuffer RenderTarget;
 
         public RobustEngine()
@@ -84,12 +86,11 @@ namespace RobustEngine
            // RobustConsole.ClearConsole();
             RobustConsole.SetLogLevel(LogLevel.Debug);
             RobustConsole.Write(LogLevel.Info, "RobustEngine", "Init() Intializing...");
-
             
             //TODO import video settings here
 
             GameScreen = new GameWindow(800, 800, GraphicsMode.Default, "RobustWando", GameWindowFlags.Default, DisplayDevice.Default, 4, 3, GraphicsContextFlags.Default);
-            AltScreens = new GameWindow(800, 800, GraphicsMode.Default, "RobustWando2", GameWindowFlags.Default, DisplayDevice.Default, 4, 3, GraphicsContextFlags.Default);
+            AltScreens = new GameWindow(800, 800, GraphicsMode.Default, "RobustWando2", GameWindowFlags.Default, DisplayDevice.Default, 4, 3, GraphicsContextFlags.Debug);
 
             //GameScreen = new GameWindow();
             //GameScreen.Size = VSettings.Size;
@@ -102,15 +103,8 @@ namespace RobustEngine
             GameScreen.MakeCurrent(); //OPENGL CONTEXT STARTS HERE
             AltScreens.Visible=true;
 
-
-            GLINFO += "\n\n-------------- OpenGL Initialization Report -----------------------";
-            GLINFO += "\n "; 
-            GLINFO += "\n OpenGL Version: " + GL.GetString(StringName.Version);
-            GLINFO += "\n Vendor: " + GL.GetString(StringName.Vendor);
-            GLINFO += "\n GLSL Version: " + GL.GetString(StringName.ShadingLanguageVersion);
-            GLINFO += "\n------------------------------------------------------------------\n";
-
-            RobustConsole.Write(LogLevel.Info, this, GLINFO);
+            PrintOGLInfo();
+            
             GameScreen.RenderFrame += Render;
             GameScreen.UpdateFrame += Update;
             AltScreens.RenderFrame += Render;
@@ -122,40 +116,47 @@ namespace RobustEngine
             GL.ClearColor(0, 0, 0, 0);           
 
             var ShaderTestFile = Path.Combine(Environment.CurrentDirectory, "Graphics", "Shaders", "ImageTest");
-            var TextureTestFile = Path.Combine(Environment.CurrentDirectory, "Devtexture_Floor.png");
+            var TextureTestFile = Path.Combine(Environment.CurrentDirectory, "floor_texture.png");
 
-            Texture = new Texture2D();            
-            RectTest = new Rect2D();
+            Texture = new Texture2D(); 
             TriangleTest = new Triangle2D();    
             PointTest = new Point2D();
-            VBUFF = new GLVertexBuffer(UsageHint.Dynamic | UsageHint.Write);
-            IBUFF = new GLIndexBuffer(UsageHint.Dynamic | UsageHint.Write);
+            VBUFF = GraphicsAPI.Resolve<IVertexBuffer>();
+            IBUFF = GraphicsAPI.Resolve<IIndexBuffer>();
             RenderTarget = new RobustFrameBuffer();
           
 
-
+            RectTest = new Rect2D();
             RectTest.SetOrigin(RectTest.Center);  
             //RectTest.SetRotation(new Vector3(0,0,45));
-            RectTest.SetFillColor(Color.DarkBlue);
-
-            TriangleTest.SetOrigin(TriangleTest.Center);
-            TriangleTest.SetRotation(new Vector3(0,0,135));
-
-      
+            //RectTest.SetFillColor(Color.DarkBlue);
 
             AltScreens.MakeCurrent();
 
             VAOID = GL.GenVertexArray();    
             GL.BindVertexArray(VAOID);  
-            Texture.LoadImage(TextureTestFile);
-            VBUFF.Init();
-            IBUFF.Init();      
+
+            Timekeeper.Start();
+           // Texture.LoadImageUsingImagesharp(TextureTestFile);
+            Timekeeper.Stop();
+            Console.WriteLine("Texture create " + Timekeeper.GetElapsed().TotalMilliseconds + "MS");    
+
+            VBUFF.Bind();
+            VBUFF.Create();
+            VBUFF.Update(TriangleTest.VertexData);            
+            VBUFF.Unbind();
+
+            IBUFF.Bind();
+            IBUFF.Create();
+            IBUFF.Update(TriangleTest.Indicies);
+            IBUFF.Unbind();  
+
             RenderTarget.Init(800,800);      
             CurrentShader = new Shader(ShaderTestFile + ".vert", ShaderTestFile + ".frag");
             GL.BindVertexArray(0);
 
-            VBUFF.Update(TriangleTest.VertexData);
-            IBUFF.Update(TriangleTest.Indicies);
+            
+           
             
             GameScreen.MakeCurrent();
             Shape2DBatchTest = new Shape2DBatch("test", 800,800);
@@ -165,35 +166,35 @@ namespace RobustEngine
             CurrentShader2 = new Shader(ShaderTestFile + ".vert", ShaderTestFile + ".frag");         
             GL.BindVertexArray(0);
 
-            int b = 100;
+            int b = 10;
             Vector3 rot = new Vector3(0,0,45);
+            Timekeeper.Start();
             for(int ix=0; ix < b; ix++)            
             {   
                 for(int iy=0; iy < b; iy++)
                 {                  
                    Vector2 pos = new Vector2((((float)ix/b)-0.5f),((float)iy/b)-.5f);
-                    RectTest2 = new Rect2D(0,0,.01f,.01f);   
+                    RectTest2 = new Rect2D(0,0,.1f,.1f);   
                     RectTest2.SetRotation(rot);
                     RectTest2.SetPosition(pos);
                     Shape2DBatchTest.Queue(RectTest2);
+                    
                 }
             }
-            
+            Timekeeper.Stop();
+            Console.WriteLine(b + " loop total time: " + Timekeeper.GetElapsed().TotalMilliseconds + "MS");    
+        
+
             Timekeeper.Start();
             Shape2DBatchTest.Process(); 
             Timekeeper.Stop();
+            Console.WriteLine(Shape2DBatchTest.BatchSize + " total time: " + Timekeeper.GetElapsed().TotalMilliseconds + " MS");    
+           
+            PlayerView = new View(Vector2.Zero, 0, 1);
+            PlayerView.Setup(800,800);  
 
-            Console.WriteLine(Shape2DBatchTest.BatchSize + " total time: " + Timekeeper.GetElapsed().TotalMilliseconds);    
-            Shape2DBatchTest.BatchSize=1;     
-          //  Shape2DBatchTest.BatchModelMatrix*= Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(-90));
-            //PlayerView = new View(Vector2.Zero, 0, 100);            
-            //GL.Viewport(0, 0, 800, 800);
-
-
-            //Context = new GraphicsContext(GraphicsMode.Default, GameScreen.WindowInfo,4,4,GraphicsContextFlags.Default);
-            //Context.MakeCurrent(GameScreen.WindowInfo);
-            //(Context as IGraphicsContextInternal).LoadAll();
-            //GL.Enable(EnableCap.Blend);
+            SpritebatchView = new View(Vector2.Zero, 0, 1);
+            SpritebatchView.Setup(800,800);  
 
             RobustConsole.Write(LogLevel.Info, "RobustEngine", "Init() Done.");
             ReadyToRun = true;
@@ -203,7 +204,7 @@ namespace RobustEngine
         public void Run()
         {
 
-            RobustConsole.Write(LogLevel.Warning, "RobustEngine", "Starting Run loop...");
+            RobustConsole.Write(LogLevel.Fatal, "RobustEngine", "Starting Run loop...");
 
             Timekeeper.Start();
             GameScreen.Run(60);
@@ -211,32 +212,27 @@ namespace RobustEngine
         }
 
         Vector3 newrott = Vector3.One;
+        float poscam = 0;
         public void Update(object Sender, FrameEventArgs E)
         {
-            mov=.05f;
+            mov=50f;
+            poscam+=.00001f;
 
-           
+            newrott= new Vector3(0,0,MathHelper.DegreesToRadians(.05f));
             
-            //RectTest.SetRotation(newrott);
-            //VBUFF.Update(RectTest.VertexData);
-            Shape2DBatchTest.ShapeQueue.ForEach(delegate(Shape2D shape){shape.SetRotation(newrott);});  
-            Shape2DBatchTest.ModelMatrix*=Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(.05f));
-            //Shape2DBatchTest.Process();
+           // RectTest.SetRotation(newrott);
+           // VBUFF.Update(RectTest.VertexData);
+          
+           //Shape2DBatchTest.ModelMatrix*=Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(.05f));
 
             GameScreen.ProcessEvents();
             AltScreens.ProcessEvents();
             Shape2DBatchTest.BatchSize+=1; 
-            
+           
             if(Shape2DBatchTest.BatchSize>=10000)
             {
                  Shape2DBatchTest.BatchSize=1;
             }
-           
-           // Console.WriteLine(Shape2DBatchTest.BatchSize);
-
-            // Shape2DBatchTest.BatchModelMatrix*= Matrix4.CreateRotationZ(.005f);
-            // Shape2DBatchTest.BatchModelMatrix*= Matrix4.CreateRotationY(.005f);
-          // RectTest.SetRotation(new Vector3(0,0,-mov));
         }
 
         float mov = 0f;
@@ -250,70 +246,73 @@ namespace RobustEngine
         public void Render(object Sender, FrameEventArgs E)
         {        
     
-            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
 
             GameScreen.MakeCurrent();   
                GL.BindVertexArray(VAOID2);    
                 GL.Clear(ClearBufferMask.ColorBufferBit);
-                CurrentShader.Enable();
-                Texture.Bind();  
+               // CurrentShader.Enable();
+                //Texture.Bind();  
 
-                
-                RobustEngine.CurrentShader.setUniform("ModelMatrix",Shape2DBatchTest.ModelMatrix );
-                RobustEngine.CurrentShader.setUniform("UsingTexture", 1);
+          
+    
+               // RobustEngine.CurrentShader.setUniform("ModelMatrix",Matrix4.Identity);
+               // RobustEngine.CurrentShader.setUniform("UsingTexture", 0);
                
-                               
+                SpritebatchView.Update();  
                 Shape2DBatchTest.Draws();  
                 GL.BindVertexArray(0); 
                
                
-                Texture.Unbind();
-                CurrentShader.Disable();
+               // Texture.Unbind();
+              //  CurrentShader.Disable();
                 GL.BindVertexArray(0); 
             GameScreen.SwapBuffers();
 
          
             AltScreens.MakeCurrent();   
+               
                 GL.Clear(ClearBufferMask.ColorBufferBit);   
                 GL.BindVertexArray(VAOID); 
-               
-                RenderTarget.Begin(); 
-
-               // GL.Clear(ClearBufferMask.ColorBufferBit);        
-                      
-                CurrentShader2.Enable();
+                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
+               // RenderTarget.Begin(); 
+                 GL.Clear(ClearBufferMask.ColorBufferBit);   
+              //  CurrentShader2.Enable();
                 Texture.Bind();              
-                
+                 
 
                 VBUFF.Update(RectTest.VertexData);
                 IBUFF.Update(RectTest.Indicies);
                 IBUFF.Bind();
-   
-                RobustEngine.CurrentShader2.setUniform("ModelMatrix", RectTest.ModelMatrix );
-                RobustEngine.CurrentShader2.setUniform("UsingTexture",1);
-                 CheckGLErrors();
+             
+               // RobustEngine.CurrentShader2.setUniform("ModelMatrix", RectTest.ModelMatrix );
+               // RobustEngine.CurrentShader2.setUniform("UsingTexture",0);
+                
                 GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);
               
-               RenderTarget.End();
-               CheckGLErrors();
+             //  RenderTarget.End();
+        
+               
+                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
                 Texture.Unbind();
                 IBUFF.Unbind();
                 
-                RenderTarget.Bind();
-     
+               // RenderTarget.Bind();     
+                        
                 VBUFF.Update(RenderTarget.VertexData);
                 IBUFF.Update(RenderTarget.Indicies);
                 IBUFF.Bind();
-
-                RobustEngine.CurrentShader2.setUniform("ModelMatrix", RenderTarget.ModelMatrix );
-                RobustEngine.CurrentShader2.setUniform("UsingTexture",1);
+                PlayerView.Update();
+             //   RobustEngine.CurrentShader2.setUniform("ModelMatrix", RenderTarget.ModelMatrix );
+              //  RobustEngine.CurrentShader2.setUniform("UsingTexture",1);
                 
-                 GL.DrawElements(PrimitiveType.Triangles , 6, DrawElementsType.UnsignedInt, 0);
-               
+                GL.DrawElements(PrimitiveType.Triangles , 6, DrawElementsType.UnsignedInt, 0);               
+
+                
                 //GL.DrawArrays(PrimitiveType.Triangles,0,3);
                 IBUFF.Unbind();                
-                RenderTarget.Unbind();   
-                CurrentShader2.Disable();
+              //  RenderTarget.Unbind();   
+              //  CurrentShader2.Disable();
                 GL.BindVertexArray(0);                 
                
             AltScreens.SwapBuffers();  
@@ -321,10 +320,13 @@ namespace RobustEngine
             frames++;
             if (Timekeeper.GetElapsed().Seconds >= 1)
             {
+                PlayerView.TranslateTo(new Vector2(poscam,poscam));
+               
                 RobustConsole.Write(LogLevel.Debug, "RobustEngine", "Render() FPS " + frames);
                 Timekeeper.Start();
                 frames = 0;
                 CheckGLErrors();
+                
             }
             // RobustConsole.Write(LogLevel.Debug, "RobustEngine", "Render() MS " + Timekeeper.GetTime().Milliseconds.ToString());
         }
@@ -347,6 +349,68 @@ namespace RobustEngine
 
         }
 
+
+
+        public void PrintOGLInfo()
+        {
+            GLINFO = "";
+            GLINFO += "\n\n-------------- OpenGL Initialization Report -----------------------";         
+            GLINFO += "\n OpenGL Renderer   : " + GL.GetString(StringName.Renderer);
+            GLINFO += "\n OpenGL Version    : " + GL.GetString(StringName.Version);
+            GLINFO += "\n OpenGL Vendor     : " + GL.GetString(StringName.Vendor);
+            GLINFO += "\n Context Flags     : " + GL.GetInteger(GetPName.ContextFlags);
+            GLINFO += "\n GLSL Version      : " + GL.GetString(StringName.ShadingLanguageVersion);
+            GLINFO += "\n---------------------------------------------------------------------\n";
+            RobustConsole.Write(LogLevel.Info, this, GLINFO);
+
+        }
+
+        public void PrintOGLInfoExtendedBecauseSomethingBroke()
+        {          
+            int i = 0;
+            GLINFO = "";
+            EXTENSIONS = "";    
+            var ext= "";        
+            var ssl= "";
+            var ss2= "";       
+    
+            while (true)
+            {
+                ext = GL.GetString(StringNameIndexed.Extensions,i);
+                if (ext != "")
+                {
+                    ssl = GL.GetString(StringNameIndexed.ShadingLanguageVersion,i);
+                    if(ssl != "")
+                    {
+                        ss2+= ssl + ",";
+                    }
+
+                    EXTENSIONS+= "\n" + ext; 
+                    i++;       
+                }
+                else
+                {
+                    break;
+                }  
+            }           
+
+            GLINFO += "\n--------------[ OpenGL Initialization Report ]-----------------------";
+            GLINFO += "\n OpenGL Renderer   : " + GL.GetString(StringName.Renderer);
+            GLINFO += "\n OpenGL Version    : " + GL.GetString(StringName.Version);
+            GLINFO += "\n OpenGL Vendor     : " + GL.GetString(StringName.Vendor);
+            GLINFO += "\n Context Flags     : " + GL.GetInteger(GetPName.ContextFlags);
+            GLINFO += "\n GLSL Version      : " + GL.GetString(StringName.ShadingLanguageVersion);
+            GLINFO += "\n GLSL Versions     : " + ss2;
+
+            GLINFO += "\n\n----------------[ OpenGL EXT/ARB Report ]--------------------------\n";
+            GLINFO += ""; 
+            GLINFO += "Total Extensions found:" + i;
+            GLINFO +=  EXTENSIONS;
+            GLINFO += "\n---------------------------------------------------------------------\n";
+
+            RobustConsole.Write(LogLevel.Info, this, GLINFO);
+
+        }
         #region Global Error Checking
         public static void CheckGLErrors()
         {

@@ -1,9 +1,9 @@
-using RobustEngine.Graphics.OpenGL;
+using RobustEngine.Graphics.Interfaces;
 using OpenTK;
 
 namespace RobustEngine.Graphics.Shapes2D
 {
-    public class Point2D : Shape2D, IRenderable2D
+    public class Point2D : Shape2D, IRenderable
     {
 
         public Point2D() 

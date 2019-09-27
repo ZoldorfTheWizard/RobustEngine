@@ -1,26 +1,14 @@
 using System;
-using OpenTK.Graphics.OpenGL;
 using RobustEngine.Graphics.Interfaces;
-
+using OpenTK.Graphics.OpenGL;
 
 
 namespace RobustEngine.Graphics.OpenGL
-{
-    public enum UsageHint
-    {
-        Read =1,
-        Write = 2,
-        Copy = 4,
-        Dynamic = 8,
-        Static = 16,
-        Stream = 32,
-    }
+{   
 
-    public class GLBuffer : IGLBuffer
-    {        
-
+    public abstract class GLBuffer 
+    {  
         private int id;
-        private UsageHint RobustBufferUsageHint;
 
         protected BufferTarget GLBufferTarget;
         protected BufferUsageHint GLBufferUsageHint;      
@@ -29,13 +17,7 @@ namespace RobustEngine.Graphics.OpenGL
         {
             get { return id; }
         }  
-
-        public UsageHint BufferHint
-        {
-            get { return RobustBufferUsageHint; }
-            set { GLBufferUsageHint = GLHelper.CheckUsageHint(value); RobustBufferUsageHint = value; }
-        }            
-
+        
         public GLBuffer(BufferTarget BF)
         {
             id = GL.GenBuffer();
@@ -51,6 +33,17 @@ namespace RobustEngine.Graphics.OpenGL
         {
             GL.BindBuffer(GLBufferTarget, 0);
         }
+        
+        public void SetUsageHint(UsageHint UH)
+        {
+            SetUsageHint(GraphicsAPI.CheckUsageHint(UH));
+        }
+
+        internal void SetUsageHint(BufferUsageHint BUH)
+        {   
+            GLBufferUsageHint = BUH;
+        }
+
     }
     
 }

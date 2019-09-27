@@ -4,8 +4,9 @@ layout(location = 1) in vec4 ColorIn;
 layout(location = 2) in vec3 NormalIn;
 layout(location = 3) in vec2 UVCoordIn;
 
-uniform mat4 ModelMatrix;
+
 uniform mat4 ViewMatrix;
+uniform mat4 ModelMatrix;
 
 out vec2 TexCoord; 
 out vec4 Color;

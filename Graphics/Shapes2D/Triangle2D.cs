@@ -72,12 +72,6 @@ namespace RobustEngine.Graphics.Shapes2D
             CenterTop = VertexData[1].ToVector2();
             BottomRight = VertexData[2].ToVector2();         
 
-            SetTextureMapping();        
-       
-        }
-
-        public override void SetTextureMapping()
-        {
             VertexData[0].Tx = 0;
             VertexData[0].Ty = 1;
 
@@ -85,8 +79,8 @@ namespace RobustEngine.Graphics.Shapes2D
             VertexData[1].Ty = 1;
 
             VertexData[2].Tx = 1;
-            VertexData[2].Ty = 0;
-        }
+            VertexData[2].Ty = 0;      
+        } 
 
         public override void SetSize(Vector2 newSize)
         {

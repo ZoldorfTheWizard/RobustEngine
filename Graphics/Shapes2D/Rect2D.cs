@@ -103,35 +103,16 @@ namespace RobustEngine.Graphics.Shapes2D
             TopRight    = VertexData[2].ToVector2();
             TopLeft     = VertexData[3].ToVector2();
             Center      = new Vector2( Size.X / 2, Size.Y / 2);
-
-            SetTextureMapping();
         }
-
         
-        public override void SetTextureMapping()
-        {
-            //Texture Mapping
-            VertexData[0].Tx = 0;
-            VertexData[0].Ty = 1;
-
-            VertexData[1].Tx = 1;
-            VertexData[1].Ty = 1;
-            
-            VertexData[2].Tx = 1;
-            VertexData[2].Ty = 0;
-            
-            VertexData[3].Tx = 0;
-            VertexData[3].Ty = 0;       
-        }
-
         public override void SetSize(Vector2 newSize)
         {
             VertexData[1].X *= newSize.X;
             VertexData[2].X *= newSize.X;
             VertexData[2].Y *= newSize.Y;
             VertexData[3].Y *= newSize.Y;
-        }     
-
+        }   
+  
         public Rect2D Union(Rect2D A, Rect2D B)
         {
             var x = Math.Min(A.Position.X, B.Position.X);

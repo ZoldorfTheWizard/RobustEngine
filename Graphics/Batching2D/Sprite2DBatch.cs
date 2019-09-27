@@ -4,9 +4,9 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
 
-namespace RobustEngine.Graphics.Sprites
+namespace RobustEngine.Graphics.Batching2D
 {
-    public class SpriteBatch : Batch
+    public sealed class Sprite2DBatch : Batch2D
     {
     
         private Texture2D CurrentTexture;
@@ -15,7 +15,7 @@ namespace RobustEngine.Graphics.Sprites
         private Stack<Matrix4> MatrixStack;
 
 
-        public SpriteBatch(string key, float width, float height) : base(key,width,height)
+        public Sprite2DBatch(string key, float width, float height) : base(key,width,height)
         {
                      
         }

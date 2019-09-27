@@ -9,19 +9,42 @@ namespace RobustEngine.Graphics
 {
     public struct Vertex
     {
-
         public float X, Y, Z;      // Position
         public float R, G, B, A;   // Color
         public float Nx, Ny, Nz;   // Normal
         public float Tx, Ty;       // Texture
 
         #region Readonly 
-
+        /// <summary>
+        /// Static Vertex of Zero Zero, Known as just Zero
+        /// </summary>
+        /// <returns>Vertex(0,0)</returns>
         public static Vertex Zero = new Vertex(0, 0);
+        
+        /// <summary>
+        /// Static Vertex of One Zero, Known as UnitX
+        /// </summary>
+        /// <returns>Vertex(1,0)</returns>
         public static Vertex UnitX = new Vertex(1, 0);
+
+        /// <summary>
+        ///  Static Vertex of Zero One, Known as UnitY
+        /// </summary>
+        /// <returns>Vertex(0,1)</returns>
         public static Vertex UnitY = new Vertex(0, 1);
+
+        /// <summary>
+        ///  Static Vertex of One One, Known as just One
+        /// </summary>
+        /// <returns>Vertex(1,1)</returns>
         public static Vertex One = new Vertex(1, 1);
-        public static Vertex UnitXNegUnitY = new Vertex(1, -1);
+
+        /// <summary>
+        /// Static Vertex of One Negative One, Known as Just OneNegOne
+        /// Inverse Y of Vertex.One, Used for Bottom Right or Top Right Vertex Positioning
+        /// </summary>
+        /// <returns>Vertex(1,-1)</returns>
+        public static Vertex OneNegOne = new Vertex(1, -1);
 
 
         public static readonly int Stride = 48;

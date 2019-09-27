@@ -4,34 +4,28 @@ using OpenTK.Graphics.OpenGL;
 
 namespace RobustEngine.Graphics.OpenGL
 {
-    public class GLIndexBuffer : GLBuffer, IGLIndexBuffer 
+    public sealed class GLIndexBuffer : GLBuffer, IIndexBuffer 
     {   
 
-        public GLIndexBuffer(UsageHint UH) : base (BufferTarget.ElementArrayBuffer)
+        public GLIndexBuffer(BufferUsageHint UH) : base (BufferTarget.ElementArrayBuffer)
         {   
-            BufferHint = UH;
+            GLBufferUsageHint = UH;
         }
 
-        public void Init()
+        public void Create()
         {
-            Bind();
             GL.BufferData(GLBufferTarget, 0, IntPtr.Zero, GLBufferUsageHint);
-            Unbind();
         }
 
         public void Update(int[] Indicies)
         {
-            Bind();
             GL.BufferData(GLBufferTarget, Indicies.Length * sizeof(float), Indicies, GLBufferUsageHint);          
-            Unbind();
         }
 
         public void Update(int[] Indicies, UsageHint UH)
         {
-            BufferHint = UH;
-            Bind();
+            SetUsageHint(UH);
             GL.BufferData(GLBufferTarget,Indicies.Length * sizeof(float), Indicies, GLBufferUsageHint);
-            Unbind();
         }
     }
 

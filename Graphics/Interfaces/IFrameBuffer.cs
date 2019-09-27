@@ -1,7 +1,12 @@
 namespace RobustEngine.Graphics.Interfaces
 {
-    public interface IGLFrameBuffer
+    public interface IFrameBuffer
     {
+        /// <summary>
+        /// Create a Framebuffer
+        /// </summary>
+        void Create(int w, int h, bool depth, bool stencil);
+
         /// <summary>
         /// Begin Drawing to Framebuffer
         /// </summary>

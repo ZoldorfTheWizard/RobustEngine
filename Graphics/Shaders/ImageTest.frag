@@ -10,7 +10,7 @@ out vec4 FragColor;
 
 void main()
 {
-     if(UsingTexture)
+    if(UsingTexture)
     {
         FragColor = texture(BoundTexture,TexCoord);
     }
