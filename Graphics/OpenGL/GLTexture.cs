@@ -59,7 +59,7 @@ namespace RobustEngine.Graphics.OpenGL
         }
 
 
-        public GLTexture(GLTextureTarget GLTT, GLTextureParams GLTP, PixelInternalFormat GLPIF )
+        public GLTexture(GLTextureTarget GLTT, GLTextureParams GLTP, PixelInternalFormat GLPIF = PixelInternalFormat.Rgba)
         {   
             Construct(GLTT,GLTP,GLPIF);
         }
@@ -117,7 +117,7 @@ namespace RobustEngine.Graphics.OpenGL
         /// <inherit-doc />
         public void SetTextureParams(TextureParams TP)
         {
-            SetTextureParams(GraphicsAPI.CheckTextureParams(TP));
+            SetTextureParams(GraphicsAPI.GetGLTexParams(TP));
         }
         
       

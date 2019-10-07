@@ -37,6 +37,7 @@ namespace RobustEngine.Graphics.OpenGL
         /// </summary>
         private void Compile(string VertCode, string FragCode, string GeomCode)
         {
+            //todo validation here?
             CompileVertex(VertCode);           
             CompileFragment(FragCode);
             CompileGeometry(GeomCode);

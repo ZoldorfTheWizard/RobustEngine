@@ -2,6 +2,9 @@ namespace RobustEngine.Graphics.Interfaces
 {
     public interface IFrameBuffer
     {
+
+        int ID {get;set;}
+
         /// <summary>
         /// Create a Framebuffer
         /// </summary>

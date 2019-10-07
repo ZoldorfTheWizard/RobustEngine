@@ -31,10 +31,5 @@ namespace RobustEngine.Graphics.Batching2D
             Vector4.Transform(ref pos, ref mat, out pos);
             var y = Renderable.ModelMatrix.Row1[3];
         }
-
-
-        //   VAOID = GL.GenBuffer();
-        //    GL.BindBuffer(BufferTarget.ArrayBuffer, VAOID);
-        //      GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length, &vertices[0], BufferUsageHint.DynamicDraw);
-    }
+   }
 }

@@ -5,50 +5,43 @@ using GLTextureTarget = OpenTK.Graphics.OpenGL.TextureTarget;
 
 namespace RobustEngine.Graphics.OpenGL
 {
-    public class GLFrameBuffer : IFrameBuffer
+    public sealed class GLFrameBuffer : IFrameBuffer
     {
-        public int FramebufferID;
-        
+        private int ID;
+
         private GLTexture ColorAttachment;
         private GLTexture DepthAttachment;
-        private GLTextureTarget GLTexTarget;
-        private GLTextureParams GLTexParams;
+
+        public int ID 
+        {
+            get { return id; }
+        }  
 
         public GLFrameBuffer()
-        {
-            GLTexTarget = GLTextureTarget.Texture2D;     
-            GLTexParams = GLTexture.DEFAULT_GL_TEXTURE_PARAMS;       
-            ColorAttachment = new GLTexture(GLTexTarget);
-            DepthAttachment  = new GLTexture(GLTexTarget);
-           
-            FramebufferID = GL.GenFramebuffer();
+        {    
+            ColorAttachment = new GLTexture(GLTextureTarget.Texture2D, GLTexture.DEFAULT_GL_TEXTURE_PARAMS);
+            DepthAttachment  = new GLTexture(GLTextureTarget.Texture2D, GLTexture.DEFAULT_GL_TEXTURE_PARAMS);
         }
 
         public GLFrameBuffer(GLTextureTarget TT)
         {
-            GLTexTarget = TT;                    
-            GLTexParams = GLTexture.DEFAULT_GL_TEXTURE_PARAMS;       
-            ColorAttachment = new GLTexture(GLTexTarget);
-            DepthAttachment  = new GLTexture(GLTexTarget);
-         
-            FramebufferID = GL.GenFramebuffer();
+            ColorAttachment = new GLTexture(TT,GLTexture.DEFAULT_GL_TEXTURE_PARAMS);
+            DepthAttachment  = new GLTexture(TT,GLTexture.DEFAULT_GL_TEXTURE_PARAMS);
         }
 
         public GLFrameBuffer(GLTextureTarget TT, GLTextureParams TP)
         {           
-            GLTexTarget = TT;
-            GLTexParams = TP;  
-            ColorAttachment = new GLTexture(GLTexTarget);
-            DepthAttachment  = new GLTexture(GLTexTarget);                
-        
-            FramebufferID = GL.GenFramebuffer();
+            ColorAttachment = new GLTexture(TT,TP);
+            DepthAttachment  = new GLTexture(TT,TP);
         }   
 
-        public void Create(int w, int h, bool depth=false, bool stencil=false)
+        ///<inherit-doc />
+		public void Create(int w, int h, bool depth=false, bool stencil=false)
         {   
+            ID = GL.GenFramebuffer();
+
             ColorAttachment.Bind();
             ColorAttachment.Create(w,h,IntPtr.Zero);
-            ColorAttachment.SetTextureParams(GLTexParams);   
             ColorAttachment.Unbind();
 
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, FramebufferID);
@@ -69,22 +62,26 @@ namespace RobustEngine.Graphics.OpenGL
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);           
         }
 
-        public void Begin()
+        ///<inherit-doc />
+		public void Begin()
         {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer,FramebufferID);
         }
 
-        public void End()
+        ///<inherit-doc />
+		public void End()
         {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer,0);
         }
 
-        public void Bind()
+        ///<inherit-doc />
+		public void Bind()
         {
             GL.BindTexture(GLTexTarget, ColorAttachment.ID);
         }
 
-        public void Unbind()
+        ///<inherit-doc />
+		public void Unbind()
         {
             GL.BindTexture(GLTexTarget,0);
         }

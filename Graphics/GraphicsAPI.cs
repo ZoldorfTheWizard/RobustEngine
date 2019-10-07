@@ -14,6 +14,10 @@ namespace RobustEngine.Graphics
         DX12
     }
 
+
+    /// <summary>
+    /// TODO branch if other api is used
+    /// </summary>
     public static class GraphicsAPI
     {
 
@@ -46,28 +50,36 @@ namespace RobustEngine.Graphics
             }
         }
 
-        public static ITexture GetTextureImplementation(TextureTarget TT, InternalFormat IF = InternalFormat.RGBA)
+        public static ITexture NewTexture(TextureTarget TT, InternalFormat IF = InternalFormat.RGBA)
         {
-            var GLTT = CheckTextureTarget(TT);
-            var GLIF = CheckInternalFormat(IF);
-            return new GLTexture(GLTT,GLIF); //tODO Branch here based on GRAPHICS_IMPLEMENTATION_ENUM
+            var GLTT = GetGLTexTarget(TT);
+            var GLIF = GetGLInternalFormat(IF);
+            return new GLTexture(GLTT,GLIF); 
         }
 
-        public static ITexture GetTextureImplementation(TextureTarget TT,TextureParams TP, InternalFormat IF = InternalFormat.RGBA)
+        public static ITexture NewTexture(TextureTarget TT,TextureParams TP, InternalFormat IF = InternalFormat.RGBA)
         {
-            var GLTT = CheckTextureTarget(TT);
-            var GLTP = CheckTextureParams(TP);
-            var GLIF = CheckInternalFormat(IF);
-            return new GLTexture(GLTT,GLTP,GLIF); //tODO Branch here based on GRAPHICS_IMPLEMENTATION_ENUM
+            var GLTT = GetGLTexTarget(TT);
+            var GLTP = GetGLTexParams(TP);
+            var GLIF = GetGLInternalFormat(IF);
+            return new GLTexture(GLTT,GLTP,GLIF); 
         }
 
-        public static GLShader GetShaderImplementation(string vertcode, string fragcode, string geomcode="")
+        public static IShader NewShader(string vertcode, string fragcode, string geomcode="")
         {            
             return new GLShader(vertcode,fragcode,geomcode);
         }
 
+        public static IFrameBuffer NewFrameBuffer(TextureTarget TT, TextureParams TP)
+        {        
+            var GLTT = GetGLTexTarget(TT);
+            var GLTP = GetGLTexParams(TP);    
+            return new GLFrameBuffer(GLTT,GLTP);
+        }
+
+
         
-        public static PixelInternalFormat CheckInternalFormat(InternalFormat TF)
+        public static PixelInternalFormat GetGLInternalFormat(InternalFormat TF)
         {
             switch(TF)
             {
@@ -77,7 +89,7 @@ namespace RobustEngine.Graphics
             }
         }
 
-        public static GLTextureTarget CheckTextureTarget(TextureTarget TT)
+        public static GLTextureTarget GetGLTexTarget(TextureTarget TT)
         {
             switch(TT)
             {
@@ -88,7 +100,7 @@ namespace RobustEngine.Graphics
             }    
         }
 
-        public static GLTextureParams CheckTextureParams(TextureParams RobustTexParams)
+        public static GLTextureParams GetGLTexParams(TextureParams RobustTexParams)
         {
             GLTextureParams GLTexParams = new GLTextureParams();
             
@@ -169,6 +181,7 @@ namespace RobustEngine.Graphics
             }
 
         }
+
         public static BufferUsageHint CheckUsageHint(UsageHint UH)
         {
             switch (UH)
@@ -200,9 +213,6 @@ namespace RobustEngine.Graphics
                 default : return BufferUsageHint.DynamicDraw;
             }
         }
-
-      
-
    }   
 
 

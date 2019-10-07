@@ -12,17 +12,20 @@ namespace RobustEngine.Graphics.OpenGL
             GLBufferUsageHint = UH;
         }
 
-        public void Create()
+        ///<inherit-doc />
+		public void Create()
         {
             GL.BufferData(GLBufferTarget, 0, IntPtr.Zero, GLBufferUsageHint);
         }
 
-        public void Update(int[] Indicies)
+        ///<inherit-doc />
+		public void Update(int[] Indicies)
         {
             GL.BufferData(GLBufferTarget, Indicies.Length * sizeof(float), Indicies, GLBufferUsageHint);          
         }
 
-        public void Update(int[] Indicies, UsageHint UH)
+        ///<inherit-doc />
+		public void Update(int[] Indicies, UsageHint UH)
         {
             SetUsageHint(UH);
             GL.BufferData(GLBufferTarget,Indicies.Length * sizeof(float), Indicies, GLBufferUsageHint);

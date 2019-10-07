@@ -7,9 +7,9 @@ namespace RobustEngine.Graphics.OpenGL
     
     public sealed class GLVertexBuffer : GLBuffer , IVertexBuffer
     {  
-        public GLVertexBuffer() : base(BufferTarget.ArrayBuffer)
+        public GLVertexBuffer(BufferUsageHint BUH) : base(BufferTarget.ArrayBuffer)
         {
-            
+            GLBufferUsageHint = BUH;
         }
     
         public void Create() 

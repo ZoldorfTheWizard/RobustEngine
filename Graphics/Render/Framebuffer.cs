@@ -19,13 +19,12 @@ namespace RobustEngine.Graphics.Render
         public float PointSize{get;set;}
         public float LineWidth{get;set;}
 
-        public IFrameBuffer Implementation;
+        public IFrameBuffer FrameBuffer;
         
         public Framebuffer(TextureTarget TT = TextureTarget.Texture2D)
         {
-          
+           FrameBuffer = GraphicsAPI.NewFrameBuffer();
         }
-
 
         public void Init(int width,int height)
         {
@@ -60,9 +59,7 @@ namespace RobustEngine.Graphics.Render
             PointSize=1f;
             LineWidth=1f;
 
-            //GLCreate(width,height);          
-
-            //Init dx12/gl buff  
+            FrameBuffer.Create(width,height);          
         }
 
     }
